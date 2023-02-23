@@ -44,7 +44,6 @@ export class UsersService {
 
     // 회원정보 수정
     async update(id: number, userData: UpdateUserDto) {
-        console.log(userData)
         if(userData.password) {
             const hashedPassword = await bcrypt.hash (userData.password, 10);
             userData.password = hashedPassword;
