@@ -45,6 +45,9 @@ export class UsersService {
     // 회원정보 수정
     async update(id: number, userData: UpdateUserDto) {
         if(userData.password) {
+            if(userData.password.length < 8) {
+                throw new BadRequestException('8자 이상의 비밀번호를 입력해주십시오.');
+            }
             const hashedPassword = await bcrypt.hash (userData.password, 10);
             userData.password = hashedPassword;
         }
