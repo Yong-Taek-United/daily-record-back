@@ -13,10 +13,7 @@ export class UsersService {
         private usersRepository: Repository<Users>,
     ){}
 
-    async getUser(email: string) {
-        return await this.usersRepository.findOne({where:{email}});
-    }
-
+    // 회원가입
     async create(userData: CreateUserDto) {
         const { email, username, password, password2 } = userData;
 
@@ -43,18 +40,26 @@ export class UsersService {
         return {Success: true, statusCode: 201, message: '회원가입이 완료되었습니다.'}
     }
 
+    // 회원 조회
     async get(id: number) {
         const user = await this.usersRepository.findOne({where:{id}});
         return{Success: true, statusCode: 201, message: '회원 조회가 완료되었습니다.', userData: user}
     }
 
+    // 회원정보 수정
     async update(id: number, userData: UpdateUserDto) {
         await this.usersRepository.update(id, userData);
         return {Success: true, statusCode: 200, message: '회원 수정이 완료되었습니다.'}
     }
 
+    // 회원 탈퇴
     async delete(id: number) {
         await this.usersRepository.delete(id);
         return {Success: true, statusCode: 200, message: '회원 삭제가 완료되었습니다.'}
+    }
+
+    // 회원 조회(로그인 인증용)
+    async getUser(email: string) {
+        return await this.usersRepository.findOne({where:{email}});
     }
 }
