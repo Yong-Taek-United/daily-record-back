@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Users } from '../entities/users.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -41,4 +42,14 @@ export class UsersService {
     async getUser(email: string) {
         return await this.usersRepository.findOne({where:{email}});
       }
+
+    async update(id: number, userData: UpdateUserDto) {
+        const user = await this.usersRepository.update(id, userData);
+        return user;
+    }
+
+    async delete(id: number) {
+        const user = await this.usersRepository.delete(id);
+        return user;
+    }
 }
