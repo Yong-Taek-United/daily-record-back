@@ -37,4 +37,8 @@ export class UsersService {
         this.usersRepository.save(user);
         return user
     }
+
+    async getUser(email: string) {
+        return await this.usersRepository.findOne({where:{email}});
+      }
 }
