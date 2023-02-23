@@ -36,20 +36,20 @@ export class UsersService {
             password: hashedPassword
         }
         this.usersRepository.save(user);
-        return user
+        return {Success: true, statusCode: 201, message: '회원가입이 완료되었습니다.'}
     }
 
     async getUser(email: string) {
         return await this.usersRepository.findOne({where:{email}});
-      }
+    }
 
     async update(id: number, userData: UpdateUserDto) {
-        const user = await this.usersRepository.update(id, userData);
-        return user;
+        await this.usersRepository.update(id, userData);
+        return {Success: true, statusCode: 200, message: '수정이 완료되었습니다.'}
     }
 
     async delete(id: number) {
-        const user = await this.usersRepository.delete(id);
-        return user;
+        await this.usersRepository.delete(id);
+        return {Success: true, statusCode: 200, message: '삭제가 완료되었습니다.'}
     }
 }
