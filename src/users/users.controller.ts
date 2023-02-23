@@ -12,6 +12,11 @@ export class UsersController {
         return this.usersService.create(userData);
     }
 
+    @Get('/:id')
+    get(@Param('id') userId: number) {
+        return this.usersService.get(userId);
+    }
+
     @Patch('/:id')
     update(@Param('id') userId: number, @Body() userDate: UpdateUserDto) {
         return this.usersService.update(userId, userDate);
