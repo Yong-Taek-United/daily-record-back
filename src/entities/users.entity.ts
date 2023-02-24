@@ -3,8 +3,10 @@ import { Entity,
     Column, 
     CreateDateColumn, 
     UpdateDateColumn, 
-    DeleteDateColumn
+    DeleteDateColumn,
+    OneToMany
 } from "typeorm";
+import { Dailies } from "./dailies.entity";
 
 
 @Entity({ schema: 'dairy-record', name: 'users' })
@@ -32,4 +34,7 @@ export class Users{
 
     @Column({default: true})
     isActive: Boolean;
+
+    @OneToMany(type => Dailies, dailies => dailies.users)
+    dailies: Dailies[]
 }
