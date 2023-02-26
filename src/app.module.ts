@@ -4,10 +4,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { Users } from './entities/users.entity';
 import { AuthModule } from './auth/auth.module';
 import { DailiesModule } from './dailies/dailies.module';
+import { EventsModule } from './events/events.module';
+import { Users } from './entities/users.entity';
 import { Dailies } from './entities/dailies.entity';
+import { Events } from './entities/events.entity';
 
 @Module({
   imports: [
@@ -20,12 +22,14 @@ import { Dailies } from './entities/dailies.entity';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [
-          Users, Dailies
+          Users, Dailies, Events
       ],
+      "synchronize": true,
     }),
     UsersModule,
     AuthModule,
-    DailiesModule
+    DailiesModule,
+    EventsModule
   ],
   controllers: [AppController],
   providers: [AppService],
