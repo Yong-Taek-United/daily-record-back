@@ -39,5 +39,4 @@ export class DailiesService {
         await this.dailiesRepository.delete(id);
         return {Success: true, statusCode: 200, message: '데일리 삭제가 완료되었습니다.'};
     }
-
 }

@@ -29,5 +29,4 @@ export class DailiesController {
     delete(@Param('id') dailyId: number) {
         return this.dailiesService.delete(dailyId);
     }
-
 }
