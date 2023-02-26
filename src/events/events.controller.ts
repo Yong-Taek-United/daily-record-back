@@ -7,7 +7,6 @@ export class EventsController {
 
     @Post()
     create(@Body() eventData) {
-        console.log('hi')
         return this.eventsService.create(eventData);
     }
 
