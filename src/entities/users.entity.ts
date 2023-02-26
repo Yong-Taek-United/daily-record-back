@@ -7,6 +7,7 @@ import { Entity,
     OneToMany
 } from "typeorm";
 import { Dailies } from "./dailies.entity";
+import { Events } from "./events.entity";
 
 
 @Entity({ schema: 'dairy-record', name: 'users' })
@@ -37,4 +38,7 @@ export class Users{
 
     @OneToMany(type => Dailies, dailies => dailies.users)
     dailies: Dailies[]
+
+    @OneToMany(type => Events, events => events.users)
+    events: Events[]
 }

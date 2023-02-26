@@ -4,8 +4,10 @@ import { Entity,
     CreateDateColumn, 
     UpdateDateColumn, 
     DeleteDateColumn,
-    ManyToOne
+    ManyToOne,
+    OneToMany
 } from "typeorm";
+import { Events } from "./events.entity";
 import { Users } from "./users.entity";
 
 
@@ -26,6 +28,12 @@ export class Dailies{
     @Column({default: false})
     isDeleted: Boolean;
 
-    @ManyToOne(type => Users, users => users.dailies)
+    @ManyToOne(type => Users, users => users.dailies, {
+        nullable: false, 
+        onDelete: 'CASCADE'
+    })
     users: Users
+
+    @OneToMany(type => Events, events => events.dailies)
+    events: Events[]
 }
