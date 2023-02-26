@@ -18,8 +18,8 @@ export class DailiesService {
 
     // 데일리 전체 조회
     async getDailies() {
-        const daily = await this.dailiesRepository.find();
-        return {Success: true, statusCode: 201, message: '데일리 전체 조회가 완료되었습니다.', dailyData: daily};
+        const dailies = await this.dailiesRepository.find();
+        return {Success: true, statusCode: 201, message: '데일리 전체 조회가 완료되었습니다.', dailyData: dailies};
     }
 
     // 데일리 개별 조회
