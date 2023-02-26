@@ -25,6 +25,8 @@ import { Events } from './entities/events.entity';
           Users, Dailies, Events
       ],
       "synchronize": true,
+      timezone: 'z',
+      charset: 'utf8mb4',
     }),
     UsersModule,
     AuthModule,
