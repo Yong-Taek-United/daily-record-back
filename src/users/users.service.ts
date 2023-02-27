@@ -21,13 +21,13 @@ export class UsersService {
         if(isExist) {
             throw new ConflictException('이미 존재하는 이메일입니다.');
         }
+        
+        if(password !== password2) {
+            throw new BadRequestException('비밀번호를 다시 확인해주십시오.');
+        }
 
         if(password.length < 8 || password2.length < 8) {
             throw new BadRequestException('8자 이상의 비밀번호를 입력해주십시오.');
-        }
-
-        if(password !== password2) {
-            throw new BadRequestException('비밀번호를 다시 확인해주십시오.');
         }
 
         const hashedPassword = await bcrypt.hash (password, 10);
