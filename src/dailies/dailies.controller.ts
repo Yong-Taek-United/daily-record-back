@@ -12,7 +12,6 @@ export class DailiesController {
 
     @Get('/getDailies/:id')
     getDailies(@Param('id') userId: number) {
-        console.log(userId)
         return this.dailiesService.getDailies(userId);
     }
 
