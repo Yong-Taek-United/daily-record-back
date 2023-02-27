@@ -10,9 +10,9 @@ export class EventsController {
         return this.eventsService.create(eventData);
     }
 
-    @Get()
-    getEvents() {
-        return this.eventsService.getEvents();
+    @Get('/getEvents/:id')
+    getEvents(@Param('id') userId: number) {
+        return this.eventsService.getEvents(userId);
     }
 
     @Get('/:id')

@@ -17,14 +17,14 @@ export class DailiesService {
     }
 
     // 데일리 전체 조회
-    async getDailies() {
-        const dailies = await this.dailiesRepository.find();
+    async getDailies(userId: number) {
+        const dailies = await this.dailiesRepository.find({where: {users: {id: userId}}});
         return {Success: true, statusCode: 201, message: '데일리 전체 조회가 완료되었습니다.', dailyData: dailies};
     }
 
     // 데일리 개별 조회
     async getDaily(id: number) {
-        const daily = await this.dailiesRepository.findOne({where:{id}});
+        const daily = await this.dailiesRepository.findOne({where: {id}});
         return {Success: true, statusCode: 201, message: '데일리 조회가 완료되었습니다.', dailyData: daily};
     }
 

@@ -10,9 +10,10 @@ export class DailiesController {
         return this.dailiesService.create(dailyData);
     }
 
-    @Get()
-    getDailies() {
-        return this.dailiesService.getDailies();
+    @Get('/getDailies/:id')
+    getDailies(@Param('id') userId: number) {
+        console.log(userId)
+        return this.dailiesService.getDailies(userId);
     }
 
     @Get('/:id')
