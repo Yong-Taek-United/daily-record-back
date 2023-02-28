@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { MouseEvent, useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
 import Daily from '../components/Daily';
+import DailyDetail from '../components/DailyDetail';
 
 const Home = () => {
     const navigate = useNavigate();
 
+    const detailRef = useRef<HTMLDivElement>(null);
+
     const [UserId, setUserId] = useState(0);
+    const [ActionDailyDetail, setActionDailyDetail] = useState(false);
 
     useEffect(() => {
         const access_token = localStorage.getItem('access_token');
@@ -24,12 +28,33 @@ const Home = () => {
         }).catch(Error => {
             navigate('/login')
         });
-    }, [])
+
+        const closeDailyDetail = (e: any) => {
+            if(ActionDailyDetail && detailRef.current && !detailRef.current.contains(e.target)) {
+                setActionDailyDetail(false);
+            }
+        };
+
+        document.addEventListener('mousedown', closeDailyDetail);
+        return () => {
+            document.removeEventListener('mousedown', closeDailyDetail);
+        };
+
+    }, [ActionDailyDetail]);
+
+    const openDailyDetail = () => {
+        setActionDailyDetail(true);
+    };
 
     return (
-        <div>
-            <h2>Home</h2>
-            <Daily userId={UserId} />
+        <div style={{display: 'flex', width: '100%', height: '100%', backgroundColor: '#f1f1f1'}}>
+            <div style={{width: '100%', height: '100%'}} >
+                <h2>Home</h2>
+                <Daily userId={UserId} openDailyDetail={openDailyDetail}/>
+            </div>
+            {ActionDailyDetail &&
+                <DailyDetail detailRef={detailRef} />
+            }
         </div>
     );
 };
