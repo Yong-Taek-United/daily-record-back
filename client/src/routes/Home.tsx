@@ -6,8 +6,12 @@ import DailyDetail from '../components/DailyDetail';
 import { api } from '../utils/authInstance';
 
 type ServerData = {
-    userId: number;
-  }
+    userData: {
+        userId: number;
+        email: string;
+        username: string;
+    }
+}
 
 const Home = () => {
     const navigate = useNavigate();
@@ -25,8 +29,8 @@ const Home = () => {
                 Authorization: `Bearer ${access_token}`
             }
         }).then(res => {
-            if(res.data.userId) {
-                setUserId(res.data.userId);
+            if(res.data.userData.userId) {
+                setUserId(res.data.userData.userId);
             } else {
                 navigate('/login')
             }
