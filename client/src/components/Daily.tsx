@@ -1,9 +1,10 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import { Box, Grid, Paper } from '@mui/material';
 
 type Tprops = {
     userId: number;
-    openDailyDetail(e: any): void;
+    toggleDrawer(e: any): void;
 }
 
 type TDailisInfo = {
@@ -12,7 +13,7 @@ type TDailisInfo = {
 }
 
 function Daily(props: Tprops) {
-    const {userId, openDailyDetail} = props
+    const {userId, toggleDrawer} = props
 
     const [Dailies, setDailies] = useState<TDailisInfo[]>([]);
 
@@ -27,18 +28,24 @@ function Daily(props: Tprops) {
 
     const renderDaily = Dailies.map((daily, i) => {
         return (
-            <div key={i} style={{width: 100, height: 100, margin: 20, backgroundColor: 'gray'}} onClick={openDailyDetail}>
-                <p>{daily.id}</p>
-                <p>{daily.createdAt}</p>
-            </div>
+            <Grid item xs={12/7}>
+                <Box>
+                    <Paper style={{maxWidth: '130px', minHeight: '130px', margin: 0}} elevation={3} onClick={toggleDrawer}>
+                        <p>{daily.id}</p>
+                        <p>{daily.createdAt}</p>
+                    </Paper>
+                </Box>
+            </Grid>
         );
     });
 
     return (
-        <div>
-            <h2>Daily</h2>
-            {renderDaily}
-        </div>
+        // <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+        <Grid style={{display: 'flex', alignItems: 'center'}} container spacing={2}>
+            
+                {renderDaily}
+            
+        </Grid>
     );
 };
 

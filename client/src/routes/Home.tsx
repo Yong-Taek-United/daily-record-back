@@ -1,9 +1,9 @@
 import React, { MouseEvent, useEffect, useRef, useState } from 'react'
-import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
 import Daily from '../components/Daily';
 import DailyDetail from '../components/DailyDetail';
 import { api } from '../utils/authInstance';
+import { Box, Button, Drawer } from '@mui/material';
 
 type ServerData = {
     userData: {
@@ -16,10 +16,10 @@ type ServerData = {
 const Home = () => {
     const navigate = useNavigate();
 
-    const detailRef = useRef<HTMLDivElement>(null);
 
     const [UserId, setUserId] = useState(0);
-    const [ActionDailyDetail, setActionDailyDetail] = useState(false);
+    const [OpenToggle, setOpenToggle] = useState(false);
+    console.log(OpenToggle)
 
     useEffect(() => {
         const access_token = localStorage.getItem('access_token');
@@ -35,35 +35,41 @@ const Home = () => {
                 navigate('/login')
             }
         }).catch(Error => {
-            navigate('/login')
+            navigate('/login');
         });
+    }, []);
 
-        const closeDailyDetail = (e: any) => {
-            if(ActionDailyDetail && detailRef.current && !detailRef.current.contains(e.target)) {
-                setActionDailyDetail(false);
-            }
-        };
-
-        document.addEventListener('mousedown', closeDailyDetail);
-        return () => {
-            document.removeEventListener('mousedown', closeDailyDetail);
-        };
-
-    }, [ActionDailyDetail]);
-
-    const openDailyDetail = () => {
-        setActionDailyDetail(true);
+    const toggleDrawer =
+        (e: React.KeyboardEvent | React.MouseEvent) => {
+            if (
+                e.type === 'keydown' &&
+                ((e as React.KeyboardEvent).key === 'Tab' ||
+                    (e as React.KeyboardEvent).key === 'Shift')
+            ) {
+            return;
+        }
+        if(OpenToggle) {
+            setOpenToggle(false);
+            return;
+        }
+        setOpenToggle(true);
     };
 
     return (
         <div style={{display: 'flex', width: '100%', height: '100%', backgroundColor: '#f1f1f1'}}>
-            <div style={{width: '100%', height: '100%'}} >
-                <h2>Home</h2>
-                <Daily userId={UserId} openDailyDetail={openDailyDetail}/>
-            </div>
-            {ActionDailyDetail &&
-                <DailyDetail detailRef={detailRef} />
-            }
+            <Daily userId={UserId} toggleDrawer={toggleDrawer} />
+            <Drawer
+                anchor='right'
+                open={OpenToggle}
+                onClose={toggleDrawer}
+            >
+                <Box
+                    sx={{ width: 400 }}
+                    onClick={toggleDrawer}
+                    onKeyDown={toggleDrawer}
+                >
+                </Box>
+            </Drawer>
         </div>
     );
 };
