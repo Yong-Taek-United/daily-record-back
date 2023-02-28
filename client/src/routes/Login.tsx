@@ -1,6 +1,10 @@
-import axios from 'axios';
 import React, { ChangeEvent, FormEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { api } from '../utils/authInstance';
+
+type ServerData = {
+    access_token: string
+  }
 
 const Login = () => {
     const navigate = useNavigate();
@@ -15,13 +19,13 @@ const Login = () => {
     const onPasswordHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setPassword(e.currentTarget.value);
     };
-    const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const onSubmit = async(e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         let body = {
             email: Email,
             password: Password
         };
-        axios.post('http://localhost:5000/auth/login', body)
+        await api().post<ServerData>(`/auth/login`, body)
         .then(res => {
             if(res.data.access_token) {
                 localStorage.setItem('access_token', res.data.access_token)

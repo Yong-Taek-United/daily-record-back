@@ -1,6 +1,11 @@
-import axios from 'axios';
 import React, { ChangeEvent, FormEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { api } from '../utils/authInstance';
+
+type ServerData = {
+    Success: boolean;
+    message: string;
+  }
 
 const SignUp = () => {
 
@@ -24,7 +29,7 @@ const SignUp = () => {
         setPassword2(e.currentTarget.value);
     };
 
-    const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const onSubmit = async(e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         let body = {
             email: Email,
@@ -32,7 +37,7 @@ const SignUp = () => {
             password: Password,
             password2: Password2
         };
-        axios.post('http://localhost:5000/users', body)
+        await api().post<ServerData>(`/users`, body)
         .then(res => {
             if(res.data.Success) {
                 alert(res.data.message);

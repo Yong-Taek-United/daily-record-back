@@ -3,6 +3,11 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
 import Daily from '../components/Daily';
 import DailyDetail from '../components/DailyDetail';
+import { api } from '../utils/authInstance';
+
+type ServerData = {
+    userId: number;
+  }
 
 const Home = () => {
     const navigate = useNavigate();
@@ -15,7 +20,7 @@ const Home = () => {
     useEffect(() => {
         const access_token = localStorage.getItem('access_token');
 
-        axios.get('http://localhost:5000/auth', {
+        api().get<ServerData>('/auth', {
             headers: {
                 Authorization: `Bearer ${access_token}`
             }
