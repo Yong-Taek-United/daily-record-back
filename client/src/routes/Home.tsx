@@ -1,9 +1,8 @@
-import React, { MouseEvent, useEffect, useRef, useState } from 'react'
+import React, { MouseEvent, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Daily from '../components/Daily';
-import DailyDetail from '../components/DailyDetail';
 import { api } from '../utils/authInstance';
-import { Box, Button, Drawer } from '@mui/material';
+import { Box, Drawer } from '@mui/material';
 
 type ServerData = {
     userData: {
