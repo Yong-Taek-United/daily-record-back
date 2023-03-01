@@ -1,7 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { AppBar,Box, Toolbar, Typography, Button, IconButton, } from '@mui/material';
 import { AddCircle } from '@mui/icons-material';
 import { api } from '../utils/authInstance';
+import { useDispatch } from 'react-redux';
+import * as type from '../redux/types'
+import { OpenDailyToggle, setDailyData } from '../redux/actions/dailyAction';
+import DailyToggle from './DailyToggle';
 
 type ServerData = {
     userData: {
@@ -12,6 +16,16 @@ type ServerData = {
 }
 
 const NavBar = () => {
+
+    const dispatch = useDispatch();
+    const setOpenToggle = useCallback(
+        (isOpened: type.isOpened) => dispatch(OpenDailyToggle(isOpened)),
+        [dispatch]
+    );
+    const setCurrDaily = useCallback(
+        (dailiy: type.dailyData) => dispatch(setDailyData(dailiy)),
+        [dispatch]
+    );
 
     const [UserId, setUserId] = useState(0);
     const [Username, setUsername] = useState('');
@@ -31,9 +45,19 @@ const NavBar = () => {
         }).catch(Error => {
             console.log(Error)
         });
-      
-    }, [])
-    
+    }, []);
+
+    const toggleDrawer = (open: boolean, dailiy?: any) => 
+        (e: React.KeyboardEvent | React.MouseEvent) => {
+            if(e.type === 'keydown' && (
+                (e as React.KeyboardEvent).key === 'Tab' ||
+                    (e as React.KeyboardEvent).key === 'Shift'
+            )) {
+            return;
+            }
+            setCurrDaily(dailiy);
+            setOpenToggle(open);
+    };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -50,6 +74,7 @@ const NavBar = () => {
                         color="inherit"
                         aria-label="menu"
                         sx={{ mr: 2 }}
+                        onClick={toggleDrawer(true)}
                     >
                         <AddCircle />
                     </IconButton>

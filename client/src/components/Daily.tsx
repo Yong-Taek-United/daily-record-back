@@ -53,9 +53,7 @@ function Daily(props: Tprops) {
             )) {
             return;
             }
-            if(dailiy) {
-                setCurrDaily(dailiy);
-            }
+            setCurrDaily(dailiy);
             setOpenToggle(open);
     };
 
