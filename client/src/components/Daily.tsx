@@ -9,6 +9,10 @@ type Tprops = {
 type TDailisInfo = {
     id: number;
     createdAt: string;
+    events: {
+        id: number;
+        description: string;
+    }[]
 }
 
 function Daily(props: Tprops) {
@@ -17,7 +21,7 @@ function Daily(props: Tprops) {
     const [Dailies, setDailies] = useState<TDailisInfo[]>([]);
     const [OpenToggle, setOpenToggle] = useState(false);
     const [CurrOpenDaily, setCurrOpenDaily] = useState<TDailisInfo | null>(null);
-
+    console.log(Dailies)
     useEffect(() => {
         api().get(`/dailies/getDailies/${userId}`)
             .then(res => {
@@ -70,6 +74,11 @@ function Daily(props: Tprops) {
                     >
                         <p>{CurrOpenDaily?.id}</p>
                         <p>{CurrOpenDaily?.createdAt}</p>
+                        <div>
+                            {CurrOpenDaily?.events.map((event, i) => {
+                                return (<p key={i}>{event.description}</p>)
+                            })}
+                        </div>
                     </Box>
                 </Drawer>
         </Grid>
