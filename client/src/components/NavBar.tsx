@@ -16,7 +16,6 @@ const NavBar = () => {
     const [UserId, setUserId] = useState(0);
     const [Username, setUsername] = useState('');
     
-
     useEffect(() => {
         const access_token = localStorage.getItem('access_token');
 
@@ -25,7 +24,6 @@ const NavBar = () => {
                 Authorization: `Bearer ${access_token}`
             }
         }).then(res => {
-            console.log(res.data.userData)
             if(res.data) {
                 setUserId(res.data.userData.userId);
                 setUsername(res.data.userData.username);
