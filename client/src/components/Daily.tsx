@@ -1,6 +1,6 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Box, Grid, Paper } from '@mui/material';
+import { api } from '../utils/authInstance';
 
 type Tprops = {
     userId: number;
@@ -18,7 +18,7 @@ function Daily(props: Tprops) {
     const [Dailies, setDailies] = useState<TDailisInfo[]>([]);
 
     useEffect(() => {
-        axios.get(`http://localhost:5000/dailies/getDailies/${userId}`)
+        api().get(`/dailies/getDailies/${userId}`)
             .then(res => {
                 setDailies(res.data.dailyData)
             }).catch(Error => {
