@@ -18,7 +18,7 @@ export class DailiesService {
 
     // 데일리 전체 조회
     async getDailies(userId: number) {
-        const dailies = await this.dailiesRepository.find({where: {users: {id: userId}}});
+        const dailies = await this.dailiesRepository.find({relations: ['events'], where: {users: {id: userId}}});
         return {Success: true, statusCode: 201, message: '데일리 전체 조회가 완료되었습니다.', dailyData: dailies};
     }
 
