@@ -1,17 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Box, Grid, Paper, Drawer } from '@mui/material';
+import { Box, Grid, Paper } from '@mui/material';
 import { api } from '../utils/authInstance';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import * as type from '../redux/types'
-import { OpenDailyToggle } from '../redux/actions/dailyAction';
-import { RootState } from '../redux/reducers/rootReducer';
-// import DailyDetail from './DailyDetail';
+import { OpenDailyToggle, setDailyData } from '../redux/actions/dailyAction';
+import DailyToggle from './DailyToggle';
 
 type Tprops = {
     userId: number;
 }
 
-type TDailisInfo = {
+interface TDailisInfo {
     id: number;
     createdAt: string;
     events: {
@@ -26,20 +25,23 @@ function Daily(props: Tprops) {
     const dispatch = useDispatch();
     
     const [Dailies, setDailies] = useState<TDailisInfo[]>([]);
-    const [CurrOpenDaily, setCurrOpenDaily] = useState<TDailisInfo | null>(null);
     
-    const DailyToggle = useSelector((state: RootState) => state.dailyReducer.openCloseValue);
-    const setDailyToggle = useCallback(
+    const setOpenToggle = useCallback(
         (isOpened: type.isOpened) => dispatch(OpenDailyToggle(isOpened)),
         [dispatch]
+        );
+
+    const setCurrDaily = useCallback(
+        (dailiy: type.dailyData) => dispatch(setDailyData(dailiy)),
+        [dispatch]
     );
-    
+
     useEffect(() => {
         api().get(`/dailies/getDailies/${userId}`)
             .then(res => {
-                setDailies(res.data.dailyData)
+                setDailies(res.data.dailyData);
             }).catch(Error => {
-                console.log(Error)
+                console.log(Error);
         });
     }, [userId])
 
@@ -52,9 +54,9 @@ function Daily(props: Tprops) {
             return;
             }
             if(dailiy) {
-                setCurrOpenDaily(dailiy);
+                setCurrDaily(dailiy);
             }
-            setDailyToggle(open);
+            setOpenToggle(open);
     };
 
     const renderDaily = Dailies.map((daily, i) => {
@@ -75,26 +77,24 @@ function Daily(props: Tprops) {
         <Grid style={{display: 'flex', alignItems: 'center'}} container spacing={2}>
             
                 {renderDaily}
-                {/* {OpenToggle &&
-                    <DailyDetail OpenToggleData={OpenToggle} CurrOpenDailyData={CurrOpenDaily}/>
-                } */}
-                <Drawer
+                <DailyToggle setOpenToggle={setOpenToggle}/>
+                {/* <Drawer
                     anchor='right'
-                    open={DailyToggle}
-                    onClose={toggleDrawer(false, CurrOpenDaily)}
+                    open={openCloseValue}
+                    onClose={toggleDrawer(false)}
                 >
                     <Box
                         sx={{ width: 400 }}
                     >
-                        <p>{CurrOpenDaily?.id}</p>
-                        <p>{CurrOpenDaily?.createdAt}</p>
+                        <p>{CurDailyData?.id}</p>
+                        <p>{CurDailyData?.createdAt}</p>
                         <div>
-                            {CurrOpenDaily?.events?.map((event, i) => {
+                            {CurDailyData?.events?.map((event, i) => {
                                 return (<p key={i}>{event.description}</p>)
                             })}
                         </div>
                     </Box>
-                </Drawer>
+                </Drawer> */}
         </Grid>
     );
 };

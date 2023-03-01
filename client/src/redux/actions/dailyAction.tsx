@@ -1,8 +1,13 @@
 import * as type from '../types';
 
-export const CHANGE_DAILYTOGGLE = 'changeDailyToggle/CHANGE_DAILYTOGGLE' as const;
-
-export const OpenDailyToggle = (isOpened: type.isOpened ) => ({
-    type: CHANGE_DAILYTOGGLE,
+export const OPEN_DAILYTOGGLE = 'changeDailyToggle/CHANGE_DAILYTOGGLE' as const;
+export const OpenDailyToggle = (isOpened: type.isOpened) => ({
+    type: OPEN_DAILYTOGGLE,
     payload: isOpened,
+});
+
+export const SET_DAILYDATA = 'setDailyData/SET_DAILYDATA' as const;
+export const setDailyData = (dailyData: type.dailyData) => ({
+    type: SET_DAILYDATA,
+    payload: dailyData,
 });
