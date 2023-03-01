@@ -12,7 +12,7 @@ type TDailisInfo = {
     events: {
         id: number;
         description: string;
-    }[]
+    }[] | null
 }
 
 function Daily(props: Tprops) {
@@ -75,7 +75,7 @@ function Daily(props: Tprops) {
                         <p>{CurrOpenDaily?.id}</p>
                         <p>{CurrOpenDaily?.createdAt}</p>
                         <div>
-                            {CurrOpenDaily?.events.map((event, i) => {
+                            {CurrOpenDaily?.events?.map((event, i) => {
                                 return (<p key={i}>{event.description}</p>)
                             })}
                         </div>
