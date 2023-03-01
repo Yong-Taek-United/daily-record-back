@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, Paper } from '@mui/material';
+import { Box, Grid, Paper, Drawer } from '@mui/material';
 import { api } from '../utils/authInstance';
 
 type Tprops = {
     userId: number;
-    toggleDrawer(e: any): void;
 }
 
 type TDailisInfo = {
@@ -13,9 +12,11 @@ type TDailisInfo = {
 }
 
 function Daily(props: Tprops) {
-    const {userId, toggleDrawer} = props
+    const {userId} = props
 
     const [Dailies, setDailies] = useState<TDailisInfo[]>([]);
+    const [OpenToggle, setOpenToggle] = useState(false);
+    const [CurrOpenDaily, setCurrOpenDaily] = useState<TDailisInfo | null>(null);
 
     useEffect(() => {
         api().get(`/dailies/getDailies/${userId}`)
@@ -26,25 +27,51 @@ function Daily(props: Tprops) {
         });
     }, [userId])
 
+    const toggleDrawer = (open: boolean, dailiy?: any) => 
+        (e: React.KeyboardEvent | React.MouseEvent) => {
+            if(e.type === 'keydown' && (
+                (e as React.KeyboardEvent).key === 'Tab' ||
+                    (e as React.KeyboardEvent).key === 'Shift'
+            )) {
+            return;
+            }
+            if(dailiy) {
+                setCurrOpenDaily(dailiy);
+            }
+            setOpenToggle(open);
+    };
+
     const renderDaily = Dailies.map((daily, i) => {
         return (
-            <Grid item xs={12/7}>
+            <Grid item xs={12/7} key={i}>
                 <Box>
-                    <Paper style={{maxWidth: '130px', minHeight: '130px', margin: 0}} elevation={3} onClick={toggleDrawer}>
+                    <Paper style={{maxWidth: '130px', minHeight: '130px', margin: 0}} elevation={3} onClick={toggleDrawer(true, daily)}>
                         <p>{daily.id}</p>
                         <p>{daily.createdAt}</p>
                     </Paper>
                 </Box>
+                
             </Grid>
         );
     });
 
     return (
-        // <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
         <Grid style={{display: 'flex', alignItems: 'center'}} container spacing={2}>
             
                 {renderDaily}
-            
+
+                <Drawer
+                    anchor='right'
+                    open={OpenToggle}
+                    onClose={toggleDrawer(false, CurrOpenDaily)}
+                >
+                    <Box
+                        sx={{ width: 400 }}
+                    >
+                        <p>{CurrOpenDaily?.id}</p>
+                        <p>{CurrOpenDaily?.createdAt}</p>
+                    </Box>
+                </Drawer>
         </Grid>
     );
 };

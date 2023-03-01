@@ -2,14 +2,24 @@ import React, { MouseEvent, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Daily from '../components/Daily';
 import { api } from '../utils/authInstance';
-import { Box, Drawer } from '@mui/material';
+// import { Box, Drawer } from '@mui/material';
 
-type ServerData = {
+type TServerData = {
+    Success: boolean,
     userData: {
         userId: number;
         email: string;
         username: string;
+    },
+    dailyData: {
+        id: number;
+        createdAt: Date;
     }
+}
+
+type TDailyData = {
+    id: number;
+    createdAt: Date;
 }
 
 const Home = () => {
@@ -17,13 +27,13 @@ const Home = () => {
 
 
     const [UserId, setUserId] = useState(0);
-    const [OpenToggle, setOpenToggle] = useState(false);
-    console.log(OpenToggle)
+    // const [OpenToggle, setOpenToggle] = useState(false);
+    const [DailyData, setDailyData] = useState<TDailyData[]>([]);
 
     useEffect(() => {
         const access_token = localStorage.getItem('access_token');
 
-        api().get<ServerData>('/auth', {
+        api().get<TServerData>('/auth', {
             headers: {
                 Authorization: `Bearer ${access_token}`
             }
@@ -36,28 +46,37 @@ const Home = () => {
         }).catch(Error => {
             navigate('/login');
         });
+
+        // api().get<TServerData>(`/dailies/${}`)
+        //     .then(res => {
+        //         if(res.data.Success) {
+        //             setDailyData(res.data.dailyData);
+        //         }
+        //     }).catch(Error => {
+        //         navigate('/');
+        // });
     }, []);
 
-    const toggleDrawer =
-        (e: React.KeyboardEvent | React.MouseEvent) => {
-            if (
-                e.type === 'keydown' &&
-                ((e as React.KeyboardEvent).key === 'Tab' ||
-                    (e as React.KeyboardEvent).key === 'Shift')
-            ) {
-            return;
-        }
-        if(OpenToggle) {
-            setOpenToggle(false);
-            return;
-        }
-        setOpenToggle(true);
-    };
+    // const toggleDrawer =
+    //     (e: React.KeyboardEvent | React.MouseEvent) => {
+    //         if (
+    //             e.type === 'keydown' &&
+    //             ((e as React.KeyboardEvent).key === 'Tab' ||
+    //                 (e as React.KeyboardEvent).key === 'Shift')
+    //         ) {
+    //         return;
+    //     }
+    //     if(OpenToggle) {
+    //         setOpenToggle(false);
+    //         return;
+    //     }
+    //     setOpenToggle(true);
+    // };
 
     return (
         <div style={{display: 'flex', width: '100%', height: '100%', backgroundColor: '#f1f1f1'}}>
-            <Daily userId={UserId} toggleDrawer={toggleDrawer} />
-            <Drawer
+            <Daily userId={UserId} />
+            {/* <Drawer
                 anchor='right'
                 open={OpenToggle}
                 onClose={toggleDrawer}
@@ -68,7 +87,7 @@ const Home = () => {
                     onKeyDown={toggleDrawer}
                 >
                 </Box>
-            </Drawer>
+            </Drawer> */}
         </div>
     );
 };
