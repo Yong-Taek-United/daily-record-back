@@ -21,7 +21,7 @@ function Daily(props: Tprops) {
     const [Dailies, setDailies] = useState<TDailisInfo[]>([]);
     const [OpenToggle, setOpenToggle] = useState(false);
     const [CurrOpenDaily, setCurrOpenDaily] = useState<TDailisInfo | null>(null);
-    console.log(Dailies)
+    
     useEffect(() => {
         api().get(`/dailies/getDailies/${userId}`)
             .then(res => {
