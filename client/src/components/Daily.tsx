@@ -1,6 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Box, Grid, Paper, Drawer } from '@mui/material';
 import { api } from '../utils/authInstance';
+import { useDispatch, useSelector } from 'react-redux';
+import * as type from '../redux/types'
+import { OpenDailyToggle } from '../redux/actions/dailyAction';
+import { RootState } from '../redux/reducers/rootReducer';
+// import DailyDetail from './DailyDetail';
 
 type Tprops = {
     userId: number;
@@ -18,9 +23,16 @@ type TDailisInfo = {
 function Daily(props: Tprops) {
     const {userId} = props
 
+    const dispatch = useDispatch();
+    
     const [Dailies, setDailies] = useState<TDailisInfo[]>([]);
-    const [OpenToggle, setOpenToggle] = useState(false);
     const [CurrOpenDaily, setCurrOpenDaily] = useState<TDailisInfo | null>(null);
+    
+    const DailyToggle = useSelector((state: RootState) => state.dailyReducer.openCloseValue);
+    const setDailyToggle = useCallback(
+        (isOpened: type.isOpened) => dispatch(OpenDailyToggle(isOpened)),
+        [dispatch]
+    );
     
     useEffect(() => {
         api().get(`/dailies/getDailies/${userId}`)
@@ -42,7 +54,7 @@ function Daily(props: Tprops) {
             if(dailiy) {
                 setCurrOpenDaily(dailiy);
             }
-            setOpenToggle(open);
+            setDailyToggle(open);
     };
 
     const renderDaily = Dailies.map((daily, i) => {
@@ -63,10 +75,12 @@ function Daily(props: Tprops) {
         <Grid style={{display: 'flex', alignItems: 'center'}} container spacing={2}>
             
                 {renderDaily}
-
+                {/* {OpenToggle &&
+                    <DailyDetail OpenToggleData={OpenToggle} CurrOpenDailyData={CurrOpenDaily}/>
+                } */}
                 <Drawer
                     anchor='right'
-                    open={OpenToggle}
+                    open={DailyToggle}
                     onClose={toggleDrawer(false, CurrOpenDaily)}
                 >
                     <Box
