@@ -20,13 +20,17 @@ function DailyToggle(props: Tprops) {
 
     const navigate = useNavigate();
 
-    const [CurrDate, setCurrDate] = useState<Dayjs | null>(null);
+    const Today = dayjs(new Date());
+    const [CurrDate, setCurrDate] = useState<Dayjs | null>(Today);
     // const [EventText, setEventText] = useState('');
     const [EventDescs, setEventDescs] = useState<string[]>([]);
 
     const {CurrUserData} = useSelector((state: RootState) => state.userReducer);
     const {openCloseValue, CurDailyData} = useSelector((state: RootState) => state.dailyReducer);
     
+
+
+
     useEffect(() => {
         if(CurDailyData) {
             const date = dayjs(CurDailyData.date)
@@ -49,34 +53,44 @@ function DailyToggle(props: Tprops) {
             )) {
             return;
             }
-            setEventDescs([]);
-            setCurrDate(null);
+            // if(!CurDailyData) {
+            //     createDaily();
+            // }
+            if(openCloseValue) {
+                updateDaily();
+                setEventDescs([]);
+                setCurrDate(Today);
+            }
             setOpenToggle(open);
     };
 
     const createDaily = () => {
+        if(!CurrUserData) {
+            return;
+        }
         let body = {
-            users: CurrUserData?.id,
+            users: CurrUserData.id,
             date: CurrDate
         };
         api().post('/dailies', body)
         .then(res => {
             navigate('/')
-            console.log(res.data);
         }).catch(Error => {
             console.log(Error);
         });
     };
 
     const updateDaily = () => {
+        if(!CurrUserData || !CurDailyData) {
+            return;
+        }
         let body = {
-            users: CurrUserData?.id,
+            users: CurrUserData.id,
             date: CurrDate
         };
-        api().patch(`/dailies/${CurDailyData?.id}`, body)
+        api().patch(`/dailies/${CurDailyData.id}`, body)
         .then(res => {
             navigate('/')
-            console.log(res.data);
         }).catch(Error => {
             console.log(Error);
         });
