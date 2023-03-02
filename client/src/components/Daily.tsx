@@ -74,8 +74,8 @@ function Daily() {
                         <div>
                             <p>{dayjs(daily?.date).format('YYYY-MM-DD')}</p>
                             <div>
-                                {daily?.events?.map((event, i) => {
-                                    return <p>{event.description}</p>
+                                {daily?.events?.map((event, j) => {
+                                    return <p key={j}>{event.description}</p>
                                 })}
                             </div>
                         </div>

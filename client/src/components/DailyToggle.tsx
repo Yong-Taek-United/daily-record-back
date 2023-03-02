@@ -115,7 +115,6 @@ function DailyToggle(props: Tprops) {
         if(CurrUserData && CurDailyData){
             api().get<TServerEventData>(`/events/getEvents/${CurrUserData.id}/${CurDailyData.id}`)
                 .then(res => {
-                    console.log(res.data.eventData)
                     setEvents(res.data.eventData);
                 }).catch(Error => {
                     console.log(Error);
