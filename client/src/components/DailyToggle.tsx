@@ -13,6 +13,7 @@ import { useDispatch } from 'react-redux';
 import { setEventsData } from '../redux/actions/eventAction';
 
 type Tprops = {
+    getDailis(): void;
     setOpenToggle(isOpened: boolean): type.changeDailyToggleAction['openCloseValue'];
     setCurrDaily(daily: any): type.changeDailyToggleAction['CurDailyData'];
 }
@@ -26,7 +27,7 @@ type TServerData = {
 }
 
 function DailyToggle(props: Tprops) {
-    const { setOpenToggle, setCurrDaily} = props;
+    const { getDailis, setOpenToggle, setCurrDaily} = props;
 
     const Today = dayjs(new Date());
     const [CurrDate, setCurrDate] = useState<Dayjs | null>(Today);
@@ -45,7 +46,6 @@ function DailyToggle(props: Tprops) {
 
     useEffect(() => {
         getEvents();
-        console.log('작동1')
         const date = dayjs(CurDailyData?.date)
         setCurrDate(date)
     }, [CurDailyData])
@@ -78,6 +78,7 @@ function DailyToggle(props: Tprops) {
         };
         api().post('/dailies', body)
         .then(res => {
+            getDailis();
         }).catch(Error => {
             console.log(Error);
         });
@@ -93,6 +94,7 @@ function DailyToggle(props: Tprops) {
         };
         api().patch(`/dailies/${CurDailyData.id}`, body)
         .then(res => {
+            getDailis();
         }).catch(Error => {
             console.log(Error);
         });

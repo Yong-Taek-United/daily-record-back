@@ -39,17 +39,6 @@ function Daily() {
         [dispatch]
     );
 
-    useEffect(() => {
-        if(CurrUserData){
-            api().get<TServerData>(`/dailies/getDailies/${CurrUserData.id}`)
-                .then(res => {
-                    setDailies(res.data.dailyData);
-                }).catch(Error => {
-                    console.log(Error);
-            });
-        }
-    }, [CurrUserData?.id, DailiesData])
-
     const toggleDrawer = (open: boolean, dailiy: any) => 
         (e: KeyboardEvent | MouseEvent) => {
             if(e.type === 'keydown' && (
@@ -61,6 +50,21 @@ function Daily() {
             setCurrDaily(dailiy);
             setOpenToggle(open);
     };
+
+    const getDailis = () => {
+        if(CurrUserData){
+            api().get<TServerData>(`/dailies/getDailies/${CurrUserData.id}`)
+                .then(res => {
+                    setDailies(res.data.dailyData);
+                }).catch(Error => {
+                    console.log(Error);
+            });
+        }
+    };
+
+    useEffect(() => {
+        getDailis();
+    }, [CurrUserData]);
 
     const renderDaily = DailiesData.map((daily, i) => {
         return (
@@ -80,7 +84,7 @@ function Daily() {
     return (
         <Grid style={{display: 'flex', alignItems: 'center'}} container spacing={2}>
             {renderDaily}
-            <DailyToggle setOpenToggle={setOpenToggle} setCurrDaily={setCurrDaily}/>
+            <DailyToggle getDailis={getDailis} setOpenToggle={setOpenToggle} setCurrDaily={setCurrDaily}/>
         </Grid>
     );
 };
