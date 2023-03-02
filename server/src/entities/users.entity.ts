@@ -36,6 +36,9 @@ export class Users{
     @Column({default: true})
     isActive: Boolean;
 
+    @Column({default: false})
+    isAdmin: Boolean;
+
     @OneToMany(type => Dailies, dailies => dailies.users)
     dailies: Dailies[]
 

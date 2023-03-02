@@ -14,7 +14,10 @@ import { Users } from "./users.entity";
 @Entity({ schema: 'dairy-record', name: 'dailies' })
 export class Dailies{
     @PrimaryGeneratedColumn({type:'int',name:'id'})
-    id:number;
+    id: number;
+
+    @Column()
+    date: Date;
 
     @CreateDateColumn()
     createdAt: Date;

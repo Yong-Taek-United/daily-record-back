@@ -28,6 +28,9 @@ export class Events{
     deletedAt: Date | null;
 
     @Column({default: false})
+    isChecked: Boolean;
+
+    @Column({default: false})
     isDeleted: Boolean;
     
     @ManyToOne(type => Users, users => users.events, {
