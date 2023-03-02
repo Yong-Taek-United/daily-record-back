@@ -73,10 +73,14 @@ function Daily() {
                     <Paper style={{maxWidth: '130px', minHeight: '130px', margin: 0}} elevation={3} onClick={toggleDrawer(true, daily)}>
                         <div>
                             <p>{dayjs(daily?.date).format('YYYY-MM-DD')}</p>
+                            <div>
+                                {daily?.events?.map((event, i) => {
+                                    return <p>{event.description}</p>
+                                })}
+                            </div>
                         </div>
                     </Paper>
                 </Box>
-                
             </Grid>
         );
     });
