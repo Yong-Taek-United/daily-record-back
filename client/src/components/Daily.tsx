@@ -6,6 +6,7 @@ import * as type from '../redux/types'
 import { OpenDailyToggle, setDailiesData, setDailyData } from '../redux/actions/dailyAction';
 import DailyToggle from './DailyToggle';
 import { RootState } from '../redux/reducers/rootReducer';
+import dayjs from 'dayjs';
 
 type TServerData = {
     Success: boolean,
@@ -33,19 +34,21 @@ function Daily() {
         (dailiy: type.dailyData) => dispatch(setDailyData(dailiy)),
         [dispatch]
     );
-    const setDailies2 = useCallback(
+    const setDailies = useCallback(
         (dailiesData: type.dailyData[]) => dispatch(setDailiesData(dailiesData)),
         [dispatch]
     );
 
     useEffect(() => {
-        api().get<TServerData>(`/dailies/getDailies/${CurrUserData?.id}`)
-            .then(res => {
-                setDailies2(res.data.dailyData);
-            }).catch(Error => {
-                console.log(Error);
-        });
-    }, [CurrUserData?.id])
+        if(CurrUserData){
+            api().get<TServerData>(`/dailies/getDailies/${CurrUserData.id}`)
+                .then(res => {
+                    setDailies(res.data.dailyData);
+                }).catch(Error => {
+                    console.log(Error);
+            });
+        }
+    }, [CurrUserData?.id, DailiesData])
 
     const toggleDrawer = (open: boolean, dailiy: any) => 
         (e: KeyboardEvent | MouseEvent) => {
@@ -64,8 +67,9 @@ function Daily() {
             <Grid item xs={12/7} key={i}>
                 <Box>
                     <Paper style={{maxWidth: '130px', minHeight: '130px', margin: 0}} elevation={3} onClick={toggleDrawer(true, daily)}>
-                        <p>{daily?.id}</p>
-                        <p>{daily?.date}</p>
+                        <div>
+                            <p>{dayjs(daily?.date).format('YYYY-MM-DD')}</p>
+                        </div>
                     </Paper>
                 </Box>
                 
