@@ -17,8 +17,8 @@ export class EventsService {
     }
 
     // 이벤트 전체 조회
-    async getEvents(userId:number) {
-        const events = await this.eventsRepository.find({where: {users: {id: userId}}});
+    async getEvents(userId:number, dailyId:number) {
+        const events = await this.eventsRepository.find({where: { users: {id: userId}, dailies: {id: dailyId} }});
         return {Success: true, statusCode: 201, message: '이벤트 전체 조회가 완료되었습니다.', eventData: events};
     }
 
