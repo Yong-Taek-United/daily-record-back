@@ -44,12 +44,6 @@ function DailyToggle(props: Tprops) {
         [dispatch]
     );
 
-    useEffect(() => {
-        getEvents();
-        const date = dayjs(CurDailyData?.date)
-        setCurrDate(date)
-    }, [CurDailyData])
-
     const toggleDrawer = (open: boolean) => 
         (e: KeyboardEvent | MouseEvent) => {
             if(e.type === 'keydown' && (
@@ -132,6 +126,12 @@ function DailyToggle(props: Tprops) {
             });
         }
     }
+
+    useEffect(() => {
+        getEvents();
+        const date = dayjs(CurDailyData?.date)
+        setCurrDate(date)
+    }, [CurDailyData]);
     
     return (
         <Drawer
