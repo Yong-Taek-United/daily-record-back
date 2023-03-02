@@ -12,7 +12,7 @@ type Tprops = {
 
 interface TDailisInfo {
     id: number;
-    createdAt: string;
+    date: string;
     events: {
         id: number;
         description: string;
@@ -63,7 +63,7 @@ function Daily(props: Tprops) {
                 <Box>
                     <Paper style={{maxWidth: '130px', minHeight: '130px', margin: 0}} elevation={3} onClick={toggleDrawer(true, daily)}>
                         <p>{daily.id}</p>
-                        <p>{daily.createdAt}</p>
+                        <p>{daily.date}</p>
                     </Paper>
                 </Box>
                 
@@ -73,26 +73,8 @@ function Daily(props: Tprops) {
 
     return (
         <Grid style={{display: 'flex', alignItems: 'center'}} container spacing={2}>
-            
-                {renderDaily}
-                <DailyToggle setOpenToggle={setOpenToggle}/>
-                {/* <Drawer
-                    anchor='right'
-                    open={openCloseValue}
-                    onClose={toggleDrawer(false)}
-                >
-                    <Box
-                        sx={{ width: 400 }}
-                    >
-                        <p>{CurDailyData?.id}</p>
-                        <p>{CurDailyData?.createdAt}</p>
-                        <div>
-                            {CurDailyData?.events?.map((event, i) => {
-                                return (<p key={i}>{event.description}</p>)
-                            })}
-                        </div>
-                    </Box>
-                </Drawer> */}
+            {renderDaily}
+            <DailyToggle setOpenToggle={setOpenToggle}/>
         </Grid>
     );
 };

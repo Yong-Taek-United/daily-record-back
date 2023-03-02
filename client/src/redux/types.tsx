@@ -4,7 +4,7 @@ export type isOpened = boolean;
 
 export type dailyData = {
     id: number;
-    createdAt: string;
+    date: string;
     events: {
         id: number;
         description: string;

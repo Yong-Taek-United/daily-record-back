@@ -34,7 +34,7 @@ function DailyToggle(props: Tprops) {
                 sx={{ width: 400 }}
             >
                 <p>{CurDailyData?.id}</p>
-                <p>{CurDailyData?.createdAt}</p>
+                <p>{CurDailyData?.date}</p>
                 <div>
                     {CurDailyData?.events?.map((event, i) => {
                         return (<p key={i}>{event.description}</p>)
