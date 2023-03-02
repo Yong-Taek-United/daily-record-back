@@ -1,12 +1,15 @@
-import React, { MouseEvent, useEffect, useState } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import Daily from '../components/Daily';
 import { api } from '../utils/authInstance';
+import { setUserData } from '../redux/actions/userAction';
+import * as type from '../redux/types'
 
 type TServerData = {
     Success: boolean,
     userData: {
-        userId: number;
+        id: number;
         email: string;
         username: string;
     },
@@ -24,9 +27,12 @@ type TDailyData = {
 const Home = () => {
     const navigate = useNavigate();
 
-
-    const [UserId, setUserId] = useState(0);
-    const [DailyData, setDailyData] = useState<TDailyData[]>([]);
+    // const [UserId, setUserId] = useState(0);
+    const dispatch = useDispatch();
+    const setCurrUser = useCallback(
+        (user: type.userData) => dispatch(setUserData(user)),
+        [dispatch]
+    );
 
     useEffect(() => {
         const access_token = localStorage.getItem('access_token');
@@ -36,8 +42,8 @@ const Home = () => {
                 Authorization: `Bearer ${access_token}`
             }
             }).then(res => {
-                if(res.data.userData.userId) {
-                    setUserId(res.data.userData.userId);
+                if(res.data.userData) {
+                    setCurrUser(res.data.userData);
                 } else {
                     navigate('/login')
                 }
@@ -48,7 +54,7 @@ const Home = () => {
 
     return (
         <div style={{display: 'flex', width: '100%', height: '100%', backgroundColor: '#f1f1f1'}}>
-            <Daily userId={UserId} />
+            <Daily/>
         </div>
     );
 };

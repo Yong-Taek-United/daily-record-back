@@ -1,14 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Box, Grid, Paper } from '@mui/material';
 import { api } from '../utils/authInstance';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as type from '../redux/types'
 import { OpenDailyToggle, setDailyData } from '../redux/actions/dailyAction';
 import DailyToggle from './DailyToggle';
+import { RootState } from '../redux/reducers/rootReducer';
 
-type Tprops = {
-    userId: number;
-}
+// type Tprops = {
+//     userId: number;
+// }
 
 interface TDailisInfo {
     id: number;
@@ -19,13 +20,14 @@ interface TDailisInfo {
     }[] | null
 }
 
-function Daily(props: Tprops) {
-    const {userId} = props
+function Daily() {
+    // const {userId} = props
 
     const dispatch = useDispatch();
     
     const [Dailies, setDailies] = useState<TDailisInfo[]>([]);
-    
+    const {CurrUserData} = useSelector((state: RootState) => state.userReducer);
+    console.log(CurrUserData?.id)
     const setOpenToggle = useCallback(
         (isOpened: type.isOpened) => dispatch(OpenDailyToggle(isOpened)),
         [dispatch]
@@ -37,13 +39,13 @@ function Daily(props: Tprops) {
     );
 
     useEffect(() => {
-        api().get(`/dailies/getDailies/${userId}`)
+        api().get(`/dailies/getDailies/${CurrUserData?.id}`)
             .then(res => {
                 setDailies(res.data.dailyData);
             }).catch(Error => {
                 console.log(Error);
         });
-    }, [userId])
+    }, [CurrUserData?.id])
 
     const toggleDrawer = (open: boolean, dailiy?: any) => 
         (e: React.KeyboardEvent | React.MouseEvent) => {

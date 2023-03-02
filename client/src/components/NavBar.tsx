@@ -1,23 +1,18 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import { AppBar,Box, Toolbar, Typography, Button, IconButton, } from '@mui/material';
 import { AddCircle } from '@mui/icons-material';
-import { api } from '../utils/authInstance';
 import { useDispatch } from 'react-redux';
 import * as type from '../redux/types'
 import { OpenDailyToggle, setDailyData } from '../redux/actions/dailyAction';
-import DailyToggle from './DailyToggle';
-
-type ServerData = {
-    userData: {
-        userId: number;
-        email: string;
-        username: string;
-    }
-}
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/reducers/rootReducer';
 
 const NavBar = () => {
 
+    const {CurrUserData} = useSelector((state: RootState) => state.userReducer);
+    
     const dispatch = useDispatch();
+
     const setOpenToggle = useCallback(
         (isOpened: type.isOpened) => dispatch(OpenDailyToggle(isOpened)),
         [dispatch]
@@ -26,26 +21,6 @@ const NavBar = () => {
         (dailiy: type.dailyData) => dispatch(setDailyData(dailiy)),
         [dispatch]
     );
-
-    const [UserId, setUserId] = useState(0);
-    const [Username, setUsername] = useState('');
-    
-    useEffect(() => {
-        const access_token = localStorage.getItem('access_token');
-
-        api().get<ServerData>('/auth', {
-            headers: {
-                Authorization: `Bearer ${access_token}`
-            }
-        }).then(res => {
-            if(res.data) {
-                setUserId(res.data.userData.userId);
-                setUsername(res.data.userData.username);
-            }
-        }).catch(Error => {
-            console.log(Error)
-        });
-    }, []);
 
     const toggleDrawer = (open: boolean, dailiy?: any) => 
         (e: React.KeyboardEvent | React.MouseEvent) => {
@@ -66,7 +41,7 @@ const NavBar = () => {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                 하루기록
             </Typography>
-            {UserId ?
+            {CurrUserData?.id ?
                 <div>
                     <IconButton
                         size="large"
@@ -78,7 +53,7 @@ const NavBar = () => {
                     >
                         <AddCircle />
                     </IconButton>
-                    <Button color="inherit">{Username}</Button>
+                    <Button color="inherit">{CurrUserData?.username}</Button>
                 </div>
             :
                 <Button color="inherit">Login</Button>
