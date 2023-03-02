@@ -12,8 +12,8 @@ export class DailiesService {
     
     // 데일리 생성
     async create(dailyData) {
-        await this.dailiesRepository.save(dailyData);
-        return {Success: true, statusCode: 201, message: '데일리 생성이 완료되었습니다.'};
+        const daily = await this.dailiesRepository.save(dailyData);
+        return {Success: true, statusCode: 201, message: '데일리 생성이 완료되었습니다.', dailyData: daily};
     }
 
     // 데일리 전체 조회

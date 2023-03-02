@@ -11,6 +11,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { api } from '../utils/authInstance';
 import { useDispatch } from 'react-redux';
 import { setEventsData } from '../redux/actions/eventAction';
+import { setDailyData } from '../redux/actions/dailyAction';
 
 type Tprops = {
     getDailis(): void;
@@ -18,13 +19,25 @@ type Tprops = {
     setCurrDaily(daily: any): type.changeDailyToggleAction['CurDailyData'];
 }
 
-type TServerData = {
+type TServerEventData = {
     Success: boolean,
     eventData: {
         id: number;
         description: string;
     }[]
 }
+
+type TServerDailyData = {
+    Success: boolean,
+    dailyData: {
+        id: number;
+        date: string;
+        events: {
+            id: number;
+            description: string;
+        }[] | null
+    }
+};
 
 function DailyToggle(props: Tprops) {
     const { getDailis, setOpenToggle, setCurrDaily} = props;
@@ -43,7 +56,6 @@ function DailyToggle(props: Tprops) {
         (eventsData: type.eventData[]) => dispatch(setEventsData(eventsData)),
         [dispatch]
     );
-
     const toggleDrawer = (open: boolean) => 
         (e: KeyboardEvent | MouseEvent) => {
             if(e.type === 'keydown' && (
@@ -62,20 +74,21 @@ function DailyToggle(props: Tprops) {
             setOpenToggle(open);
     };
 
-    const createDaily = () => {
-        if(!CurrUserData) {
-            return;
-        }
+    const createDaily = async() => {
         let body = {
-            users: CurrUserData.id,
+            users: CurrUserData?.id,
             date: CurrDate
         };
-        api().post('/dailies', body)
+        let dailyId: number = 0;
+        await api().post<TServerDailyData> ('/dailies', body)
         .then(res => {
             getDailis();
+            setCurrDaily(res.data.dailyData);
+            dailyId = res.data.dailyData.id;
         }).catch(Error => {
             console.log(Error);
         });
+        return dailyId;
     };
 
     const updateDaily = () => {
@@ -98,16 +111,33 @@ function DailyToggle(props: Tprops) {
         setEventText(e.currentTarget.value)
     }
 
-    const createEvent = () => {
-        if(!CurrUserData || !EventText || !CurDailyData) {
+    const getEvents = () => {
+        if(CurrUserData && CurDailyData){
+            api().get<TServerEventData>(`/events/getEvents/${CurrUserData.id}/${CurDailyData.id}`)
+                .then(res => {
+                    console.log(res.data.eventData)
+                    setEvents(res.data.eventData);
+                }).catch(Error => {
+                    console.log(Error);
+            });
+        }
+    }
+
+    const createEvent = async() => {
+        if(!CurrUserData || !EventText) {
             return;
         }
+        let dailyId = CurDailyData?.id
+        if(!CurDailyData) {
+            let data = await createDaily();
+            dailyId= data;
+        } 
         let body = {
             users: CurrUserData.id,
-            dailies: CurDailyData.id,
+            dailies: dailyId,
             description: EventText
         };
-        api().post('/events', body)
+        await api().post('/events', body)
         .then(res => {
             getEvents();
             setEventText('');
@@ -116,21 +146,12 @@ function DailyToggle(props: Tprops) {
         });
     };
 
-    const getEvents = () => {
-        if(CurrUserData && CurDailyData){
-            api().get<TServerData>(`/events/getEvents/${CurrUserData.id}/${CurDailyData.id}`)
-                .then(res => {
-                    setEvents(res.data.eventData);
-                }).catch(Error => {
-                    console.log(Error);
-            });
-        }
-    }
-
     useEffect(() => {
-        getEvents();
-        const date = dayjs(CurDailyData?.date)
-        setCurrDate(date)
+        setTimeout(() => {
+            getEvents();
+            const date = dayjs(CurDailyData?.date)
+            setCurrDate(date)
+        }, 1);
     }, [CurDailyData]);
     
     return (
@@ -169,8 +190,6 @@ function DailyToggle(props: Tprops) {
                 />
                 <Button onClick={createEvent}>작성</Button>
                 <br/>
-                <Button onClick={createDaily}>생성</Button>
-                <Button onClick={updateDaily}>수정</Button>
             </Box>
         </Drawer>
     );
