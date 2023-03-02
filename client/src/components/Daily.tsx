@@ -16,7 +16,7 @@ type TServerData = {
         events: {
             id: number;
             description: string;
-        }[] | null
+        }[]
     }[]
 }
 
@@ -80,7 +80,7 @@ function Daily() {
     return (
         <Grid style={{display: 'flex', alignItems: 'center'}} container spacing={2}>
             {renderDaily}
-            <DailyToggle setOpenToggle={setOpenToggle}/>
+            <DailyToggle setOpenToggle={setOpenToggle} setCurrDaily={setCurrDaily}/>
         </Grid>
     );
 };

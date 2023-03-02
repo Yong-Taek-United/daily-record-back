@@ -1,5 +1,6 @@
 import { setUserData } from './actions/userAction';
-import { OpenDailyToggle } from './actions/dailyAction';
+import { OpenDailyToggle, setDailyData} from './actions/dailyAction';
+import { setEventsData } from './actions/eventAction';
 
 // User
 export type userData = {
@@ -34,4 +35,17 @@ export type DAILYREDUCERTYPE = {
 
 export type changeDailyToggleAction = {
     openCloseValue: ReturnType<typeof OpenDailyToggle>;
+    CurDailyData: ReturnType<typeof setDailyData>;
 }
+
+// Event
+export type eventData = {
+    id: number;
+    description: string;
+} | null
+
+export type EVENTEDUCERTYPE = {
+    EventsData: eventData[];
+}
+
+export type setEventDataAction = ReturnType<typeof setEventsData>
