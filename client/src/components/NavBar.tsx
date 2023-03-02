@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { KeyboardEvent, MouseEvent, useCallback } from 'react';
 import { AppBar,Box, Toolbar, Typography, Button, IconButton, } from '@mui/material';
 import { AddCircle } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
@@ -23,10 +23,10 @@ const NavBar = () => {
     );
 
     const toggleDrawer = (open: boolean, dailiy?: any) => 
-        (e: React.KeyboardEvent | React.MouseEvent) => {
+        (e: KeyboardEvent | MouseEvent) => {
             if(e.type === 'keydown' && (
-                (e as React.KeyboardEvent).key === 'Tab' ||
-                    (e as React.KeyboardEvent).key === 'Shift'
+                (e as KeyboardEvent).key === 'Tab' ||
+                    (e as KeyboardEvent).key === 'Shift'
             )) {
             return;
             }

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { KeyboardEvent, MouseEvent, useCallback, useEffect } from 'react';
 import { Box, Grid, Paper } from '@mui/material';
 import { api } from '../utils/authInstance';
 import { useDispatch, useSelector } from 'react-redux';
@@ -41,7 +41,6 @@ function Daily() {
     useEffect(() => {
         api().get<TServerData>(`/dailies/getDailies/${CurrUserData?.id}`)
             .then(res => {
-                console.log(res.data.dailyData)
                 setDailies2(res.data.dailyData);
             }).catch(Error => {
                 console.log(Error);
@@ -49,10 +48,10 @@ function Daily() {
     }, [CurrUserData?.id])
 
     const toggleDrawer = (open: boolean, dailiy: any) => 
-        (e: React.KeyboardEvent | React.MouseEvent) => {
+        (e: KeyboardEvent | MouseEvent) => {
             if(e.type === 'keydown' && (
-                (e as React.KeyboardEvent).key === 'Tab' ||
-                    (e as React.KeyboardEvent).key === 'Shift'
+                (e as KeyboardEvent).key === 'Tab' ||
+                    (e as KeyboardEvent).key === 'Shift'
             )) {
             return;
             }

@@ -27,14 +27,4 @@ const openDailyToggle = createReducer<type.DAILYREDUCERTYPE, any>(
     }
 )
 
-// const setDailyData = createReducer<type.OPENORCLOSEVALUE, type.changeDailyToggleAction>(
-//     initialState,
-//     {
-//         [CHANGE_DAILYTOGGLE]: (state, action) =>
-//             produce(state, (draft) => {
-//                 draft.openCloseValue = action.payload;
-//         })
-//     }
-// )
-
 export default openDailyToggle;

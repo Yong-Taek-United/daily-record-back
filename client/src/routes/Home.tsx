@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import Daily from '../components/Daily';
@@ -17,7 +17,6 @@ type TServerData = {
 const Home = () => {
     const navigate = useNavigate();
 
-    // const [UserId, setUserId] = useState(0);
     const dispatch = useDispatch();
     const setCurrUser = useCallback(
         (user: type.userData) => dispatch(setUserData(user)),
@@ -49,4 +48,4 @@ const Home = () => {
     );
 };
 
-export default Home
+export default Home;
