@@ -11,3 +11,9 @@ export const setDailyData = (dailyData: type.dailyData) => ({
     type: SET_DAILYDATA,
     payload: dailyData,
 });
+
+export const SET_DAILIESDATA = 'setDailiesData/SET_DAILIESDATA' as const;
+export const setDailiesData = (dailiesData: type.dailyData[]) => ({
+    type: SET_DAILIESDATA,
+    payload: dailiesData,
+});

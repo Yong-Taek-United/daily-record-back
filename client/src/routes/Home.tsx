@@ -7,21 +7,11 @@ import { setUserData } from '../redux/actions/userAction';
 import * as type from '../redux/types'
 
 type TServerData = {
-    Success: boolean,
     userData: {
         id: number;
         email: string;
         username: string;
-    },
-    dailyData: {
-        id: number;
-        createdAt: Date;
     }
-}
-
-type TDailyData = {
-    id: number;
-    createdAt: Date;
 }
 
 const Home = () => {

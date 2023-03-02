@@ -26,9 +26,10 @@ export type dailyData = {
     }[] | null
 } | null;
 
-export type OPENORCLOSEVALUE = {
+export type DAILYREDUCERTYPE = {
     openCloseValue: boolean;
     CurDailyData: dailyData;
+    DailiesData: dailyData[];
 }
 
 export type changeDailyToggleAction = {

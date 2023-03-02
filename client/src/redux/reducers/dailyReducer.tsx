@@ -1,14 +1,15 @@
 import * as type from '../types';
-import { OPEN_DAILYTOGGLE, SET_DAILYDATA } from '../actions/dailyAction';
+import { OPEN_DAILYTOGGLE, SET_DAILYDATA, SET_DAILIESDATA } from '../actions/dailyAction';
 import produce from 'immer';
 import { createReducer } from 'typesafe-actions';
 
-export const initialState: type.OPENORCLOSEVALUE= {
+export const initialState: type.DAILYREDUCERTYPE= {
     openCloseValue: false,
-    CurDailyData: null
+    CurDailyData: null,
+    DailiesData: []
 }
 
-const openDailyToggle = createReducer<type.OPENORCLOSEVALUE, any>(
+const openDailyToggle = createReducer<type.DAILYREDUCERTYPE, any>(
     initialState,
     {
         [OPEN_DAILYTOGGLE]: (state, action) =>
@@ -18,6 +19,10 @@ const openDailyToggle = createReducer<type.OPENORCLOSEVALUE, any>(
         [SET_DAILYDATA]: (state, action) =>
             produce(state, (draft) => {
                 draft.CurDailyData = action.payload;
+        }),
+        [SET_DAILIESDATA]: (state, action) =>
+            produce(state, (draft) => {
+                draft.DailiesData = action.payload;
         }),
     }
 )
