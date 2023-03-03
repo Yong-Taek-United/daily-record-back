@@ -42,7 +42,7 @@ export type changeDailyToggleAction = {
 export type eventData = {
     id: number;
     description: string;
-} | null
+}
 
 export type EVENTEDUCERTYPE = {
     EventsData: eventData[];

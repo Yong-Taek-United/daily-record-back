@@ -1,4 +1,4 @@
-import { ChangeEvent, KeyboardEvent, MouseEvent, useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, KeyboardEvent, MouseEvent, MouseEventHandler, useCallback, useEffect, useState } from 'react';
 import { Box, Button, Drawer } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/reducers/rootReducer';
@@ -11,7 +11,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { api } from '../utils/authInstance';
 import { useDispatch } from 'react-redux';
 import { setEventsData } from '../redux/actions/eventAction';
-import { setDailyData } from '../redux/actions/dailyAction';
 
 type Tprops = {
     getDailis(): void;
@@ -44,11 +43,13 @@ function DailyToggle(props: Tprops) {
 
     const Today = dayjs(new Date());
     const [CurrDate, setCurrDate] = useState<Dayjs | null>(Today);
-    const [EventText, setEventText] = useState('');
+    const [EventCeateText, setEventCreateText] = useState('');
+    const [EventUpdateText, setEventUpdateText] = useState<string>('');
 
     const {CurrUserData} = useSelector((state: RootState) => state.userReducer);
     const {openCloseValue, CurDailyData} = useSelector((state: RootState) => state.dailyReducer);
     const {EventsData} = useSelector((state: RootState) => state.eventReducer);
+    const [CurrEventId, setCurrEventId] = useState<number | null>(null);
 
     const dispatch = useDispatch();
 
@@ -68,7 +69,7 @@ function DailyToggle(props: Tprops) {
                 setCurrDate(Today);
                 setCurrDaily(null);
                 setEvents([]);
-                setEventText('');
+                setEventCreateText('');
                 updateDaily();
             }
             setOpenToggle(open);
@@ -106,9 +107,14 @@ function DailyToggle(props: Tprops) {
             console.log(Error);
         });
     };
-
-    const onEventHandle = (e:ChangeEvent<HTMLInputElement>) => {
-        setEventText(e.currentTarget.value)
+    
+    const onEventcreateHandle = (e:ChangeEvent<HTMLInputElement>) => {
+        setEventCreateText(e.currentTarget.value)
+    }
+    const onEventUpdateHandle = (e:ChangeEvent<HTMLInputElement>) => {
+        setEventUpdateText(e.currentTarget.value)
+        let temporaryId = Number(e.currentTarget.name)
+        setCurrEventId(temporaryId)
     }
 
     const getEvents = () => {
@@ -123,7 +129,7 @@ function DailyToggle(props: Tprops) {
     }
 
     const createEvent = async() => {
-        if(!CurrUserData || !EventText) {
+        if(!CurrUserData || !EventCeateText) {
             return;
         }
         let dailyId = CurDailyData?.id
@@ -134,12 +140,26 @@ function DailyToggle(props: Tprops) {
         let body = {
             users: CurrUserData.id,
             dailies: dailyId,
-            description: EventText
+            description: EventCeateText
         };
         await api().post('/events', body)
         .then(res => {
             getEvents();
-            setEventText('');
+            setEventCreateText('');
+        }).catch(Error => {
+            console.log(Error);
+        });
+    };
+
+    const updateEvent = async() => {
+        if(!CurrUserData || !CurrEventId) {
+            return;
+        }
+        let body = {
+            description: EventUpdateText
+        }
+        await api().patch(`/events/${CurrEventId}`, body)
+        .then(res => {
         }).catch(Error => {
             console.log(Error);
         });
@@ -152,7 +172,13 @@ function DailyToggle(props: Tprops) {
             setCurrDate(date)
         }, 1);
     }, [CurDailyData]);
-    
+
+    useEffect(() => {
+        setTimeout(() => {
+            updateEvent()
+        }, 100);
+    }, [EventUpdateText]);
+
     return (
         <Drawer
             anchor='right'
@@ -174,18 +200,29 @@ function DailyToggle(props: Tprops) {
                         renderInput={(params) => <TextField {...params} />}
                     />
                 </LocalizationProvider>
-                <div>
-                    {EventsData?.map((event, i) => {
-                        return (<p key={i}>{event?.description}</p>)
+                <Box>
+                    {EventsData && EventsData.map((event, i) => {
+                        let temporaryId = String(event.id)
+                        return (
+                            <Box key={i} >
+                                <TextField
+                                    id="standard-basic"
+                                    name={temporaryId}
+                                    variant="standard"
+                                    defaultValue={event.description}
+                                    onChange={onEventUpdateHandle}
+                                />
+                            </Box>
+                        );
                     })}
-                </div>
+                </Box>
                 <TextField
-                    id="eventText"
+                    id="eventCreateText"
                     placeholder='입력해주세요.'
                     multiline
                     maxRows={4}
-                    value={EventText}
-                    onChange={onEventHandle}
+                    value={EventCeateText}
+                    onChange={onEventcreateHandle}
                 />
                 <Button onClick={createEvent}>작성</Button>
                 <br/>
