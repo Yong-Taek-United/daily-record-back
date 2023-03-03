@@ -179,12 +179,13 @@ function DailyToggle(props: Tprops) {
     const deleteMsgOpen = Boolean(DeleteMsg);
     const deleteMsgId = deleteMsgOpen ? 'simple-popover' : undefined;
 
-    const deleteDaily = () => {
+    const deleteEvent = () => {
         if(CurrUserData && CurrEventId){
             api().delete(`/events/${CurrEventId}`)
                 .then(res => {
                     setCurrEventId(null);
                     handleClose();
+                    getEvents();
                 }).catch(Error => {
                     console.log(Error);
             });
@@ -192,12 +193,13 @@ function DailyToggle(props: Tprops) {
     };
 
     useEffect(() => {
+        console.log('얍')
         setTimeout(() => {
             getEvents();
             const date = dayjs(CurDailyData?.date)
             setCurrDate(date)
         }, 1);
-    }, [CurDailyData, EventsData]);
+    }, [CurDailyData]);
 
     useEffect(() => {
         setTimeout(() => {
@@ -282,7 +284,7 @@ function DailyToggle(props: Tprops) {
                         color="inherit"
                         aria-label="execute"
                         sx={{ mr: 1 }}
-                        onClick={deleteDaily}
+                        onClick={deleteEvent}
                     >
                         <CheckCircleOutline color='success' />
                     </IconButton>
