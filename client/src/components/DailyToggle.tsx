@@ -193,7 +193,6 @@ function DailyToggle(props: Tprops) {
     };
 
     useEffect(() => {
-        console.log('얍')
         setTimeout(() => {
             getEvents();
             const date = dayjs(CurDailyData?.date)
