@@ -1,5 +1,5 @@
 import { ChangeEvent, KeyboardEvent, MouseEvent, MouseEventHandler, useCallback, useEffect, useState } from 'react';
-import { Box, Button, Drawer } from '@mui/material';
+import { Box, Button, Drawer, IconButton, Popover, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/reducers/rootReducer';
 import * as type from '../redux/types'
@@ -11,6 +11,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { api } from '../utils/authInstance';
 import { useDispatch } from 'react-redux';
 import { setEventsData } from '../redux/actions/eventAction';
+import { CheckCircleOutline, HighlightOff, RemoveCircle } from '@mui/icons-material';
 
 type Tprops = {
     getDailis(): void;
@@ -165,13 +166,38 @@ function DailyToggle(props: Tprops) {
         });
     };
 
+    const [DeleteMsg, setDeleteMsg] = useState<HTMLButtonElement | null>(null);
+    const handleClick = (eventId?: number) => (e: MouseEvent<HTMLButtonElement>) => {
+        if(eventId) {
+            setCurrEventId(eventId);
+        }
+        setDeleteMsg(e.currentTarget);
+    };
+    const handleClose = () => {
+        setDeleteMsg(null);
+    };
+    const deleteMsgOpen = Boolean(DeleteMsg);
+    const deleteMsgId = deleteMsgOpen ? 'simple-popover' : undefined;
+
+    const deleteDaily = () => {
+        if(CurrUserData && CurrEventId){
+            api().delete(`/events/${CurrEventId}`)
+                .then(res => {
+                    setCurrEventId(null);
+                    handleClose();
+                }).catch(Error => {
+                    console.log(Error);
+            });
+        }
+    };
+
     useEffect(() => {
         setTimeout(() => {
             getEvents();
             const date = dayjs(CurDailyData?.date)
             setCurrDate(date)
         }, 1);
-    }, [CurDailyData]);
+    }, [CurDailyData, EventsData]);
 
     useEffect(() => {
         setTimeout(() => {
@@ -212,6 +238,16 @@ function DailyToggle(props: Tprops) {
                                     defaultValue={event.description}
                                     onChange={onEventUpdateHandle}
                                 />
+                                <IconButton
+                                    size="small"
+                                    // edge="end"
+                                    color="inherit"
+                                    aria-label="delete"
+                                    sx={{ mr: 2}}
+                                    onClick={handleClick(event.id)}
+                                >
+                                    <RemoveCircle color='error'/>
+                                </IconButton>
                             </Box>
                         );
                     })}
@@ -227,6 +263,41 @@ function DailyToggle(props: Tprops) {
                 <Button onClick={createEvent}>작성</Button>
                 <br/>
             </Box>
+
+            <Popover
+                id={deleteMsgId}
+                open={deleteMsgOpen}
+                anchorEl={DeleteMsg}
+                onClose={handleClose}
+                anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+                }}
+            >
+                <Typography fontSize={15} sx={{ p: 2 }}>이벤트를 삭제하시겠습니까?</Typography>
+                <Box>
+                    <IconButton
+                        size="small"
+                        // edge="end"
+                        color="inherit"
+                        aria-label="execute"
+                        sx={{ mr: 1 }}
+                        onClick={deleteDaily}
+                    >
+                        <CheckCircleOutline color='success' />
+                    </IconButton>
+                    <IconButton
+                        size="small"
+                        // edge="end"
+                        color="inherit"
+                        aria-label="cancel"
+                        sx={{ mr: 1 }}
+                        onClick={handleClose}
+                    >
+                        <HighlightOff color='error' />
+                    </IconButton>
+                </Box>
+            </Popover>
         </Drawer>
     );
 };
