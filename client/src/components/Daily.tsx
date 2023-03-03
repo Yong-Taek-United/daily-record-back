@@ -1,5 +1,6 @@
-import { KeyboardEvent, MouseEvent, useCallback, useEffect } from 'react';
-import { Box, Grid, Paper } from '@mui/material';
+import { KeyboardEvent, MouseEvent, useCallback, useEffect, useState } from 'react';
+import { Box, Grid, Paper, Card, IconButton, Popover, Typography} from '@mui/material';
+import { RemoveCircle, CheckCircleOutline, HighlightOff } from '@mui/icons-material';
 import { api } from '../utils/authInstance';
 import { useDispatch, useSelector } from 'react-redux';
 import * as type from '../redux/types'
@@ -64,22 +65,61 @@ function Daily() {
 
     useEffect(() => {
         getDailis();
-    }, [CurrUserData]);
+    }, [CurrUserData, DailiesData]);
+
+
+    const [DeleteMsg, setDeleteMsg] = useState<HTMLButtonElement | null>(null);
+    const handleClick = (dailyId?: number) => (e: MouseEvent<HTMLButtonElement>) => {
+        if(dailyId) {
+            setCurrDailyId(dailyId);
+        }
+        setDeleteMsg(e.currentTarget);
+    };
+    const handleClose = () => {
+        setDeleteMsg(null);
+    };
+    const deleteMsgOpen = Boolean(DeleteMsg);
+    const deleteMsgId = deleteMsgOpen ? 'simple-popover' : undefined;
+
+    const [CurrDailyId, setCurrDailyId] = useState<number | null>(null);
+    const deleteDaily = () => {
+        if(CurrUserData && CurrDailyId){
+            api().delete(`/dailies/${CurrDailyId}`)
+                .then(res => {
+                    setCurrDailyId(null);
+                    handleClose();
+                }).catch(Error => {
+                    console.log(Error);
+            });
+        }
+    };
 
     const renderDaily = DailiesData.map((daily, i) => {
         return (
             <Grid item xs={12/7} key={i}>
                 <Box>
-                    <Paper style={{maxWidth: '130px', minHeight: '130px', margin: 0}} elevation={3} onClick={toggleDrawer(true, daily)}>
-                        <div>
-                            <p>{dayjs(daily?.date).format('YYYY-MM-DD')}</p>
-                            <div>
+                    <Card sx={{width: 130, height: 130, margin: 0}} elevation={3}>
+                        <IconButton
+                            size="small"
+                            // edge="end"
+                            color="inherit"
+                            aria-label="delete"
+                            sx={{ mr: 2}}
+                            onClick={handleClick(daily?.id)}
+                        >
+                            <RemoveCircle color='error'/>
+                        </IconButton>
+                        <Box onClick={toggleDrawer(true, daily)}>
+                            <Typography variant="h6" component="div">
+                                {dayjs(daily?.date).format('YYYY-MM-DD')}
+                            </Typography>
+                            <Box>
                                 {daily?.events?.map((event, j) => {
-                                    return <p key={j}>{event.description}</p>
+                                    return <Typography key={j} variant="body1"> {event.description}</Typography>
                                 })}
-                            </div>
-                        </div>
-                    </Paper>
+                            </Box>
+                        </Box>
+                    </Card>
                 </Box>
             </Grid>
         );
@@ -89,6 +129,40 @@ function Daily() {
         <Grid style={{display: 'flex', alignItems: 'center'}} container spacing={2}>
             {renderDaily}
             <DailyToggle getDailis={getDailis} setOpenToggle={setOpenToggle} setCurrDaily={setCurrDaily}/>
+            <Popover
+                id={deleteMsgId}
+                open={deleteMsgOpen}
+                anchorEl={DeleteMsg}
+                onClose={handleClose}
+                anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+                }}
+            >
+                <Typography fontSize={15} sx={{ p: 2 }}>데일리를 삭제하시겠습니까?</Typography>
+                <Box>
+                    <IconButton
+                        size="small"
+                        // edge="end"
+                        color="inherit"
+                        aria-label="execute"
+                        sx={{ mr: 1 }}
+                        onClick={deleteDaily}
+                    >
+                        <CheckCircleOutline color='success' />
+                    </IconButton>
+                    <IconButton
+                        size="small"
+                        // edge="end"
+                        color="inherit"
+                        aria-label="cancel"
+                        sx={{ mr: 1 }}
+                        onClick={handleClose}
+                    >
+                        <HighlightOff color='error' />
+                    </IconButton>
+                </Box>
+            </Popover>
         </Grid>
     );
 };
