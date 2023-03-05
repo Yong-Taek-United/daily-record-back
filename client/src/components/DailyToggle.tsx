@@ -274,7 +274,11 @@ function DailyToggle(props: Tprops) {
                 <Divider />
 
                 {/* 이벤트 생성란 */}
-                <Box component="form" onSubmit={createEvent}>
+                <Box 
+                    component="form" 
+                    onSubmit={createEvent}
+                    sx={{display: 'flex', alignItems: 'center'}}
+                >
                     <TextField
                         required
                         type="text"
@@ -283,8 +287,16 @@ function DailyToggle(props: Tprops) {
                         placeholder='입력해주세요.'
                         value={EventCeateText}
                         onChange={onEventcreateHandle}
+                        size="small"
+                        sx={{width: 240}}
                     />
-                    <Button type="submit" variant="contained">작성</Button>
+                    <Button 
+                        type="submit" 
+                        variant="contained"
+                        sx={{ml: 1}}
+                    >
+                        작성
+                    </Button>
                 </Box>
             </Box>
             </Box>
