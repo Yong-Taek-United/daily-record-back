@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, KeyboardEvent, MouseEvent, MouseEventHandler, useCallback, useEffect, useState } from 'react';
-import { Box, Button, Drawer, IconButton, Popover, Typography, TextField } from '@mui/material';
+import { Box, Button, Drawer, IconButton, Popover, Typography, TextField, Divider, List, ListItem } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/reducers/rootReducer';
 import * as type from '../redux/types'
@@ -209,18 +209,51 @@ function DailyToggle(props: Tprops) {
         }, 100);
     }, [EventUpdateText]);
 
+    const renderEvent = EventsData && EventsData.map((event, i) => {
+        let temporaryId = String(event.id)
+        return (
+            <List component="nav" aria-label="mailbox folders"
+                key={i} 
+                sx={{mt: '4px'}}
+            >
+                <TextField
+                    sx={{width: 270}}
+                    id=""
+                    name={temporaryId}
+                    variant="standard"
+                    defaultValue={event.description}
+                    onChange={onEventUpdateHandle}
+                />
+                <IconButton
+                    size="small"
+                    // edge="end"
+                    color="inherit"
+                    aria-label="delete"
+                    sx={{ ml: 2}}
+                    onClick={handleClick(event.id)}
+                >
+                    <RemoveCircle color='error'/>
+                </IconButton>
+            </List>
+        );
+    })
+
     return (
         <Drawer
             anchor='right'
             open={openCloseValue}
             onClose={toggleDrawer(false)}
         >
-            <Box
-                sx={{ width: 400 }}
+            <Box 
+                sx={{marginTop: 5, display: 'flex', flexDirection: 'column', justifyContent:'center', width: 400}}
             >
+            <Box 
+                sx={{display: 'flex', flexDirection: 'column', justifyContent:'center', alignItems: 'center'}}
+            >   
+
+                {/* 일자 선택 */}
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                        // label={"}
                         value={CurrDate}
                         inputFormat="YYYY-MM-DD"
                         mask="____-__-__"
@@ -230,32 +263,17 @@ function DailyToggle(props: Tprops) {
                         renderInput={(params) => <TextField {...params} />}
                     />
                 </LocalizationProvider>
-                <Box>
-                    {EventsData && EventsData.map((event, i) => {
-                        let temporaryId = String(event.id)
-                        return (
-                            <Box key={i} >
-                                <TextField
-                                    id="standard-basic"
-                                    name={temporaryId}
-                                    variant="standard"
-                                    defaultValue={event.description}
-                                    onChange={onEventUpdateHandle}
-                                />
-                                <IconButton
-                                    size="small"
-                                    // edge="end"
-                                    color="inherit"
-                                    aria-label="delete"
-                                    sx={{ mr: 2}}
-                                    onClick={handleClick(event.id)}
-                                >
-                                    <RemoveCircle color='error'/>
-                                </IconButton>
-                            </Box>
-                        );
-                    })}
+
+                {/* 이벤트 리스트 */}
+                <Box
+                    sx={{mt: 2, height: '60vh'}}
+                >
+                    {renderEvent}
                 </Box>
+
+                <Divider />
+
+                {/* 이벤트 생성란 */}
                 <Box component="form" onSubmit={createEvent}>
                     <TextField
                         required
@@ -269,7 +287,9 @@ function DailyToggle(props: Tprops) {
                     <Button type="submit" variant="contained">작성</Button>
                 </Box>
             </Box>
-
+            </Box>
+            
+            {/* 이벤트 삭제 메세지창 */}
             <Popover
                 id={deleteMsgId}
                 open={deleteMsgOpen}
