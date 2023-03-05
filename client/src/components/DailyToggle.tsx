@@ -42,8 +42,6 @@ type TServerDailyData = {
 function DailyToggle(props: Tprops) {
     const { getDailis, setOpenToggle, setCurDailyDate, setCurrDaily} = props;
 
-    const Today = dayjs();
-    // const [CurrDate, setCurrDate] = useState<Dayjs | null>(Today);
     const [EventCeateText, setEventCreateText] = useState('');
     const [EventUpdateText, setEventUpdateText] = useState<string>('');
 
@@ -67,7 +65,6 @@ function DailyToggle(props: Tprops) {
             return;
             }
             if (openCloseValue) {
-                // setCurrDate(Today);
                 setCurrDaily(null);
                 setEvents([]);
                 setEventCreateText('');
@@ -113,7 +110,6 @@ function DailyToggle(props: Tprops) {
         }
         let body = {
             users: CurrUserData.id,
-            // date: dayjsToString(CurrDate)
         };
         api().patch(`/dailies/${CurDailyData.id}`, body)
         .then(res => {
@@ -125,10 +121,6 @@ function DailyToggle(props: Tprops) {
     
     const onEventcreateHandle = (e:ChangeEvent<HTMLInputElement>) => {
         setEventCreateText(e.currentTarget.value)
-    }
-    const onClickEventUpdateHandle = (e:MouseEvent<HTMLInputElement>) => {
-        // setEventUpdateText(e.currentTarget)
-        // console.log(e.target)
     }
 
     const onEventUpdateHandle = (e:ChangeEvent<HTMLInputElement>) => {
@@ -214,7 +206,6 @@ function DailyToggle(props: Tprops) {
         }
     };
     useEffect(() => {
-        console.log('데일리 바뀜',CurDailyData)
         setTimeout(() => {
             if(!CurDailyData) {
                 setEvents([]);
@@ -235,17 +226,14 @@ function DailyToggle(props: Tprops) {
     }, [EventUpdateText]);
 
     useEffect(() => {
-        console.log('날짜 바뀜',CurDailyDate)
         setTimeout(() => {
             getDailyByDate();
         }, 1);
     }, [CurDailyDate]);
     useEffect(() => {
-        console.log('이벤트 바뀜',EventsData)
     }, [EventsData]);
 
     const renderEvent = EventsData.map((event, i) => {
-        // console.log(event.description)
         let temporaryId = String(event.id)
         return (
             <List component="nav" aria-label="mailbox folders"
@@ -260,7 +248,6 @@ function DailyToggle(props: Tprops) {
                     defaultValue={event.description}
                     key={event.description}
                     onChange={onEventUpdateHandle}
-                    // onClick={onClickEventUpdateHandle}
                 />
                 <IconButton
                     size="small"

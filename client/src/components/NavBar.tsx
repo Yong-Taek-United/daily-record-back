@@ -3,7 +3,7 @@ import { AppBar,Box, Toolbar, Typography, Button, IconButton, } from '@mui/mater
 import { AddCircle } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 import * as type from '../redux/types'
-import { OpenDailyToggle, setDailyData, setDailyDate } from '../redux/actions/dailyAction';
+import { OpenDailyToggle, setDailyDate } from '../redux/actions/dailyAction';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/reducers/rootReducer';
 import dayjs, { Dayjs } from 'dayjs';
@@ -21,10 +21,6 @@ const NavBar = () => {
     );
     const setCurDailyDate = useCallback(
         (dailyDate: type.dailyDate) => dispatch(setDailyDate(dailyDate)),
-        [dispatch]
-    );
-    const setCurrDaily = useCallback(
-        (daily: type.dailyData) => dispatch(setDailyData(daily)),
         [dispatch]
     );
 
