@@ -1,10 +1,9 @@
-import { ChangeEvent, KeyboardEvent, MouseEvent, MouseEventHandler, useCallback, useEffect, useState } from 'react';
-import { Box, Button, Drawer, IconButton, Popover, Typography } from '@mui/material';
+import { ChangeEvent, FormEvent, KeyboardEvent, MouseEvent, MouseEventHandler, useCallback, useEffect, useState } from 'react';
+import { Box, Button, Drawer, IconButton, Popover, Typography, TextField } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/reducers/rootReducer';
 import * as type from '../redux/types'
 import dayjs, { Dayjs } from 'dayjs';
-import TextField from '@mui/material/TextField';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -129,19 +128,23 @@ function DailyToggle(props: Tprops) {
         }
     }
 
-    const createEvent = async() => {
-        if(!CurrUserData || !EventCeateText) {
+    const createEvent = async(e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const data = new FormData(e.currentTarget);
+        console.log(data.get('eventCreateText'))
+        if(!CurrUserData || !data.get('eventCreateText')) {
+            console.log('시발')
             return;
         }
-        let dailyId = CurDailyData?.id
+        
+        let temporaryId = CurDailyData?.id
         if(!CurDailyData) {
-            let data = await createDaily();
-            dailyId= data;
+            temporaryId= await createDaily();
         } 
         let body = {
             users: CurrUserData.id,
-            dailies: dailyId,
-            description: EventCeateText
+            dailies: temporaryId,
+            description: data.get('eventCreateText')
         };
         await api().post('/events', body)
         .then(res => {
@@ -253,16 +256,18 @@ function DailyToggle(props: Tprops) {
                         );
                     })}
                 </Box>
-                <TextField
-                    id="eventCreateText"
-                    placeholder='입력해주세요.'
-                    multiline
-                    maxRows={4}
-                    value={EventCeateText}
-                    onChange={onEventcreateHandle}
-                />
-                <Button onClick={createEvent}>작성</Button>
-                <br/>
+                <Box component="form" onSubmit={createEvent}>
+                    <TextField
+                        required
+                        type="text"
+                        id="eventCreateText"
+                        name="eventCreateText"
+                        placeholder='입력해주세요.'
+                        value={EventCeateText}
+                        onChange={onEventcreateHandle}
+                    />
+                    <Button type="submit" variant="contained">작성</Button>
+                </Box>
             </Box>
 
             <Popover
