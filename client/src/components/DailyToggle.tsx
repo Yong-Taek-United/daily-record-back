@@ -75,10 +75,16 @@ function DailyToggle(props: Tprops) {
             setOpenToggle(open);
     };
 
+    const dayjsToString = (data:Dayjs | null) => {
+        if(data !== null) {
+            return data.format('YYYY-MM-DD');
+        }
+    };
+    
     const createDaily = async() => {
         let body = {
             users: CurrUserData?.id,
-            date: CurrDate
+            date: dayjsToString(CurrDate)
         };
         let dailyId: number = 0;
         await api().post<TServerDailyData> ('/dailies', body)
@@ -98,7 +104,7 @@ function DailyToggle(props: Tprops) {
         }
         let body = {
             users: CurrUserData.id,
-            date: CurrDate
+            date: dayjsToString(CurrDate)
         };
         api().patch(`/dailies/${CurDailyData.id}`, body)
         .then(res => {
@@ -131,9 +137,7 @@ function DailyToggle(props: Tprops) {
     const createEvent = async(e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const data = new FormData(e.currentTarget);
-        console.log(data.get('eventCreateText'))
         if(!CurrUserData || !data.get('eventCreateText')) {
-            console.log('시발')
             return;
         }
         
@@ -260,7 +264,7 @@ function DailyToggle(props: Tprops) {
                         onChange={(newValue) => {
                             setCurrDate(newValue);
                         }}
-                        renderInput={(params) => <TextField {...params} />}
+                        renderInput={(params) => <TextField sx={{width: 300}} {...params} />}
                     />
                 </LocalizationProvider>
 
