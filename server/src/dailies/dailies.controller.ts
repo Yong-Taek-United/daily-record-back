@@ -20,6 +20,12 @@ export class DailiesController {
         return this.dailiesService.getDaily(dailyId);
     }
 
+    @Get('/byDate/:date')
+    getDailyByDate(@Param('date') Date: Date) {
+        console.log('시바====================',Date)
+        return this.dailiesService.getDailyByDate(Date);
+    }
+
     @Patch('/:id')
     update(@Param('id') dailyId: number, @Body() dailyDate) {
         return this.dailiesService.update(dailyId, dailyDate);

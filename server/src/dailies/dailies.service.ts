@@ -22,9 +22,15 @@ export class DailiesService {
         return {Success: true, statusCode: 201, message: '데일리 전체 조회가 완료되었습니다.', dailyData: dailies};
     }
 
-    // 데일리 개별 조회
+    // 데일리 개별 조회(by id)
     async getDaily(id: number) {
         const daily = await this.dailiesRepository.findOne({where: {id}});
+        return {Success: true, statusCode: 201, message: '데일리 조회가 완료되었습니다.', dailyData: daily};
+    }
+
+    // 데일리 개별 조회(by date)
+    async getDailyByDate(date: Date) {
+        const daily = await this.dailiesRepository.findOne({where: {date}});
         return {Success: true, statusCode: 201, message: '데일리 조회가 완료되었습니다.', dailyData: daily};
     }
 

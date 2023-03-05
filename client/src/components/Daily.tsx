@@ -4,7 +4,7 @@ import { RemoveCircle, CheckCircleOutline, HighlightOff } from '@mui/icons-mater
 import { api } from '../utils/authInstance';
 import { useDispatch, useSelector } from 'react-redux';
 import * as type from '../redux/types'
-import { OpenDailyToggle, setDailiesData, setDailyData } from '../redux/actions/dailyAction';
+import { OpenDailyToggle, setDailiesData, setDailyData, setDailyDate } from '../redux/actions/dailyAction';
 import DailyToggle from './DailyToggle';
 import { RootState } from '../redux/reducers/rootReducer';
 import dayjs from 'dayjs';
@@ -31,8 +31,12 @@ function Daily() {
         (isOpened: type.isOpened) => dispatch(OpenDailyToggle(isOpened)),
         [dispatch]
     );
+    const setCurDailyDate = useCallback(
+        (dailyDate: type.dailyDate) => dispatch(setDailyDate(dailyDate)),
+        [dispatch]
+    );
     const setCurrDaily = useCallback(
-        (dailiy: type.dailyData) => dispatch(setDailyData(dailiy)),
+        (daily: type.dailyData) => dispatch(setDailyData(daily)),
         [dispatch]
     );
     const setDailies = useCallback(
@@ -40,7 +44,7 @@ function Daily() {
         [dispatch]
     );
 
-    const toggleDrawer = (open: boolean, dailiy: any) => 
+    const toggleDrawer = (open: boolean, dailyDate: string) => 
         (e: KeyboardEvent | MouseEvent) => {
             if(e.type === 'keydown' && (
                 (e as KeyboardEvent).key === 'Tab' ||
@@ -48,7 +52,7 @@ function Daily() {
             )) {
             return;
             }
-            setCurrDaily(dailiy);
+            setCurDailyDate(dayjs(dailyDate));
             setOpenToggle(open);
     };
 
@@ -95,40 +99,48 @@ function Daily() {
     };
 
     const renderDaily = DailiesData.map((daily, i) => {
-        return (
-            <Grid item xs={12/7} key={i}>
-                <Box>
-                    <Card sx={{width: 130, height: 130, margin: 0}} elevation={3}>
-                        <IconButton
-                            size="small"
-                            // edge="end"
-                            color="inherit"
-                            aria-label="delete"
-                            sx={{ mr: 2}}
-                            onClick={handleClick(daily?.id)}
-                        >
-                            <RemoveCircle color='error'/>
-                        </IconButton>
-                        <Box onClick={toggleDrawer(true, daily)}>
-                            <Typography variant="h6" component="div">
-                                {dayjs(daily?.date).format('YYYY-MM-DD')}
-                            </Typography>
-                            <Box>
-                                {daily?.events?.map((event, j) => {
-                                    return <Typography key={j} variant="body1"> {event.description}</Typography>
-                                })}
+        if (daily) {
+            const dailyDate = dayjs(daily.date).format('YYYY-MM-DD');
+            return (
+                <Grid item xs={12/7} key={i}>
+                    <Box>
+                        <Card sx={{width: 130, height: 130, margin: 0}} elevation={3}>
+                            <IconButton
+                                size="small"
+                                // edge="end"
+                                color="inherit"
+                                aria-label="delete"
+                                sx={{ mr: 2}}
+                                onClick={handleClick(daily.id)}
+                            >
+                                <RemoveCircle color='error'/>
+                            </IconButton>
+                            <Box onClick={toggleDrawer(true, dailyDate)}>
+                                <Typography variant="h6" component="div">
+                                    {dailyDate}
+                                </Typography>
+                                <Box>
+                                    {daily.events?.map((event, j) => {
+                                        return <Typography key={j} variant="body1"> {event.description}</Typography>
+                                    })}
+                                </Box>
                             </Box>
-                        </Box>
-                    </Card>
-                </Box>
-            </Grid>
-        );
+                        </Card>
+                    </Box>
+                </Grid>
+            );
+        }
     });
 
     return (
         <Grid style={{display: 'flex', alignItems: 'center'}} container spacing={2}>
             {renderDaily}
-            <DailyToggle getDailis={getDailis} setOpenToggle={setOpenToggle} setCurrDaily={setCurrDaily}/>
+            <DailyToggle
+                getDailis={getDailis}
+                setOpenToggle={setOpenToggle}
+                setCurDailyDate={setCurDailyDate}
+                setCurrDaily={setCurrDaily}
+            />
             <Popover
                 id={deleteMsgId}
                 open={deleteMsgOpen}

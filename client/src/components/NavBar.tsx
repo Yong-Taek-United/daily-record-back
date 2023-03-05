@@ -3,26 +3,32 @@ import { AppBar,Box, Toolbar, Typography, Button, IconButton, } from '@mui/mater
 import { AddCircle } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 import * as type from '../redux/types'
-import { OpenDailyToggle, setDailyData } from '../redux/actions/dailyAction';
+import { OpenDailyToggle, setDailyData, setDailyDate } from '../redux/actions/dailyAction';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/reducers/rootReducer';
+import dayjs, { Dayjs } from 'dayjs';
 
 const NavBar = () => {
 
     const {CurrUserData} = useSelector((state: RootState) => state.userReducer);
     
+    const Today = dayjs();
     const dispatch = useDispatch();
 
     const setOpenToggle = useCallback(
         (isOpened: type.isOpened) => dispatch(OpenDailyToggle(isOpened)),
         [dispatch]
     );
+    const setCurDailyDate = useCallback(
+        (dailyDate: type.dailyDate) => dispatch(setDailyDate(dailyDate)),
+        [dispatch]
+    );
     const setCurrDaily = useCallback(
-        (dailiy: type.dailyData) => dispatch(setDailyData(dailiy)),
+        (daily: type.dailyData) => dispatch(setDailyData(daily)),
         [dispatch]
     );
 
-    const toggleDrawer = (open: boolean, dailiy?: any) => 
+    const toggleDrawer = (open: boolean, dailyDate: Dayjs) => 
         (e: KeyboardEvent | MouseEvent) => {
             if(e.type === 'keydown' && (
                 (e as KeyboardEvent).key === 'Tab' ||
@@ -30,7 +36,7 @@ const NavBar = () => {
             )) {
             return;
             }
-            setCurrDaily(dailiy);
+            setCurDailyDate(dailyDate);
             setOpenToggle(open);
     };
 
@@ -49,7 +55,7 @@ const NavBar = () => {
                         color="inherit"
                         aria-label="menu"
                         sx={{ mr: 2 }}
-                        onClick={toggleDrawer(true)}
+                        onClick={toggleDrawer(true, Today)}
                     >
                         <AddCircle />
                     </IconButton>

@@ -14,8 +14,9 @@ import { CheckCircleOutline, HighlightOff, RemoveCircle } from '@mui/icons-mater
 
 type Tprops = {
     getDailis(): void;
-    setOpenToggle(isOpened: boolean): type.changeDailyToggleAction['openCloseValue'];
-    setCurrDaily(daily: any): type.changeDailyToggleAction['CurDailyData'];
+    setOpenToggle(isOpened: boolean): type.dailyActionType['openCloseValue'];
+    setCurDailyDate(dailyDate: Dayjs | null): type.dailyActionType['CurDailyDate'];
+    setCurrDaily(daily: any): type.dailyActionType['CurDailyData'];
 }
 
 type TServerEventData = {
@@ -39,15 +40,15 @@ type TServerDailyData = {
 };
 
 function DailyToggle(props: Tprops) {
-    const { getDailis, setOpenToggle, setCurrDaily} = props;
+    const { getDailis, setOpenToggle, setCurDailyDate, setCurrDaily} = props;
 
-    const Today = dayjs(new Date());
-    const [CurrDate, setCurrDate] = useState<Dayjs | null>(Today);
+    const Today = dayjs();
+    // const [CurrDate, setCurrDate] = useState<Dayjs | null>(Today);
     const [EventCeateText, setEventCreateText] = useState('');
     const [EventUpdateText, setEventUpdateText] = useState<string>('');
 
     const {CurrUserData} = useSelector((state: RootState) => state.userReducer);
-    const {openCloseValue, CurDailyData} = useSelector((state: RootState) => state.dailyReducer);
+    const {openCloseValue, CurDailyDate, CurDailyData} = useSelector((state: RootState) => state.dailyReducer);
     const {EventsData} = useSelector((state: RootState) => state.eventReducer);
     const [CurrEventId, setCurrEventId] = useState<number | null>(null);
 
@@ -66,7 +67,7 @@ function DailyToggle(props: Tprops) {
             return;
             }
             if (openCloseValue) {
-                setCurrDate(Today);
+                // setCurrDate(Today);
                 setCurrDaily(null);
                 setEvents([]);
                 setEventCreateText('');
@@ -80,11 +81,19 @@ function DailyToggle(props: Tprops) {
             return data.format('YYYY-MM-DD');
         }
     };
+    const getDailyByDate = async() => {
+        await api().get<TServerDailyData>(`/dailies/byDate/${dayjsToString(CurDailyDate)}`)
+        .then(res => {
+            setCurrDaily(res.data.dailyData);
+        }).catch(Error => {
+            console.log(Error);
+        });
+    };
     
     const createDaily = async() => {
         let body = {
             users: CurrUserData?.id,
-            date: dayjsToString(CurrDate)
+            date: dayjsToString(CurDailyDate)
         };
         let dailyId: number = 0;
         await api().post<TServerDailyData> ('/dailies', body)
@@ -104,7 +113,7 @@ function DailyToggle(props: Tprops) {
         }
         let body = {
             users: CurrUserData.id,
-            date: dayjsToString(CurrDate)
+            // date: dayjsToString(CurrDate)
         };
         api().patch(`/dailies/${CurDailyData.id}`, body)
         .then(res => {
@@ -117,8 +126,14 @@ function DailyToggle(props: Tprops) {
     const onEventcreateHandle = (e:ChangeEvent<HTMLInputElement>) => {
         setEventCreateText(e.currentTarget.value)
     }
+    const onClickEventUpdateHandle = (e:MouseEvent<HTMLInputElement>) => {
+        // setEventUpdateText(e.currentTarget)
+        // console.log(e.target)
+    }
+
     const onEventUpdateHandle = (e:ChangeEvent<HTMLInputElement>) => {
         setEventUpdateText(e.currentTarget.value)
+        console.log(e.currentTarget)
         let temporaryId = Number(e.currentTarget.name)
         setCurrEventId(temporaryId)
     }
@@ -198,12 +213,18 @@ function DailyToggle(props: Tprops) {
             });
         }
     };
-
     useEffect(() => {
+        console.log('데일리 바뀜',CurDailyData)
         setTimeout(() => {
+            if(!CurDailyData) {
+                setEvents([]);
+            }
             getEvents();
-            const date = dayjs(CurDailyData?.date)
-            setCurrDate(date)
+            if(!CurDailyData || CurDailyData?.date === dayjsToString(CurDailyDate)) {
+                return;
+            }
+            const date = dayjs(CurDailyData.date)
+            setCurDailyDate(date)
         }, 1);
     }, [CurDailyData]);
 
@@ -213,7 +234,18 @@ function DailyToggle(props: Tprops) {
         }, 100);
     }, [EventUpdateText]);
 
-    const renderEvent = EventsData && EventsData.map((event, i) => {
+    useEffect(() => {
+        console.log('날짜 바뀜',CurDailyDate)
+        setTimeout(() => {
+            getDailyByDate();
+        }, 1);
+    }, [CurDailyDate]);
+    useEffect(() => {
+        console.log('이벤트 바뀜',EventsData)
+    }, [EventsData]);
+
+    const renderEvent = EventsData.map((event, i) => {
+        // console.log(event.description)
         let temporaryId = String(event.id)
         return (
             <List component="nav" aria-label="mailbox folders"
@@ -222,11 +254,13 @@ function DailyToggle(props: Tprops) {
             >
                 <TextField
                     sx={{width: 270}}
-                    id=""
+                    id={temporaryId}
                     name={temporaryId}
                     variant="standard"
                     defaultValue={event.description}
+                    key={event.description}
                     onChange={onEventUpdateHandle}
+                    // onClick={onClickEventUpdateHandle}
                 />
                 <IconButton
                     size="small"
@@ -258,11 +292,11 @@ function DailyToggle(props: Tprops) {
                 {/* 일자 선택 */}
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                        value={CurrDate}
+                        value={CurDailyDate}
                         inputFormat="YYYY-MM-DD"
                         mask="____-__-__"
                         onChange={(newValue) => {
-                            setCurrDate(newValue);
+                            setCurDailyDate(newValue);
                         }}
                         renderInput={(params) => <TextField sx={{width: 300}} {...params} />}
                     />
@@ -272,7 +306,7 @@ function DailyToggle(props: Tprops) {
                 <Box
                     sx={{mt: 2, height: '60vh'}}
                 >
-                    {renderEvent}
+                    {EventsData && renderEvent}
                 </Box>
 
                 <Divider />
