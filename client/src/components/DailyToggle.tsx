@@ -68,7 +68,7 @@ function DailyToggle(props: Tprops) {
                 setCurrDaily(null);
                 setEvents([]);
                 setEventCreateText('');
-                updateDaily();
+                // updateDaily();
             }
             setOpenToggle(open);
     };
@@ -104,20 +104,20 @@ function DailyToggle(props: Tprops) {
         return dailyId;
     };
 
-    const updateDaily = () => {
-        if(!CurrUserData || !CurDailyData) {
-            return;
-        }
-        let body = {
-            users: CurrUserData.id,
-        };
-        api().patch(`/dailies/${CurDailyData.id}`, body)
-        .then(res => {
-            getDailis();
-        }).catch(Error => {
-            console.log(Error);
-        });
-    };
+    // const updateDaily = () => {
+    //     if(!CurrUserData || !CurDailyData) {
+    //         return;
+    //     }
+    //     let body = {
+    //         users: CurrUserData.id,
+    //     };
+    //     api().patch(`/dailies/${CurDailyData.id}`, body)
+    //     .then(res => {
+    //         getDailis();
+    //     }).catch(Error => {
+    //         console.log(Error);
+    //     });
+    // };
     
     const onEventcreateHandle = (e:ChangeEvent<HTMLInputElement>) => {
         setEventCreateText(e.currentTarget.value)
