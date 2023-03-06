@@ -223,15 +223,7 @@ function DailyToggle(props: Tprops) {
     };
     useEffect(() => {
         setTimeout(() => {
-            if(!CurDailyData) {
-                setEvents([]);
-            }
             getEvents();
-            // if(!CurDailyData || CurDailyData?.date === dayjsToString(CurDailyDate)) {
-            //     return;
-            // }
-            // const date = dayjs(CurDailyData.date)
-            // setCurDailyDate(date)
         }, 1);
     }, [CurDailyData]);
 
