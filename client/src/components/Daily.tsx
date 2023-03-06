@@ -1,6 +1,6 @@
 import { KeyboardEvent, MouseEvent, useCallback, useEffect, useState } from 'react';
 import { Box, Grid, Paper, Card, IconButton, Popover, Typography, ButtonGroup, Button, Pagination, Chip} from '@mui/material';
-import { RemoveCircle, CheckCircleOutline, HighlightOff, ChevronLeftOutlined, ChevronRightOutlined } from '@mui/icons-material';
+import { RemoveCircle, CheckCircleOutline, HighlightOff, ChevronLeftOutlined, ChevronRightOutlined, AddCircleOutlineOutlined, AddCircle } from '@mui/icons-material';
 import { api } from '../utils/authInstance';
 import { useDispatch, useSelector } from 'react-redux';
 import * as type from '../redux/types'
@@ -104,37 +104,69 @@ function Daily() {
         }
     };
 
-    type TdailyDate = {
-        year: number;
-        month: number;
-        day: number;
-    }
+    // type TdailyDate = {
+    //     year: number;
+    //     month: number;
+    //     day: number;
+    // }
 
-    const combineDate = (daily: TdailyDate): string => {
-        let dailyDate = daily.year + '-';
-        if(daily.month < 10) {
-            dailyDate += '0' + daily.month + '-';
+    const combineDate = (year:number, month:number, day:number): string => {
+        let dailyDate = year + '-';
+        if(month < 10) {
+            dailyDate += '0' + month + '-';
         } else {
-            dailyDate += daily.month + '-';
+            dailyDate += month + '-';
         }
-        if(daily.day < 10) {
-            dailyDate += '0' + daily.day;
+        if(day < 10) {
+            dailyDate += '0' + day;
         } else {
-            dailyDate += daily.day;
+            dailyDate += day;
         }
         return dailyDate;
     }
+    const CurMonth = `${CurYearMonth[0]}-${CurYearMonth[1]}`
+    const daysOfMonth = dayjs(CurMonth).daysInMonth();
+    const firstDay = dayjs(`${CurMonth}-1`).get("day");
+    const days = ['일', '월', '화', '수', '목', '금', '토'];
 
-    const renderDaily = DailiesData.map((daily, i) => {
-        if (daily) {
-            let dailyDate = combineDate(daily);
+    const renderDays = days.map((v, i) => {
+        return (
+            <Grid item xs={12/7} key={i}>
+                <Box>
+                    <Card sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: 130, height: 40, margin: 0, backgroundColor: '#1976d2'}} elevation={3}>
+                        <Box sx={{color: '#ffffff', fontSize: 15, fontWeight: 800}}>{v}요일</Box>
+                    </Card>
+                </Box>
+            </Grid>
+        );
+    });
+
+    const renderBlank = [...Array(firstDay)].map((v, i) => {
+        return (
+            <Grid item xs={12/7} key={i}>
+                <Box>
+                    <Card sx={{width: 130, height: 130, margin: 0, backgroundColor: '#ededed'}} elevation={3}>
+                    </Card>
+                </Box>
+            </Grid>
+        );
+    });
+
+    const renderDaily = [...Array(daysOfMonth)].map((v, i): JSX.Element =>{
+
+        const daily = DailiesData.find((daily, j): boolean | undefined => {
+            if (daily) {
+                return i+1 === daily.day;
+            }
+        });
+        if(daily) {
+            const dailyDate = combineDate(daily.year, daily.month, daily.day);
             return (
                 <Grid item xs={12/7} key={i}>
                     <Box>
                         <Card sx={{width: 130, height: 130, margin: 0}} elevation={3}>
                             <IconButton
                                 size="small"
-                                // edge="end"
                                 color="inherit"
                                 aria-label="delete"
                                 sx={{ mr: 2}}
@@ -144,13 +176,29 @@ function Daily() {
                             </IconButton>
                             <Box onClick={toggleDrawer(true, dailyDate)}>
                                 <Typography variant="h6" component="div">
-                                    {dailyDate}
+                                    {daily.day}
                                 </Typography>
                                 <Box>
                                     {daily.events?.map((event, j) => {
                                         return <Typography key={j} variant="body1"> {event.description}</Typography>
                                     })}
                                 </Box>
+                            </Box>
+                        </Card>
+                    </Box>
+                </Grid>
+            );
+        } else {
+            const dailyDate = combineDate(CurYearMonth[0], CurYearMonth[1], i+1);
+            return (
+                <Grid item xs={12/7} key={i}>
+                    <Box>
+                        <Card sx={{width: 130, height: 130, margin: 0, backgroundColor: '#ededed'}} elevation={3}>
+                            <AddCircle color="success" />
+                            <Box onClick={toggleDrawer(true, dailyDate)}>
+                                <Typography variant="h6" component="div">
+                                    {i+1}
+                                </Typography>
                             </Box>
                         </Card>
                     </Box>
@@ -207,8 +255,11 @@ function Daily() {
                 </ButtonGroup>
             </Box>
             <Box sx={{display: 'flex', alignItems: 'center', mt: 2}}>
-            <Grid container spacing={2}>
-                {renderDaily}
+                <Grid container spacing={2}>
+                    {renderDays}
+                    {renderBlank}
+                    {renderDaily}
+                </Grid>
                 <DailyToggle
                     getDailis={getDailis}
                     setOpenToggle={setOpenToggle}
@@ -249,7 +300,6 @@ function Daily() {
                         </IconButton>
                     </Box>
                 </Popover>
-            </Grid>
             </Box>
         </Box>
     );
