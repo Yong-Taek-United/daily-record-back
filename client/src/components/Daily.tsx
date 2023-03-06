@@ -133,7 +133,9 @@ function Daily() {
         return (
             <Grid item xs={12/7} key={i}>
                 <Box>
-                    <Card sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: 130, height: 40, margin: 0, backgroundColor: '#1976d2'}} elevation={3}>
+                    <Card sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', 
+                        width: 130, height: 40, margin: 0, backgroundColor: '#1976d2'}} elevation={3}
+                    >
                         <Box sx={{color: '#ffffff', fontSize: 15, fontWeight: 800}}>{v}요일</Box>
                     </Card>
                 </Box>
@@ -145,7 +147,7 @@ function Daily() {
         return (
             <Grid item xs={12/7} key={i}>
                 <Box>
-                    <Card sx={{width: 130, height: 130, margin: 0, backgroundColor: '#ededed'}} elevation={3}>
+                    <Card sx={{width: 130, height: 100, margin: 0, backgroundColor: '#ededed'}} elevation={3}>
                     </Card>
                 </Box>
             </Grid>
@@ -164,7 +166,7 @@ function Daily() {
             return (
                 <Grid item xs={12/7} key={i}>
                     <Box>
-                        <Card sx={{width: 130, height: 130, margin: 0}} elevation={3}>
+                        <Card sx={{width: 130, height: 100, margin: 0}} elevation={3}>
                             <IconButton
                                 size="small"
                                 color="inherit"
@@ -193,7 +195,7 @@ function Daily() {
             return (
                 <Grid item xs={12/7} key={i}>
                     <Box>
-                        <Card sx={{width: 130, height: 130, margin: 0, backgroundColor: '#ededed'}} elevation={3}>
+                        <Card sx={{width: 130, height: 100, margin: 0, backgroundColor: '#ededed'}} elevation={3}>
                             <AddCircle color="success" />
                             <Box onClick={toggleDrawer(true, dailyDate)}>
                                 <Typography variant="h6" component="div">
@@ -254,7 +256,7 @@ function Daily() {
                     
                 </ButtonGroup>
             </Box>
-            <Box sx={{display: 'flex', alignItems: 'center', mt: 2}}>
+            <Box sx={{display: 'flex', alignItems: 'center', mt: 3}}>
                 <Grid container spacing={2}>
                     {renderDays}
                     {renderBlank}
