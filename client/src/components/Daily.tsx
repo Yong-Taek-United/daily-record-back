@@ -176,8 +176,7 @@ function Daily() {
             <Box sx={{display: 'flex'}}>
                 <Box sx={{mr: 3}}>
                     <IconButton
-                            size="large"
-                            edge="end"
+                            size="small"
                             color="inherit"
                             aria-label="year down"
                             onClick={changeYear(false)}
@@ -186,8 +185,7 @@ function Daily() {
                     </IconButton>
                     <Chip label={CurYearMonth[0]} variant="outlined" sx={{fontSize: 17}} />
                     <IconButton
-                            size="large"
-                            edge="start"
+                            size="small"
                             color="inherit"
                             aria-label="year up"
                             onClick={changeYear(true)}
@@ -208,9 +206,8 @@ function Daily() {
                     
                 </ButtonGroup>
             </Box>
-            <Grid style={{display: 'flex', alignItems: 'center'}} container spacing={2}>
-
-
+            <Box sx={{display: 'flex', alignItems: 'center', mt: 2}}>
+            <Grid container spacing={2}>
                 {renderDaily}
                 <DailyToggle
                     getDailis={getDailis}
@@ -253,8 +250,9 @@ function Daily() {
                     </Box>
                 </Popover>
             </Grid>
+            </Box>
         </Box>
     );
 };
 
-export default Daily
+export default Daily;
