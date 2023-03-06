@@ -1,6 +1,6 @@
 import { KeyboardEvent, MouseEvent, useCallback, useEffect, useState } from 'react';
-import { Box, Grid, Paper, Card, IconButton, Popover, Typography} from '@mui/material';
-import { RemoveCircle, CheckCircleOutline, HighlightOff } from '@mui/icons-material';
+import { Box, Grid, Paper, Card, IconButton, Popover, Typography, ButtonGroup, Button, Pagination, Chip} from '@mui/material';
+import { RemoveCircle, CheckCircleOutline, HighlightOff, ChevronLeftOutlined, ChevronRightOutlined } from '@mui/icons-material';
 import { api } from '../utils/authInstance';
 import { useDispatch, useSelector } from 'react-redux';
 import * as type from '../redux/types'
@@ -24,6 +24,10 @@ type TServerData = {
 }
 
 function Daily() {
+    const Year = Number(dayjs().format('YYYY'));
+    const Month = Number(dayjs().format('MM'));
+    const [CurYearMonth, setCurYearMonth] = useState([Year, Month]);
+
     const {CurrUserData} = useSelector((state: RootState) => state.userReducer);
     const {DailiesData} = useSelector((state: RootState) => state.dailyReducer);
 
@@ -60,7 +64,7 @@ function Daily() {
 
     const getDailis = () => {
         if(CurrUserData){
-            api().get<TServerData>(`/dailies/getDailies/${CurrUserData.id}`)
+            api().get<TServerData>(`/dailies/getDailies/${CurrUserData.id}/${CurYearMonth[0]}/${CurYearMonth[1]}`)
                 .then(res => {
                     setDailies(res.data.dailyData);
                 }).catch(Error => {
@@ -71,7 +75,7 @@ function Daily() {
 
     useEffect(() => {
         getDailis();
-    }, [CurrUserData, DailiesData]);
+    }, [CurrUserData, DailiesData, CurYearMonth]);
 
 
     const [DeleteMsg, setDeleteMsg] = useState<HTMLButtonElement | null>(null);
@@ -155,50 +159,101 @@ function Daily() {
         }
     });
 
+    const changeYear = (upDown: boolean) =>
+        (e: MouseEvent<HTMLButtonElement>) => {
+            if(upDown) {
+                setCurYearMonth([CurYearMonth[0] + 1, CurYearMonth[1]]);
+            } else {
+                setCurYearMonth([CurYearMonth[0] - 1, CurYearMonth[1]]);
+            }
+    };
+    const changeMonth = (month: number) => 
+        (e: MouseEvent<HTMLButtonElement>) => {
+            setCurYearMonth([CurYearMonth[0], month]);
+    };
     return (
-        <Grid style={{display: 'flex', alignItems: 'center'}} container spacing={2}>
-            {renderDaily}
-            <DailyToggle
-                getDailis={getDailis}
-                setOpenToggle={setOpenToggle}
-                setCurDailyDate={setCurDailyDate}
-                setCurrDaily={setCurrDaily}
-            />
-            <Popover
-                id={deleteMsgId}
-                open={deleteMsgOpen}
-                anchorEl={DeleteMsg}
-                onClose={handleClose}
-                anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-                }}
-            >
-                <Typography fontSize={15} sx={{ p: 2 }}>데일리를 삭제하시겠습니까?</Typography>
-                <Box>
+        <Box>
+            <Box sx={{display: 'flex'}}>
+                <Box sx={{mr: 3}}>
                     <IconButton
-                        size="small"
-                        // edge="end"
-                        color="inherit"
-                        aria-label="execute"
-                        sx={{ mr: 1 }}
-                        onClick={deleteDaily}
+                            size="large"
+                            edge="end"
+                            color="inherit"
+                            aria-label="year down"
+                            onClick={changeYear(false)}
                     >
-                        <CheckCircleOutline color='success' />
+                        <ChevronLeftOutlined />
                     </IconButton>
+                    <Chip label={CurYearMonth[0]} variant="outlined" sx={{fontSize: 17}} />
                     <IconButton
-                        size="small"
-                        // edge="end"
-                        color="inherit"
-                        aria-label="cancel"
-                        sx={{ mr: 1 }}
-                        onClick={handleClose}
+                            size="large"
+                            edge="start"
+                            color="inherit"
+                            aria-label="year up"
+                            onClick={changeYear(true)}
                     >
-                        <HighlightOff color='error' />
+                        <ChevronRightOutlined />
                     </IconButton>
                 </Box>
-            </Popover>
-        </Grid>
+                <ButtonGroup variant="outlined" aria-label="button group">
+                    {[...Array(12)].map((v, i) => (
+                        <Button
+                            variant={CurYearMonth[1] === i+1 ? "contained" : "outlined"}
+                            key={i}
+                            onClick={changeMonth(i+1)}
+                        >
+                            {i+1}월
+                        </Button>
+                    ))}
+                    
+                </ButtonGroup>
+            </Box>
+            <Grid style={{display: 'flex', alignItems: 'center'}} container spacing={2}>
+
+
+                {renderDaily}
+                <DailyToggle
+                    getDailis={getDailis}
+                    setOpenToggle={setOpenToggle}
+                    setCurDailyDate={setCurDailyDate}
+                    setCurrDaily={setCurrDaily}
+                />
+                <Popover
+                    id={deleteMsgId}
+                    open={deleteMsgOpen}
+                    anchorEl={DeleteMsg}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                    }}
+                >
+                    <Typography fontSize={15} sx={{ p: 2 }}>데일리를 삭제하시겠습니까?</Typography>
+                    <Box>
+                        <IconButton
+                            size="small"
+                            // edge="end"
+                            color="inherit"
+                            aria-label="execute"
+                            sx={{ mr: 1 }}
+                            onClick={deleteDaily}
+                        >
+                            <CheckCircleOutline color='success' />
+                        </IconButton>
+                        <IconButton
+                            size="small"
+                            // edge="end"
+                            color="inherit"
+                            aria-label="cancel"
+                            sx={{ mr: 1 }}
+                            onClick={handleClose}
+                        >
+                            <HighlightOff color='error' />
+                        </IconButton>
+                    </Box>
+                </Popover>
+            </Grid>
+        </Box>
     );
 };
 

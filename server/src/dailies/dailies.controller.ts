@@ -10,9 +10,13 @@ export class DailiesController {
         return this.dailiesService.create(dailyData);
     }
 
-    @Get('/getDailies/:id')
-    getDailies(@Param('id') userId: number) {
-        return this.dailiesService.getDailies(userId);
+    @Get('/getDailies/:id/:year/:month')
+    getDailies(
+        @Param('id') userId: number,
+        @Param('year') year: number, 
+        @Param('month') month: number
+        ) {
+        return this.dailiesService.getDailies(userId, year, month);
     }
 
     @Get('/:id')

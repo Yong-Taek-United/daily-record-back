@@ -16,9 +16,17 @@ export class DailiesService {
         return {Success: true, statusCode: 201, message: '데일리 생성이 완료되었습니다.', dailyData: daily};
     }
 
-    // 데일리 전체 조회
-    async getDailies(userId: number) {
-        const dailies = await this.dailiesRepository.find({relations: ['events'], where: {users: {id: userId}}});
+    // 데일리 전체 조회(by date)
+    async getDailies(userId: number, year: number, month: number) {
+        const dailies = await this.dailiesRepository.find({
+            relations: ['events'], 
+            where: {
+                users: {id: userId},
+                year,
+                month
+            }, 
+            order: {day: "ASC"}
+        });
         return {Success: true, statusCode: 201, message: '데일리 전체 조회가 완료되었습니다.', dailyData: dailies};
     }
 
