@@ -1,5 +1,5 @@
 import { KeyboardEvent, MouseEvent, useCallback, useState } from 'react';
-import { AppBar,Box, Toolbar, Typography, Button, IconButton, Menu, MenuItem, } from '@mui/material';
+import { AppBar,Box, Toolbar, Typography, Button, IconButton, Menu, MenuItem, CssBaseline, } from '@mui/material';
 import { AddCircle } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 import * as type from '../redux/types'
@@ -61,8 +61,8 @@ const NavBar = () => {
     }
 
     return (
-        <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
+        <Box sx={{ flexGrow: 1}}>
+        <AppBar>
             <Toolbar>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                     하루기록

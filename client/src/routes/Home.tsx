@@ -5,6 +5,7 @@ import Daily from '../components/Daily';
 import { api } from '../utils/authInstance';
 import { setUserData } from '../redux/actions/userAction';
 import * as type from '../redux/types'
+import { Container } from '@mui/material';
 
 type TServerData = {
     userData: {
@@ -42,9 +43,14 @@ const Home = () => {
     }, []);
 
     return (
-        <div style={{display: 'flex', width: '100%', height: '100%', backgroundColor: '#f1f1f1'}}>
+        <Container
+            maxWidth="lg"
+            sx={{height: '100vh', pt: 12}}
+        >
+        {/* <div style={{display: 'flex', width: '100%', height: '100%', backgroundColor: '#f1f1f1'}}> */}
             <Daily/>
-        </div>
+        {/* </div> */}
+        </Container>
     );
 };
 
