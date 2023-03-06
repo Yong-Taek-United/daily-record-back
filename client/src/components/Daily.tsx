@@ -147,7 +147,7 @@ function Daily() {
         return (
             <Grid item xs={12/7} key={i}>
                 <Box>
-                    <Card sx={{width: 130, height: 100, margin: 0, backgroundColor: '#ededed'}} elevation={3}>
+                    <Card sx={{width: 130, height: 80, margin: 0, backgroundColor: '#ededed'}} elevation={3}>
                     </Card>
                 </Box>
             </Grid>
@@ -166,7 +166,7 @@ function Daily() {
             return (
                 <Grid item xs={12/7} key={i}>
                     <Box>
-                        <Card sx={{width: 130, height: 100, margin: 0}} elevation={3}>
+                        <Card sx={{width: 130, height: 80, margin: 0}} elevation={3}>
                             <IconButton
                                 size="small"
                                 color="inherit"
@@ -195,7 +195,7 @@ function Daily() {
             return (
                 <Grid item xs={12/7} key={i}>
                     <Box>
-                        <Card sx={{width: 130, height: 100, margin: 0, backgroundColor: '#ededed'}} elevation={3}>
+                        <Card sx={{width: 130, height: 80, margin: 0, backgroundColor: '#ededed'}} elevation={3}>
                             <AddCircle color="success" />
                             <Box onClick={toggleDrawer(true, dailyDate)}>
                                 <Typography variant="h6" component="div">
