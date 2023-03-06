@@ -47,9 +47,7 @@ const Home = () => {
             maxWidth="lg"
             sx={{height: '100vh', pt: 12}}
         >
-        {/* <div style={{display: 'flex', width: '100%', height: '100%', backgroundColor: '#f1f1f1'}}> */}
             <Daily/>
-        {/* </div> */}
         </Container>
     );
 };
