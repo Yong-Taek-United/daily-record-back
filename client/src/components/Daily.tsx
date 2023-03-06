@@ -13,7 +13,9 @@ type TServerData = {
     Success: boolean,
     dailyData: {
         id: number;
-        date: string;
+        year: number;
+        month: number;
+        day: number;
         events: {
             id: number;
             description: string;
@@ -98,9 +100,30 @@ function Daily() {
         }
     };
 
+    type TdailyDate = {
+        year: number;
+        month: number;
+        day: number;
+    }
+
+    const combineDate = (daily: TdailyDate): string => {
+        let dailyDate = daily.year + '-';
+        if(daily.month < 10) {
+            dailyDate += '0' + daily.month + '-';
+        } else {
+            dailyDate += daily.month + '-';
+        }
+        if(daily.day < 10) {
+            dailyDate += '0' + daily.day;
+        } else {
+            dailyDate += daily.day;
+        }
+        return dailyDate;
+    }
+
     const renderDaily = DailiesData.map((daily, i) => {
         if (daily) {
-            const dailyDate = dayjs(daily.date).format('YYYY-MM-DD');
+            let dailyDate = combineDate(daily);
             return (
                 <Grid item xs={12/7} key={i}>
                     <Box>

@@ -31,7 +31,9 @@ type TServerDailyData = {
     Success: boolean,
     dailyData: {
         id: number;
-        date: string;
+        year: number;
+        month: number;
+        day: number;
         events: {
             id: number;
             description: string;
@@ -73,35 +75,49 @@ function DailyToggle(props: Tprops) {
             setOpenToggle(open);
     };
 
-    const dayjsToString = (data:Dayjs | null) => {
+    const divideDate = (data:Dayjs | null) => {
         if(data !== null) {
-            return data.format('YYYY-MM-DD');
+            let date = {
+                year: Number(data.format('YYYY')),
+                month: Number(data.format('MM')),
+                day: Number(data.format('DD'))
+            };
+        return date;
         }
     };
+
     const getDailyByDate = async() => {
-        await api().get<TServerDailyData>(`/dailies/byDate/${dayjsToString(CurDailyDate)}`)
-        .then(res => {
-            setCurrDaily(res.data.dailyData);
-        }).catch(Error => {
-            console.log(Error);
-        });
+        const date = divideDate(CurDailyDate);
+        if(date) {
+            await api().get<TServerDailyData>(`/dailies/byDate/${date.year}/${date.month}/${date.day}`)
+            .then(res => {
+                setCurrDaily(res.data.dailyData);
+            }).catch(Error => {
+                console.log(Error);
+            });
+        }
     };
     
     const createDaily = async() => {
-        let body = {
-            users: CurrUserData?.id,
-            date: dayjsToString(CurDailyDate)
-        };
-        let dailyId: number = 0;
-        await api().post<TServerDailyData> ('/dailies', body)
-        .then(res => {
-            getDailis();
-            setCurrDaily(res.data.dailyData);
-            dailyId = res.data.dailyData.id;
-        }).catch(Error => {
-            console.log(Error);
-        });
-        return dailyId;
+        const date = divideDate(CurDailyDate);
+        if(date) {
+            let body = {
+                users: CurrUserData?.id,
+                year: date.year,
+                month: date.month,
+                day: date.day
+            };
+            let dailyId: number = 0;
+            await api().post<TServerDailyData> ('/dailies', body)
+            .then(res => {
+                getDailis();
+                setCurrDaily(res.data.dailyData);
+                dailyId = res.data.dailyData.id;
+            }).catch(Error => {
+                console.log(Error);
+            });
+            return dailyId;
+        }
     };
 
     // const updateDaily = () => {
@@ -211,11 +227,11 @@ function DailyToggle(props: Tprops) {
                 setEvents([]);
             }
             getEvents();
-            if(!CurDailyData || CurDailyData?.date === dayjsToString(CurDailyDate)) {
-                return;
-            }
-            const date = dayjs(CurDailyData.date)
-            setCurDailyDate(date)
+            // if(!CurDailyData || CurDailyData?.date === dayjsToString(CurDailyDate)) {
+            //     return;
+            // }
+            // const date = dayjs(CurDailyData.date)
+            // setCurDailyDate(date)
         }, 1);
     }, [CurDailyData]);
 

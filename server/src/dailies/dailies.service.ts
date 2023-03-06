@@ -29,8 +29,8 @@ export class DailiesService {
     }
 
     // 데일리 개별 조회(by date)
-    async getDailyByDate(date: Date) {
-        const daily = await this.dailiesRepository.findOne({where: {date}});
+    async getDailyByDate(year:number, month:number, day:number) {
+        const daily = await this.dailiesRepository.findOne({where: { year, month, day }});
         return {Success: true, statusCode: 201, message: '데일리 조회가 완료되었습니다.', dailyData: daily};
     }
 

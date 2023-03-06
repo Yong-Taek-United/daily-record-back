@@ -16,8 +16,14 @@ export class Dailies{
     @PrimaryGeneratedColumn({type:'int',name:'id'})
     id: number;
 
-    @Column({type: 'date'})
-    date: Date;
+    @Column('int',{name: 'year'})
+    year: number;
+
+    @Column('int',{name: 'month'})
+    month: number;
+
+    @Column('int',{name: 'day'})
+    day: number;
 
     @CreateDateColumn()
     createdAt: Date;
