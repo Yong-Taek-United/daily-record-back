@@ -29,13 +29,16 @@ const Login = () => {
     };
 
     return (
-        <Container maxWidth="lg">
+        <Container
+            maxWidth="lg"
+            sx={{height: '100vh'}}
+        >
             <Box
                 sx={{
-                    marginTop: 8,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
+                    pt: 18
                 }}
             >
                 <Typography component="h1" variant="h5">로그인</Typography>

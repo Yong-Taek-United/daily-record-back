@@ -5,7 +5,7 @@ import Daily from '../components/Daily';
 import { api } from '../utils/authInstance';
 import { setUserData } from '../redux/actions/userAction';
 import * as type from '../redux/types'
-import { Container } from '@mui/material';
+import { Container, Box } from '@mui/material';
 
 type TServerData = {
     userData: {
@@ -45,9 +45,13 @@ const Home = () => {
     return (
         <Container
             maxWidth="lg"
-            sx={{height: '100vh', pt: 12}}
+            sx={{height: '100vh'}}
         >
-            <Daily/>
+            <Box
+                sx={{pt: 12}}
+            >
+                <Daily/>
+            </Box>
         </Container>
     );
 };
