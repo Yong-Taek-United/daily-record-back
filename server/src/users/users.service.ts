@@ -15,7 +15,7 @@ export class UsersService {
 
     // 회원가입
     async create(userData: CreateUserDto) {
-        const { email, username, password, password2 } = userData;
+        const { email, password, password2 } = userData;
 
         const isExist = await this.usersRepository.findOne({where:{email}});
         if(isExist) {
