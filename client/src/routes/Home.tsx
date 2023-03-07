@@ -1,13 +1,13 @@
 import { useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import Daily from '../components/Daily';
-import { api } from '../utils/authInstance';
-import { setUserData } from '../redux/actions/userAction';
-import * as type from '../redux/types'
 import { Container, Box } from '@mui/material';
+import * as type from '../redux/types'
+import { setUserData } from '../redux/actions/userAction';
+import { api } from '../utils/authInstance';
+import Daily from '../components/Daily';
 
-type TServerData = {
+type TServerAuthData = {
     userData: {
         id: number;
         email: string;
@@ -17,9 +17,9 @@ type TServerData = {
 
 const Home = () => {
     const navigate = useNavigate();
-
     const dispatch = useDispatch();
-    const setCurrUser = useCallback(
+
+    const setCurUser = useCallback(
         (user: type.userData) => dispatch(setUserData(user)),
         [dispatch]
     );
@@ -27,15 +27,15 @@ const Home = () => {
     useEffect(() => {
         const access_token = localStorage.getItem('access_token');
 
-        api().get<TServerData>('/auth', {
+        api().get<TServerAuthData>('/auth', {
             headers: {
                 Authorization: `Bearer ${access_token}`
             }
             }).then(res => {
                 if(res.data.userData) {
-                    setCurrUser(res.data.userData);
+                    setCurUser(res.data.userData);
                 } else {
-                    navigate('/login')
+                    navigate('/login');
                 }
             }).catch(Error => {
                 navigate('/login');

@@ -1,18 +1,18 @@
-import { Box, Button, Container, Grid, TextField, Typography, Link } from '@mui/material';
-import { ChangeEvent, FormEvent, useState } from 'react'
+import { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { Box, Button, Container, Grid, TextField, Typography, Link } from '@mui/material';
 import { api } from '../utils/authInstance';
 
-type ServerData = {
+type TServerSignUpData = {
     Success: boolean;
     message: string;
   }
 
 const SignUp = () => {
-
     const navigate = useNavigate();
 
-    const onSubmit = async(e: FormEvent<HTMLFormElement>) => {
+    // 회원가입
+    const onSubmitHandler = async(e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const data = new FormData(e.currentTarget);
         let body = {
@@ -21,10 +21,9 @@ const SignUp = () => {
             password: data.get('password'),
             password2: data.get('password2')
         };
-        await api().post<ServerData>(`/users`, body)
+        await api().post<TServerSignUpData>(`/users`, body)
         .then(res => {
             if(res.data.Success) {
-                alert(res.data.message);
                 navigate('/login');
             }
         })
@@ -47,7 +46,7 @@ const SignUp = () => {
                 }}
             >
                 <Typography component="h1" variant="h5">회원가입</Typography>
-                <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1, width: '30vw', minWidth: 220}}>
+                <Box component="form" onSubmit={onSubmitHandler} noValidate sx={{ mt: 1, width: '30vw', minWidth: 220}}>
                     <TextField
                         margin="normal"
                         required
@@ -105,7 +104,7 @@ const SignUp = () => {
                 </Box>
             </Box>
         </Container>
-    )
-}
+    );
+};
 
-export default SignUp
+export default SignUp;

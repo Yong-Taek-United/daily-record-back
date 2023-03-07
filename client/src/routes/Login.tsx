@@ -1,26 +1,27 @@
-import { Box, Button, Checkbox, Container, FormControlLabel, Grid, TextField, Typography, Link } from '@mui/material';
-import { ChangeEvent, FormEvent, useState } from 'react'
+import { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { Box, Button, Container, Grid, TextField, Typography, Link } from '@mui/material';
 import { api } from '../utils/authInstance';
 
-type ServerData = {
+type TServerLoginData = {
     access_token: string
-  }
+}
 
 const Login = () => {
     const navigate = useNavigate();
 
-    const onSubmit = async(e: FormEvent<HTMLFormElement>) => {
+    // 로그인
+    const onSubmitHandler = async(e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const data = new FormData(e.currentTarget);
-        let body = {
+        const body = {
             email: data.get('email'),
             password: data.get('password')
         };
-        await api().post<ServerData>(`/auth/login`, body)
+        await api().post<TServerLoginData>(`/auth/login`, body)
         .then(res => {
             if(res.data.access_token) {
-                localStorage.setItem('access_token', res.data.access_token)
+                localStorage.setItem('access_token', res.data.access_token);
                 navigate('/');
             } else {
                 alert('Error');
@@ -42,7 +43,7 @@ const Login = () => {
                 }}
             >
                 <Typography component="h1" variant="h5">로그인</Typography>
-                <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1, width: '30vw', minWidth: 220}}>
+                <Box component="form" onSubmit={onSubmitHandler} noValidate sx={{ mt: 1, width: '30vw', minWidth: 220}}>
                     <TextField
                         margin="normal"
                         required
@@ -85,7 +86,7 @@ const Login = () => {
                 </Box>
             </Box>
         </Container>
-    )
-}
+    );
+};
 
-export default Login
+export default Login;
