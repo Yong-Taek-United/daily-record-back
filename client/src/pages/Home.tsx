@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { Container, Box } from '@mui/material';
+import { Container} from '@mui/material';
 import * as type from '../redux/types'
 import { setUserData } from '../redux/actions/userAction';
 import { api } from '../utils/authInstance';
