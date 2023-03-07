@@ -5,7 +5,8 @@ import { Container, Box } from '@mui/material';
 import * as type from '../redux/types'
 import { setUserData } from '../redux/actions/userAction';
 import { api } from '../utils/authInstance';
-import Daily from '../components/Daily';
+import DailyBoard from '../components/Board/Board';
+import DailyToggle from '../components/Toggle/Toggle';
 
 type TServerAuthData = {
     userData: {
@@ -24,10 +25,10 @@ const Home = () => {
         [dispatch]
     );
 
-    useEffect(() => {
+    // 로그인 인증
+    const getDailyByDate = async() => {
         const access_token = localStorage.getItem('access_token');
-
-        api().get<TServerAuthData>('/auth', {
+        await api().get<TServerAuthData>('/auth', {
             headers: {
                 Authorization: `Bearer ${access_token}`
             }
@@ -40,6 +41,10 @@ const Home = () => {
             }).catch(Error => {
                 navigate('/login');
         });
+    };
+
+    useEffect(() => {
+        getDailyByDate();
     }, []);
 
     return (
@@ -47,11 +52,8 @@ const Home = () => {
             maxWidth="lg"
             sx={{height: '100vh'}}
         >
-            <Box
-                sx={{pt: 12}}
-            >
-                <Daily/>
-            </Box>
+            <DailyBoard />
+            <DailyToggle />
         </Container>
     );
 };

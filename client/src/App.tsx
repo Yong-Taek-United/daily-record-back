@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 const Home = lazy(() => import('./routes/Home'));
 const SignUp = lazy(() => import('./routes/SignUp'));
 const Login = lazy(() => import('./routes/Login'));
-const NavBar = lazy(() => import('./components/NavBar'));
+const NavBar = lazy(() => import('./components/NevBar/NavBar'));
 
 const App = () => {
   return (
