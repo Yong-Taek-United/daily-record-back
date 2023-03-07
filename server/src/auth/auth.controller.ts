@@ -9,12 +9,14 @@ export class AuthController {
         private authService: AuthService
     ) {}
 
+    // 로그인
     @UseGuards(LocalAuthGuard)
     @Post('login')
     async login(@Req() req) {
         return this.authService.login(req.user);
     }
 
+    // 로그인 인증
     @UseGuards(JwtAuthGuard)
     @Get()
     userAuth(@Req() req) {
