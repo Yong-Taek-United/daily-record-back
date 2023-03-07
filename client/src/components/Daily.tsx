@@ -28,7 +28,7 @@ function Daily() {
     const Month = Number(dayjs().format('MM'));
     const [CurYearMonth, setCurYearMonth] = useState([Year, Month]);
 
-    const {CurrUserData} = useSelector((state: RootState) => state.userReducer);
+    const {CurUserData} = useSelector((state: RootState) => state.userReducer);
     const {DailiesData} = useSelector((state: RootState) => state.dailyReducer);
 
     const dispatch = useDispatch();
@@ -63,8 +63,8 @@ function Daily() {
     };
 
     const getDailis = () => {
-        if(CurrUserData){
-            api().get<TServerData>(`/dailies/getDailies/${CurrUserData.id}/${CurYearMonth[0]}/${CurYearMonth[1]}`)
+        if(CurUserData){
+            api().get<TServerData>(`/dailies/getDailies/${CurUserData.id}/${CurYearMonth[0]}/${CurYearMonth[1]}`)
                 .then(res => {
                     setDailies(res.data.dailyData);
                 }).catch(Error => {
@@ -75,7 +75,7 @@ function Daily() {
 
     useEffect(() => {
         getDailis();
-    }, [CurrUserData, DailiesData, CurYearMonth]);
+    }, [CurUserData, DailiesData, CurYearMonth]);
 
 
     const [DeleteMsg, setDeleteMsg] = useState<HTMLButtonElement | null>(null);
@@ -93,7 +93,7 @@ function Daily() {
 
     const [CurrDailyId, setCurrDailyId] = useState<number | null>(null);
     const deleteDaily = () => {
-        if(CurrUserData && CurrDailyId){
+        if(CurUserData && CurrDailyId){
             api().delete(`/dailies/${CurrDailyId}`)
                 .then(res => {
                     setCurrDailyId(null);

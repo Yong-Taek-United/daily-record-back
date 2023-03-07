@@ -12,7 +12,7 @@ import { setUserData } from '../redux/actions/userAction';
 
 const NavBar = () => {
 
-    const {CurrUserData} = useSelector((state: RootState) => state.userReducer);
+    const {CurUserData} = useSelector((state: RootState) => state.userReducer);
     
     const Today = dayjs();
 
@@ -67,7 +67,7 @@ const NavBar = () => {
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                     하루기록
                 </Typography>
-                {CurrUserData?.id ?
+                {CurUserData?.id ?
                     <Box>
                         <IconButton
                             size="large"
@@ -87,7 +87,7 @@ const NavBar = () => {
                             color="inherit"
                             onClick={handleClick}
                         >
-                            {CurrUserData.username}
+                            {CurUserData.username}
                         </Button>
                         <Menu
                             id="basic-menu"

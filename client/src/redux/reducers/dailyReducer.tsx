@@ -1,21 +1,21 @@
+import { createReducer } from 'typesafe-actions';
+import produce from 'immer';
 import * as type from '../types';
 import { OPEN_DAILYTOGGLE, SET_DAILYDATE, SET_DAILYDATA, SET_DAILIESDATA } from '../actions/dailyAction';
-import produce from 'immer';
-import { createReducer } from 'typesafe-actions';
 
 export const initialState: type.DAILYREDUCERTYPE= {
-    openCloseValue: false,
+    ToggleValue: false,
     CurDailyDate: null,
     CurDailyData: null,
     DailiesData: []
 }
 
-const DailyReducer = createReducer<type.DAILYREDUCERTYPE, any>(
+const DailyReducer = createReducer<type.DAILYREDUCERTYPE, type.dailyActionType>(
     initialState,
     {
         [OPEN_DAILYTOGGLE]: (state, action) =>
             produce(state, (draft) => {
-                draft.openCloseValue = action.payload;
+                draft.ToggleValue = action.payload;
         }),
         [SET_DAILYDATE]: (state, action) =>
             produce(state, (draft) => {

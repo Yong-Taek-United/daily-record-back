@@ -1,5 +1,5 @@
 import { setUserData } from './actions/userAction';
-import { OpenDailyToggle, setDailyDate, setDailyData} from './actions/dailyAction';
+import { OpenDailyToggle, setDailyDate, setDailyData, setDailiesData} from './actions/dailyAction';
 import { setEventsData } from './actions/eventAction';
 import { Dayjs } from 'dayjs';
 
@@ -10,11 +10,11 @@ export type userData = {
     username: string;
 } | null;
 
-export type USERDATA = {
-    CurrUserData: userData;
+export type USERREDUCERTYPE = {
+    CurUserData: userData;
 }
 
-export type setUserDataAction = ReturnType<typeof setUserData>
+export type userActionType = ReturnType<typeof setUserData>;
 
 // Daily
 export type isOpened = boolean;
@@ -33,17 +33,18 @@ export type dailyData = {
 } | null;
 
 export type DAILYREDUCERTYPE = {
-    openCloseValue: boolean;
+    ToggleValue: boolean;
     CurDailyDate: Dayjs | null;
     CurDailyData: dailyData;
     DailiesData: dailyData[];
 }
 
-export type dailyActionType = {
-    openCloseValue: ReturnType<typeof OpenDailyToggle>;
-    CurDailyDate: ReturnType<typeof setDailyDate>;
-    CurDailyData: ReturnType<typeof setDailyData>;
-}
+export type dailyActionType = 
+    | ReturnType<typeof OpenDailyToggle>
+    | ReturnType<typeof setDailyDate>
+    | ReturnType<typeof setDailyData>
+    | ReturnType<typeof setDailiesData>;
+
 
 // Event
 export type eventData = {
@@ -55,4 +56,4 @@ export type EVENTEDUCERTYPE = {
     EventsData: eventData[];
 }
 
-export type setEventDataAction = ReturnType<typeof setEventsData>
+export type eventActionType = ReturnType<typeof setEventsData>

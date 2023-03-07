@@ -1,6 +1,6 @@
 import * as type from '../types';
 
-export const OPEN_DAILYTOGGLE = 'changeDailyToggle/CHANGE_DAILYTOGGLE' as const;
+export const OPEN_DAILYTOGGLE = 'openDailyToggle/OPEN_DAILYTOGGLE' as const;
 export const OpenDailyToggle = (isOpened: type.isOpened) => ({
     type: OPEN_DAILYTOGGLE,
     payload: isOpened,

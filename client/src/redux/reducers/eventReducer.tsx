@@ -1,13 +1,13 @@
+import { createReducer } from 'typesafe-actions';
+import produce from 'immer';
 import * as type from '../types';
 import { SET_EVENTSDATA } from '../actions/eventAction';
-import produce from 'immer';
-import { createReducer } from 'typesafe-actions';
 
 export const initialState: type.EVENTEDUCERTYPE= {
     EventsData: []
 }
 
-const setEventData = createReducer<type.EVENTEDUCERTYPE, any>(
+const EventReducer = createReducer<type.EVENTEDUCERTYPE, type.eventActionType>(
     initialState,
     {
         [SET_EVENTSDATA]: (state, action) =>
@@ -17,4 +17,4 @@ const setEventData = createReducer<type.EVENTEDUCERTYPE, any>(
     }
 )
 
-export default setEventData;
+export default EventReducer;

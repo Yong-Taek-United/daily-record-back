@@ -14,9 +14,9 @@ import { CheckCircleOutline, HighlightOff, RemoveCircle } from '@mui/icons-mater
 
 type Tprops = {
     getDailis(): void;
-    setOpenToggle(isOpened: boolean): type.dailyActionType['openCloseValue'];
-    setCurDailyDate(dailyDate: Dayjs | null): type.dailyActionType['CurDailyDate'];
-    setCurrDaily(daily: any): type.dailyActionType['CurDailyData'];
+    setOpenToggle(isOpened: boolean): type.dailyActionType;
+    setCurDailyDate(dailyDate: Dayjs | null): type.dailyActionType;
+    setCurrDaily(daily: any): type.dailyActionType;
 }
 
 type TServerEventData = {
@@ -47,8 +47,8 @@ function DailyToggle(props: Tprops) {
     const [EventCeateText, setEventCreateText] = useState('');
     const [EventUpdateText, setEventUpdateText] = useState<string>('');
 
-    const {CurrUserData} = useSelector((state: RootState) => state.userReducer);
-    const {openCloseValue, CurDailyDate, CurDailyData} = useSelector((state: RootState) => state.dailyReducer);
+    const {CurUserData} = useSelector((state: RootState) => state.userReducer);
+    const {ToggleValue, CurDailyDate, CurDailyData} = useSelector((state: RootState) => state.dailyReducer);
     const {EventsData} = useSelector((state: RootState) => state.eventReducer);
     const [CurrEventId, setCurrEventId] = useState<number | null>(null);
 
@@ -66,7 +66,7 @@ function DailyToggle(props: Tprops) {
             )) {
             return;
             }
-            if (openCloseValue) {
+            if (ToggleValue) {
                 setCurrDaily(null);
                 setEvents([]);
                 setEventCreateText('');
@@ -102,7 +102,7 @@ function DailyToggle(props: Tprops) {
         const date = divideDate(CurDailyDate);
         if(date) {
             let body = {
-                users: CurrUserData?.id,
+                users: CurUserData?.id,
                 year: date.year,
                 month: date.month,
                 day: date.day
@@ -147,8 +147,8 @@ function DailyToggle(props: Tprops) {
     }
 
     const getEvents = () => {
-        if(CurrUserData && CurDailyData){
-            api().get<TServerEventData>(`/events/getEvents/${CurrUserData.id}/${CurDailyData.id}`)
+        if(CurUserData && CurDailyData){
+            api().get<TServerEventData>(`/events/getEvents/${CurUserData.id}/${CurDailyData.id}`)
                 .then(res => {
                     setEvents(res.data.eventData);
                 }).catch(Error => {
@@ -160,7 +160,7 @@ function DailyToggle(props: Tprops) {
     const createEvent = async(e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const data = new FormData(e.currentTarget);
-        if(!CurrUserData || !data.get('eventCreateText')) {
+        if(!CurUserData || !data.get('eventCreateText')) {
             return;
         }
         
@@ -169,7 +169,7 @@ function DailyToggle(props: Tprops) {
             temporaryId= await createDaily();
         } 
         let body = {
-            users: CurrUserData.id,
+            users: CurUserData.id,
             dailies: temporaryId,
             description: data.get('eventCreateText')
         };
@@ -183,7 +183,7 @@ function DailyToggle(props: Tprops) {
     };
 
     const updateEvent = async() => {
-        if(!CurrUserData || !CurrEventId) {
+        if(!CurUserData || !CurrEventId) {
             return;
         }
         let body = {
@@ -210,7 +210,7 @@ function DailyToggle(props: Tprops) {
     const deleteMsgId = deleteMsgOpen ? 'simple-popover' : undefined;
 
     const deleteEvent = () => {
-        if(CurrUserData && CurrEventId){
+        if(CurUserData && CurrEventId){
             api().delete(`/events/${CurrEventId}`)
                 .then(res => {
                     setCurrEventId(null);
@@ -274,7 +274,7 @@ function DailyToggle(props: Tprops) {
     return (
         <Drawer
             anchor='right'
-            open={openCloseValue}
+            open={ToggleValue}
             onClose={toggleDrawer(false)}
         >
             <Box 
