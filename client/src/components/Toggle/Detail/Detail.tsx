@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/reducers/rootReducer';
 import * as type from '../../../redux/types'
 import { Dayjs } from 'dayjs';
+import '../../../styles/style.css';
 import { api } from '../../../utils/authInstance';
 import { useDispatch } from 'react-redux';
 import { setEventsData } from '../../../redux/actions/eventAction';
@@ -74,12 +75,9 @@ const DailyDetail = () => {
     }, [CurDailyDate]);
 
     return (
-        <Box 
-            sx={{marginTop: 5, display: 'flex', flexDirection: 'column', justifyContent:'center', width: 400}}
-        >
-            <Box 
-                sx={{display: 'flex', flexDirection: 'column', justifyContent:'center', alignItems: 'center'}}
-            >
+        <Box className='toggle_detail_area'>
+            <Box className='toggle_detail_box'>
+                
                 {/* 일자 선택 */}
                 <DailyDatePicker />
 

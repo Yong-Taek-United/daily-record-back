@@ -48,10 +48,7 @@ const Home = () => {
     }, []);
 
     return (
-        <Container
-            maxWidth="lg"
-            sx={{height: '100vh'}}
-        >
+        <Container>
             <DailyBoard />
             <DailyToggle />
         </Container>

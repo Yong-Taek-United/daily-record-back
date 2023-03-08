@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/reducers/rootReducer';
 import * as type from '../../../redux/types'
 import { Dayjs } from 'dayjs';
+import '../../../styles/style.css';
 import { api } from '../../../utils/authInstance';
 import { useDispatch } from 'react-redux';
 import { setEventsData } from '../../../redux/actions/eventAction';
@@ -164,28 +165,25 @@ const CreateEvent = () => {
     }, [CurDailyData]);
 
     return (
-        <Box 
+        <Box
+            className='toggle_create_box'
             component="form" 
             onSubmit={createEvent}
-            sx={{display: 'flex', alignItems: 'center'}}
         >
             <TextField
-                required
                 type="text"
                 id="eventCreateText"
                 name="eventCreateText"
-                placeholder='입력해주세요.'
+                placeholder='내용을 입력해주세요.'
                 value={EventCeateText}
                 onChange={onEventcreateHandle}
-                size="small"
-                sx={{width: 240}}
             />
             <Button 
                 type="submit" 
                 variant="contained"
                 sx={{ml: 1}}
             >
-                작성
+                입력
             </Button>
         </Box>
     );

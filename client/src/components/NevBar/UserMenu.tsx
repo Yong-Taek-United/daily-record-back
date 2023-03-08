@@ -67,17 +67,13 @@ const UserMenu = () => {
     return (
         <Box>
             <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="menu"
                 sx={{ mr: 2 }}
                 onClick={toggleHandler(true, Today)}
             >
                 <AddCircle />
             </IconButton>
             <Button
-                id="basic-button"
+                id="user-button"
                 aria-controls={menuValue ? 'basic-menu' : undefined}
                 aria-haspopup="true"
                 aria-expanded={menuValue ? 'true' : undefined}
@@ -87,7 +83,7 @@ const UserMenu = () => {
                 {CurUserData?.username}
             </Button>
             <Menu
-                id="basic-menu"
+                id="user-menu"
                 anchorEl={anchorEl}
                 open={menuValue}
                 onClose={menuCloseHandler}

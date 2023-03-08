@@ -1,0 +1,97 @@
+/* Mui <Box> CSS */
+
+/* -------------- Pages -------------- */
+.sign_area {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.sign_title_box{
+    margin-top: 8px;
+    width: 30vw;
+    min-width: 220px;
+}
+
+.sign_form_box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    margin-top: 8px;
+    width: 30vw;
+    min-width: 220px;
+}
+
+/* -------------- Board -------------- */
+.board_area {
+    margin-top: 50px;
+}
+
+.select_box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 12px;
+    padding-bottom: 8px;
+}
+
+.select_year_group {
+    margin-right: 16px;
+}
+
+.card_box {
+    display: flex;
+    align-items: center;
+    margin-top: 24px;
+    padding-bottom: 12px;
+}
+
+.card_header {
+    display: flex;
+    align-items: center;
+}
+
+/* -------------- Toggle -------------- */
+.toggle_detail_area {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 400px;
+    margin-top: 5px;
+}
+
+.toggle_detail_box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.toggle_eventlist_box {
+    margin-top: 2px;
+    height: 60vh;
+}
+
+.eventlist {
+    display: flex;
+    align-items: center;
+    margin-top: 4px;
+}
+
+.toggle_create_box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* -------------- PopOver -------------- */
+.popover_message {
+    padding: 12px 12px 4px 12px;
+}
+.popover-button-group {
+    display: flex;
+    justify-content: center;
+    padding: 4px;
+}

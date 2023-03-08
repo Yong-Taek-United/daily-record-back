@@ -7,7 +7,7 @@ import { api } from '../../utils/authInstance';
 import { useDispatch } from 'react-redux';
 import { setEventsData } from '../../redux/actions/eventAction';
 import { OpenDailyToggle, setDailyData } from '../../redux/actions/dailyAction';
-import MessagePopover from '../Popover';
+import MessagePopover from '../PopOver';
 import DailyDetail from './Detail/Detail';
 
 type TServerEventsData = {
@@ -38,7 +38,7 @@ const DailyToggle = () => {
     );
 
     // 데일리 토글 열기/닫기
-    const toggleDrawer = (open: boolean) => 
+    const toggleHandler = (open: boolean) => 
         (e: KeyboardEvent | MouseEvent) => {
             if(e.type === 'keydown' && (
                 (e as KeyboardEvent).key === 'Tab' ||
@@ -87,7 +87,7 @@ const DailyToggle = () => {
         <Drawer
             anchor='right'
             open={ToggleValue}
-            onClose={toggleDrawer(false)}
+            onClose={toggleHandler(false)}
         >
             {/* 데일리 디테일 */}
             <DailyDetail />

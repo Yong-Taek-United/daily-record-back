@@ -2,7 +2,8 @@ import { ChangeEvent, MouseEvent, useCallback, useEffect, useState } from 'react
 import { Box, IconButton, TextField, List } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/reducers/rootReducer';
-import * as type from '../../../redux/types'
+import * as type from '../../../redux/types';
+import '../../../styles/style.css';
 import { api } from '../../../utils/authInstance';
 import { useDispatch } from 'react-redux';
 import { setEventId } from '../../../redux/actions/eventAction';
@@ -30,7 +31,6 @@ const EventList = () => {
     // 이벤트 수정 텍스트 업데이트
     const onEventUpdateHandle = (e: ChangeEvent<HTMLInputElement>) => {
         setEventUpdateText(e.currentTarget.value)
-        console.log(e.currentTarget)
         let temporaryId = Number(e.currentTarget.name)
         setTargetEventId(temporaryId)
     };
@@ -68,9 +68,12 @@ const EventList = () => {
     const renderEvent = EventsData.map((event, i) => {
         let temporaryId = String(event.id)
         return (
-            <List component="nav" aria-label="mailbox folders"
-                key={i} 
-                sx={{mt: '4px'}}
+            <List
+                className='eventlist'
+                key={i}
+                component="nav"
+                aria-label="event-list"
+                
             >
                 <TextField
                     sx={{width: 270}}
@@ -82,9 +85,7 @@ const EventList = () => {
                     onChange={onEventUpdateHandle}
                 />
                 <IconButton
-                    size="small"
-                    color="inherit"
-                    aria-label="delete"
+                    aria-label="delete-event-button"
                     sx={{ ml: 2}}
                     onClick={popOverOpenHandler(event.id)}
                 >
@@ -95,9 +96,7 @@ const EventList = () => {
     });
 
     return (
-        <Box
-            sx={{mt: 2, height: '60vh'}}
-        >
+        <Box className='toggle_eventlist_box'>
             {EventsData && renderEvent}
         </Box>
     );

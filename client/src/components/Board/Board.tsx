@@ -5,10 +5,11 @@ import dayjs from 'dayjs';
 import * as type from '../../redux/types'
 import { RootState } from '../../redux/reducers/rootReducer';
 import { setDailiesData } from '../../redux/actions/dailyAction';
+import '../../styles/style.css'
 import { api } from '../../utils/authInstance';
 import DailySelector from './Selector';
 import DailyCard from './Card';
-import MessagePopover from '../Popover';
+import MessagePopover from '../PopOver';
 
 type TServerDailiesData = {
     Success: boolean,
@@ -73,13 +74,12 @@ const DailyBoard = () => {
     const constCards = daysOfMonth + firstDayOfMonth
     const days = ['일', '월', '화', '수', '목', '금', '토'];
     
+    // 요일 형식 카드
     const renderDays = days.map((v, i) => {
         return (
             <Grid item xs={12/7} key={i}>
                 <Box>
-                    <Card sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', 
-                        width: 130, height: 40, margin: 0, backgroundColor: '#1976d2'}} elevation={3}
-                    >
+                    <Card elevation={1}>
                         <Box sx={{color: '#ffffff', fontSize: 15, fontWeight: 800}}>{v}요일</Box>
                     </Card>
                 </Box>
@@ -87,6 +87,7 @@ const DailyBoard = () => {
         );
     });
 
+    // 내용 카드
     const renderCard = [...Array(constCards)].map((v, i): JSX.Element =>{
 
         const index = i-firstDayOfMonth+1
@@ -116,13 +117,13 @@ const DailyBoard = () => {
     });
 
     return (
-        <Box sx={{pt: 12}}>
+        <Box className='board_area'>
                 
             {/* 연/월 조절기 */}
             <DailySelector />
 
             {/* 데일리 카드 렌더링 */}
-            <Box sx={{display: 'flex', alignItems: 'center', mt: 3}}>
+            <Box className='card_box'>
                 <Grid container spacing={2}>
                     {renderDays}
                     {renderCard}

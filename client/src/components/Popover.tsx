@@ -79,33 +79,28 @@ const MessagePopover = (props: Tprops) => {
 
     return (
         <Popover
+            className='popover_box'
             id={deleteMsgId}
             open={PopOverValue}
             anchorEl={TargetElement}
             onClose={popOverCloseHandler}
             anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
+                vertical: 'bottom',
+                horizontal: 'left',
             }}
         >
-            <Typography fontSize={15} sx={{ p: 2 }}>
+            <Typography className='popover_message' component='h6'>
                 {deleteTarget==='daily' ? '데일리를 삭제하시겠습니까?' : '이벤트를 삭제하시겠습니까?'}
-                </Typography>
-            <Box>
+            </Typography>
+            <Box className='popover-button-group'>
                 <IconButton
-                    size="small"
-                    color="inherit"
-                    aria-label="execute"
-                    sx={{ mr: 1 }}
+                    aria-label="execute-button"
                     onClick={deleteTargetHandler}
                 >
                     <CheckCircleOutline color='success' />
                 </IconButton>
                 <IconButton
-                    size="small"
-                    color="inherit"
-                    aria-label="cancel"
-                    sx={{ mr: 1 }}
+                    aria-label="cancel-button"
                     onClick={popOverCloseHandler}
                 >
                     <HighlightOff color='error' />

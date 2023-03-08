@@ -29,8 +29,8 @@ const DailySelector = () => {
 
     const renderMonthBottons = [...Array(12)].map((v, i) => (
         <Button
-            variant={CurYearMonth[1] === i+1 ? "contained" : "outlined"}
             key={i}
+            variant={CurYearMonth[1] === i+1 ? "contained" : "outlined"}
             onClick={changeMonthHandler(i+1)}
         >
             {i+1}월
@@ -38,27 +38,23 @@ const DailySelector = () => {
     ));
 
     return (
-        <Box sx={{display: 'flex'}}>
-            <Box sx={{mr: 3}}>
+        <Box className='select_box'>
+            <Box className='select_year_group'>
                 <IconButton
-                        size="small"
-                        color="inherit"
-                        aria-label="year down"
+                        aria-label="year-down"
                         onClick={changeYearHandler(false)}
                 >
                     <ChevronLeftOutlined />
                 </IconButton>
-                <Chip label={CurYearMonth[0]} variant="outlined" sx={{fontSize: 17}} />
+                <Chip label={CurYearMonth[0]} variant="outlined"/>
                 <IconButton
-                        size="small"
-                        color="inherit"
-                        aria-label="year up"
+                        aria-label="year-up"
                         onClick={changeYearHandler(true)}
                 >
                     <ChevronRightOutlined />
                 </IconButton>
             </Box>
-            <ButtonGroup variant="outlined" aria-label="button group">
+            <ButtonGroup variant="outlined" aria-label="button-group">
                 {renderMonthBottons}
             </ButtonGroup>
         </Box>

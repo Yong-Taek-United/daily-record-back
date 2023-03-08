@@ -1,6 +1,6 @@
 import { KeyboardEvent, MouseEvent, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { Box, Grid, Card, IconButton, Typography} from '@mui/material';
+import { Box, Grid, Card, IconButton, Typography, Divider, CardHeader, CardContent} from '@mui/material';
 import { RemoveCircle, AddCircle } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import * as type from '../../redux/types'
@@ -43,6 +43,12 @@ const DailyCard = (props: Tprops) => {
             )) {
             return;
             }
+
+            // 데일리 삭제 시, 토글 오픈 방지
+            const targetTagName = (e.target as HTMLInputElement).tagName
+            if(targetTagName === 'path') {
+                return
+            };
             setCurDailyDate(dayjs(dailyDate));
             setToggleValue(open);
     };
@@ -56,54 +62,41 @@ const DailyCard = (props: Tprops) => {
             setCurElement(e.currentTarget);
     };
 
-    // 자리 메우기 카드
-    const xCard = (
-        <Card sx={{width: 130, height: 80, margin: 0, backgroundColor: '#ededed'}} elevation={3}>
+    // 빈 카드
+    const emptyCard = (
+        <Card>
         </Card>
     );
 
     // 데일리 카드
-    const dailyCard = dailyDate && dailyData && (
-        <Card sx={{width: 130, height: 80, margin: 0}} elevation={3}>
-            <IconButton
-                size="small"
-                color="inherit"
-                aria-label="delete"
-                sx={{ mr: 2}}
-                onClick={popOverOpenHandler(dailyData.id)}
-            >
-                <RemoveCircle color='error'/>
-            </IconButton>
-            <Box onClick={toggleHandler(true, dailyDate)}>
-                <Typography variant="h6" component="div">
-                    {dailyData.day}
-                </Typography>
-                <Box>
-                    {dailyData.events && dailyData.events.map((event, i) => {
-                        return <Typography key={i} variant="body1"> {event.description}</Typography>
-                    })}
-                </Box>
-            </Box>
-        </Card>
-    );
-    
-    // 데일리 빈 카드
-    const emptyCard = dailyDate && (
-        <Card sx={{width: 130, height: 80, margin: 0, backgroundColor: '#ededed'}} elevation={3}>
-            <AddCircle color="success" />
-            <Box onClick={toggleHandler(true, dailyDate)}>
-                <Typography variant="h6" component="div">
-                    {index}
+    const dailyCard = dailyDate && (
+        <Card sx={dailyData && {backgroundColor: '#fff'}} onClick={toggleHandler(true, dailyDate)}>
+            <Box className='card_header'>
+                {dailyData ? 
+                    <IconButton aria-label="delete-daily-button" onClick={popOverOpenHandler(dailyData.id)}>
+                        <RemoveCircle color='error' />
+                    </IconButton>
+                :
+                    <IconButton aria-label="create-daily-button" disabled>
+                        <AddCircle color="success" />
+                    </IconButton>
+                }
+                <Typography variant="h6" sx={{flexGrow: 1, textAlign: 'end'}} >
+                    {dailyData ? dailyData.day : index} 일
                 </Typography>
             </Box>
+            <Divider />
+            <CardContent>
+                {dailyData && dailyData.events && dailyData.events.map((event, i) => 
+                    <Typography key={i} variant="body1"> {event.description}</Typography>
+                )}
+            </CardContent>
         </Card>
     );
 
     return (
         <Grid item xs={12/7} key={index}>
-            <Box>
-                {!dailyDate ? xCard : dailyData ? dailyCard : emptyCard}
-            </Box>
+            {!dailyDate ? emptyCard : dailyCard}
         </Grid>
     );
 };

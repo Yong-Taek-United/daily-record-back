@@ -7,7 +7,6 @@ const NavBar = () => {
     const {CurUserData} = useSelector((state: RootState) => state.userReducer);
 
     return (
-        <Box sx={{ flexGrow: 1}}>
         <AppBar>
             <Toolbar>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -20,7 +19,6 @@ const NavBar = () => {
                 }
             </Toolbar>
         </AppBar>
-        </Box>
     );
 }
 
