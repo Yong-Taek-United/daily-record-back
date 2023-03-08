@@ -30,6 +30,7 @@ const DailyBoard = () => {
 
     const {CurUserData} = useSelector((state: RootState) => state.userReducer);
     const {DailiesData, CurYearMonth} = useSelector((state: RootState) => state.dailyReducer);
+    const {EventsData} = useSelector((state: RootState) => state.eventReducer);
 
     const setDailies = useCallback(
         (dailiesData: type.dailyData[]) => dispatch(setDailiesData(dailiesData)),
@@ -50,7 +51,7 @@ const DailyBoard = () => {
 
     useEffect(() => {
         getDailis();
-    }, [CurUserData, CurYearMonth]);
+    }, [CurUserData, CurYearMonth, EventsData]);
 
     // 연-월-일 합치기
     const combineDate = (year:number, month:number, day:number): string => {
@@ -97,7 +98,7 @@ const DailyBoard = () => {
             );
         }
 
-        const daily = DailiesData.find((daily, j): boolean | undefined => {
+        const daily = DailiesData.find((daily): boolean | undefined => {
             if (daily) {
                 return index === daily.day;
             }

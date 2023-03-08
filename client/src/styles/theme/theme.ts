@@ -12,6 +12,10 @@ const theme = responsiveFontSizes(
             body1: {
                 fontSize: 16,
                 fontWeight: 600,
+            },
+            body2: {
+                fontSize: 12,
+                fontWeight: 600,
             }
         },
         components: {

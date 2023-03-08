@@ -87,9 +87,12 @@ const DailyCard = (props: Tprops) => {
             </Box>
             <Divider />
             <CardContent>
-                {dailyData && dailyData.events && dailyData.events.map((event, i) => 
-                    <Typography key={i} variant="body1"> {event.description}</Typography>
-                )}
+                {dailyData && dailyData.events && 
+                    <Typography variant="body1"> {dailyData?.events[0].description}</Typography>
+                }
+                {dailyData && dailyData.events && dailyData.events.length > 1 && 
+                    <Typography variant="body2"> 그 외 {dailyData.events.length-1}개...</Typography>
+                }
             </CardContent>
         </Card>
     );
