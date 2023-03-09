@@ -1,4 +1,4 @@
-import { FormEvent } from 'react'
+import { FormEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Box, Button, Container, Grid, TextField, Typography, Link, Paper } from '@mui/material';
 import '../styles/style.css'
@@ -10,6 +10,8 @@ type TServerLoginData = {
 
 const Login = () => {
     const navigate = useNavigate();
+
+    const [ErrorMsg, setErrorMsg] = useState('');
 
     // 로그인
     const onSubmitHandler = async(e: FormEvent<HTMLFormElement>) => {
@@ -24,9 +26,9 @@ const Login = () => {
             if(res.data.access_token) {
                 localStorage.setItem('access_token', res.data.access_token);
                 navigate('/');
-            } else {
-                alert('Error');
             }
+        }).catch(err => {
+            setErrorMsg(err.response.data.message)
         });
     };
 
@@ -59,6 +61,7 @@ const Login = () => {
                             label="비밀번호"
                             type="password"
                             autoComplete="current-password"
+                            helperText={ErrorMsg}
                         />
                         {/* <FormControlLabel
                             control={<Checkbox value="remember" color="primary" />}

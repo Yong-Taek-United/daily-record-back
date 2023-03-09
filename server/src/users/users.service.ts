@@ -15,19 +15,26 @@ export class UsersService {
 
     // 회원가입
     async create(userData: CreateUserDto) {
-        const { email, password, password2 } = userData;
-
+        const { email, username, password, password2 } = userData;
+        
+        if(email.length < 5) {
+            throw new BadRequestException(['email', '이메일이 너무 짧습니다.']);
+        }
         const isExist = await this.usersRepository.findOne({where:{email}});
         if(isExist) {
-            throw new ConflictException('이미 존재하는 이메일입니다.');
+            throw new ConflictException(['email', '이미 존재하는 이메일입니다.']);
         }
         
+        if(username.length < 2) {
+            throw new BadRequestException(['username', '2자 이상의 이름을 입력해주십시오.']);
+        }
+
         if(password !== password2) {
-            throw new BadRequestException('비밀번호를 다시 확인해주십시오.');
+            throw new BadRequestException(['password2', '비밀번호를 다시 확인해주십시오.']);
         }
 
         if(password.length < 8 || password2.length < 8) {
-            throw new BadRequestException('8자 이상의 비밀번호를 입력해주십시오.');
+            throw new BadRequestException(['password', '8자 이상의 비밀번호를 입력해주십시오.']);
         }
 
         const hashedPassword = await bcrypt.hash (password, 10);

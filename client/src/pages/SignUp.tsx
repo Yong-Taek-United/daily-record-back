@@ -1,4 +1,4 @@
-import { FormEvent } from 'react'
+import { FormEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Box, Button, Container, Grid, TextField, Typography, Link, Paper } from '@mui/material';
 import '../styles/style.css'
@@ -11,6 +11,12 @@ type TServerSignUpData = {
 
 const SignUp = () => {
     const navigate = useNavigate();
+
+    const [ErrorMsg, setErrorMsg] = useState(['target', 'message']);
+    const [ErrorMsgEmail, setErrorMsgEmail] = useState('');
+    const [ErrorMsgUsername, setErrorMsgUsername] = useState('');
+    const [ErrorMsgPasspword, setErrorMsgPasspword] = useState('');
+    const [ErrorMsgPassword2, setErrorMsgPassword2] = useState('');
 
     // 회원가입
     const onSubmitHandler = async(e: FormEvent<HTMLFormElement>) => {
@@ -28,9 +34,19 @@ const SignUp = () => {
                 navigate('/login');
             }
         })
-        .catch(Error => {
-            alert(Error.response.data.message);
+        .catch(err => {
+            console.log(err.response.data)
+            setErrorMsg(err.response.data.message);
         });
+    };
+
+    // 상황별 에러 메세지
+    const errorMsg = (target: string) => {
+        if(ErrorMsg[0] === target) {return ErrorMsg[1]}
+    };
+
+    const errorColor = (target: string) => {
+        if(ErrorMsg[0] === target) {return true}
     };
 
     return (
@@ -52,6 +68,8 @@ const SignUp = () => {
                             label="이메일"
                             autoComplete="email"
                             autoFocus
+                            error={errorColor('email')}
+                            helperText={errorMsg('email')}
                         />
                         <TextField
                             fullWidth
@@ -59,6 +77,8 @@ const SignUp = () => {
                             name="username"
                             label="닉네임"
                             autoComplete="username"
+                            error={errorColor('username')}
+                            helperText={errorMsg('username')}
                         />
                         <TextField
                             fullWidth
@@ -67,6 +87,8 @@ const SignUp = () => {
                             label="비밀번호"
                             type="password"
                             autoComplete="current-password"
+                            error={errorColor('password')}
+                            helperText={errorMsg('password')}
                         />
                         <TextField
                             fullWidth
@@ -75,6 +97,8 @@ const SignUp = () => {
                             label="비밀번호 확인"
                             type="password"
                             autoComplete="current-password"
+                            error={errorColor('password2')}
+                            helperText={errorMsg('password2')}
                         />
                         <Button
                             type="submit"
