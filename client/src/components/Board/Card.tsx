@@ -88,7 +88,7 @@ const DailyCard = (props: Tprops) => {
             <Divider />
             <CardContent>
                 {dailyData && dailyData.events && 
-                    <Typography variant="body1"> {dailyData?.events[0].description}</Typography>
+                    <Typography variant="body1" sx={{whiteSpace: 'nowrap'}}> {dailyData?.events[0].description}</Typography>
                 }
                 {dailyData && dailyData.events && dailyData.events.length > 1 && 
                     <Typography variant="body2"> 그 외 {dailyData.events.length-1}개...</Typography>
