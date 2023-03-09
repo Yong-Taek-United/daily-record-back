@@ -38,7 +38,7 @@ const DailyBoard = () => {
     );
 
     // 데일리 전체 조회
-    const getDailis = () => {
+    const getDailies = () => {
         if(CurUserData){
             api().get<TServerDailiesData>(`/dailies/getDailies/${CurUserData.id}/${CurYearMonth[0]}/${CurYearMonth[1]}`)
                 .then(res => {
@@ -50,7 +50,7 @@ const DailyBoard = () => {
     };
 
     useEffect(() => {
-        getDailis();
+        getDailies();
     }, [CurUserData, CurYearMonth, EventsData]);
 
     // 연-월-일 합치기
@@ -132,7 +132,7 @@ const DailyBoard = () => {
             </Box>
 
             {/* 데일리 삭제 메세지창 */}
-            <MessagePopover deleteTarget='daily' getTargets={getDailis} />
+            <MessagePopover deleteTarget='daily' getTargets={getDailies} />
         </Box>
     );
 };

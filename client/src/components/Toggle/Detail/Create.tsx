@@ -110,7 +110,6 @@ const CreateEvent = () => {
             let dailyId: number = 0;
             await api().post<TServerDailyData>('/dailies', body)
             .then(res => {
-                getDailis();
                 setCurDaily(res.data.dailyData);
                 dailyId = res.data.dailyData.id;
             }).catch(Error => {
@@ -161,7 +160,7 @@ const CreateEvent = () => {
     useEffect(() => {
         setTimeout(() => {
             getEvents();
-        }, 1);
+        }, 100);
     }, [CurDailyData]);
 
     return (
