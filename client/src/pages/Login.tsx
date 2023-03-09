@@ -53,6 +53,7 @@ const Login = () => {
                             label="이메일"
                             autoComplete="email"
                             autoFocus
+                            error={ErrorMsg ? true : false}
                         />
                         <TextField
                             fullWidth
@@ -61,6 +62,7 @@ const Login = () => {
                             label="비밀번호"
                             type="password"
                             autoComplete="current-password"
+                            error={ErrorMsg ? true : false}
                             helperText={ErrorMsg}
                         />
                         {/* <FormControlLabel
