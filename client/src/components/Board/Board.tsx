@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, Grid, Card } from '@mui/material';
+import { Box, Grid, Card, CardContent } from '@mui/material';
 import dayjs from 'dayjs';
 import * as type from '../../redux/types'
 import { RootState } from '../../redux/reducers/rootReducer';
@@ -79,11 +79,9 @@ const DailyBoard = () => {
     const renderDays = days.map((v, i) => {
         return (
             <Grid item xs={12/7} key={i}>
-                <Box>
-                    <Card elevation={1}>
-                        <Box sx={{color: '#ffffff', fontSize: 15, fontWeight: 800}}>{v}요일</Box>
-                    </Card>
-                </Box>
+                <Card elevation={1}>
+                    <Box className='card_days_form'>{v}요일</Box>
+                </Card>
             </Grid>
         );
     });

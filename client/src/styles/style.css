@@ -48,6 +48,11 @@
     padding-bottom: 12px;
 }
 
+.card_days_form {
+    font-size: 15;
+    font-weight: 800;
+}
+
 .card_header {
     display: flex;
     align-items: center;

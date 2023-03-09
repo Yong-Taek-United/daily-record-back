@@ -107,6 +107,8 @@ const theme = responsiveFontSizes(
                 styleOverrides: {
                     root: ({ ownerState }) => ({
                         ...(ownerState.elevation === 1 ? {
+                            justifyContent: 'center',
+                            alignItems: 'center',
                             backgroundColor: '#1976d2',
                             color: '#fff',
                             height: 40
