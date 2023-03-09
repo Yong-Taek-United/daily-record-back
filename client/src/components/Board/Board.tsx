@@ -94,7 +94,9 @@ const DailyBoard = () => {
         const index = i-firstDayOfMonth+1
         if(index <= 0) {
             return (
-                <DailyCard index={index}/>
+                <Grid item xs={12/7} key={i}>
+                    <DailyCard index={index}/>
+                </Grid>
             );
         }
 
@@ -107,12 +109,16 @@ const DailyBoard = () => {
         if(!daily) {
             const dailyDate = combineDate(CurYearMonth[0], CurYearMonth[1], index);
             return (
-                <DailyCard index={index} dailyDate={dailyDate} />
+                <Grid item xs={12/7} key={i}>
+                    <DailyCard index={index} dailyDate={dailyDate} />
+                </Grid>
             );
         } else {
             const dailyDate = combineDate(daily.year, daily.month, daily.day);
             return (
-                <DailyCard index={index} dailyDate={dailyDate} dailyData={daily} />
+                <Grid item xs={12/7} key={i}>
+                    <DailyCard index={index} dailyDate={dailyDate} dailyData={daily} />
+                </Grid>
             );
         }
     });

@@ -62,14 +62,10 @@ const DailyCard = (props: Tprops) => {
             setCurElement(e.currentTarget);
     };
 
-    // 빈 카드
-    const emptyCard = (
-        <Card>
-        </Card>
-    );
+    // 카드 렌더링
+    const lenderCard = dailyDate ? (
 
-    // 데일리 카드
-    const dailyCard = dailyDate && (
+        // 데일리 카드
         <Card sx={dailyData && {backgroundColor: '#fff'}} onClick={toggleHandler(true, dailyDate)}>
             <Box className='card_header'>
                 {dailyData ? 
@@ -95,12 +91,17 @@ const DailyCard = (props: Tprops) => {
                 }
             </CardContent>
         </Card>
+    ) : (
+
+        // 빈 카드
+        <Card>
+        </Card>
     );
 
     return (
-        <Grid item xs={12/7} key={index}>
-            {!dailyDate ? emptyCard : dailyCard}
-        </Grid>
+        <Box>
+            {lenderCard}
+        </Box>
     );
 };
 
