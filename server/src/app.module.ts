@@ -30,7 +30,7 @@ import { Events } from './entities/events.entity';
           Users, Dailies, Events
       ],
       "synchronize": true,
-      timezone: 'z',
+      // timezone: 'z',
       charset: 'utf8mb4',
     }),
     UsersModule,
