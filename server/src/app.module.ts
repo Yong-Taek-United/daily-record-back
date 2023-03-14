@@ -15,9 +15,9 @@ import { Events } from './entities/events.entity';
   imports: [
     ConfigModule.forRoot({
       envFilePath:
-        process.env.NODE_ENV === 'prod'
-          ? '.env.prod'
-          : '.env.dev',
+        process.env.NODE_ENV === 'production'
+          ? '.env.production'
+          : '.env.development',
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
