@@ -1,7 +1,7 @@
 import Axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 
 export const api = () => {
-    const BASE_URL = 'http://localhost:5000';
+    const BASE_URL = process.env.REACT_APP_API_URL;
 
     const axiosInstance: AxiosInstance = Axios.create({
         baseURL: BASE_URL
