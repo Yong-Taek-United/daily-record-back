@@ -28,13 +28,14 @@ export class DailiesController {
     }
 
     // 데일리 개별 조회(by date)
-    @Get('/byDate/:year/:month/:day')
+    @Get('/byDate/:userId/:year/:month/:day')
     getDailyByDate(
+        @Param('userId') userId: number,
         @Param('year') year: number, 
         @Param('month') month: number, 
         @Param('day') day: number
         ) {
-        return this.dailiesService.getDailyByDate(year, month, day);
+        return this.dailiesService.getDailyByDate(userId, year, month, day);
     }
 
     // 데일리 수정

@@ -31,6 +31,7 @@ const DailyDetail = () => {
 
     const dispatch = useDispatch();
 
+    const {CurUserData} = useSelector((state: RootState) => state.userReducer);
     const {CurDailyDate} = useSelector((state: RootState) => state.dailyReducer);
 
     const setCurDaily = useCallback(
@@ -57,8 +58,8 @@ const DailyDetail = () => {
     // 데일리 조회(by date)
     const getDailyByDate = async() => {
         const date = divideDate(CurDailyDate);
-        if(date) {
-            await api().get<TServerDailyData>(`/dailies/byDate/${date.year}/${date.month}/${date.day}`)
+        if(date && CurUserData) {
+            await api().get<TServerDailyData>(`/dailies/byDate/${CurUserData.id}/${date.year}/${date.month}/${date.day}`)
             .then(res => {
                 setCurDaily(res.data.dailyData);
             }).catch(Error => {

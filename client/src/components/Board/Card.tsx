@@ -1,6 +1,6 @@
 import { KeyboardEvent, MouseEvent, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { Box, Grid, Card, IconButton, Typography, Divider, CardHeader, CardContent} from '@mui/material';
+import { Box, Card, IconButton, Typography, Divider, CardContent} from '@mui/material';
 import { RemoveCircle, AddCircle } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import * as type from '../../redux/types'
@@ -83,7 +83,7 @@ const DailyCard = (props: Tprops) => {
             </Box>
             <Divider />
             <CardContent>
-                {dailyData && dailyData.events && 
+                {dailyData && dailyData.events && dailyData.events.length > 0 &&
                     <Typography variant="body1" sx={{whiteSpace: 'nowrap'}}>{dailyData.events[0].description}</Typography>
                 }
                 {dailyData && dailyData.events && dailyData.events.length > 1 && 

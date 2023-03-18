@@ -5,7 +5,7 @@ import { RootState } from '../../redux/reducers/rootReducer';
 import * as type from '../../redux/types'
 import { api } from '../../utils/authInstance';
 import { useDispatch } from 'react-redux';
-import { setEventsData } from '../../redux/actions/eventAction';
+import { setEventId, setEventsData } from '../../redux/actions/eventAction';
 import { OpenDailyToggle, setDailyData } from '../../redux/actions/dailyAction';
 import MessagePopover from '../PopOver';
 import DailyDetail from './Detail/Detail';
@@ -36,6 +36,10 @@ const DailyToggle = () => {
         (eventsData: type.eventData[]) => dispatch(setEventsData(eventsData)),
         [dispatch]
     );
+    const setTargetEventId = useCallback(
+        (eventId: type.eventId) => dispatch(setEventId(eventId)),
+        [dispatch]
+    );
 
     // 데일리 토글 열기/닫기
     const toggleHandler = (open: boolean) => 
@@ -49,6 +53,7 @@ const DailyToggle = () => {
             if (ToggleValue) {
                 setCurDaily(null);
                 setEvents([]);
+                setTargetEventId(null)
                 // updateDaily();
             }
             setToggleValue(open);

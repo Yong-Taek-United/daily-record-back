@@ -8,7 +8,7 @@ import '../../../styles/style.css';
 import { api } from '../../../utils/authInstance';
 import { useDispatch } from 'react-redux';
 import { setEventsData } from '../../../redux/actions/eventAction';
-import { setDailiesData, setDailyData } from '../../../redux/actions/dailyAction';
+import { setDailyData } from '../../../redux/actions/dailyAction';
 
 type TServerEventsData = {
     Success: boolean,
@@ -16,20 +16,6 @@ type TServerEventsData = {
         id: number;
         description: string;
     }[]
-};
-
-type TServerDailiesData = {
-    Success: boolean,
-    dailyData: {
-        id: number;
-        year: number;
-        month: number;
-        day: number;
-        events: {
-            id: number;
-            description: string;
-        }[] | null
-    }[];
 };
 
 type TServerDailyData = {
@@ -51,14 +37,10 @@ const CreateEvent = () => {
     const dispatch = useDispatch();
 
     const {CurUserData} = useSelector((state: RootState) => state.userReducer);
-    const {CurDailyDate, CurDailyData, CurYearMonth} = useSelector((state: RootState) => state.dailyReducer);
+    const {CurDailyDate, CurDailyData} = useSelector((state: RootState) => state.dailyReducer);
 
     const setCurDaily = useCallback(
         (daily: type.dailyData) => dispatch(setDailyData(daily)),
-        [dispatch]
-    );
-    const setDailies = useCallback(
-        (dailiesData: type.dailyData[]) => dispatch(setDailiesData(dailiesData)),
         [dispatch]
     );
     const setEvents = useCallback(
@@ -82,18 +64,6 @@ const CreateEvent = () => {
                 day: Number(data.format('DD'))
             };
         return date;
-        }
-    };
-
-    // 데일리 전체 조회
-    const getDailis = async() => {
-        if(CurUserData){
-            await api().get<TServerDailiesData>(`/dailies/getDailies/${CurUserData.id}/${CurYearMonth[0]}/${CurYearMonth[1]}`)
-            .then(res => {
-                setDailies(res.data.dailyData);
-            }).catch(Error => {
-                console.log(Error);
-            });
         }
     };
 
@@ -138,7 +108,6 @@ const CreateEvent = () => {
         if(!CurUserData || !data.get('eventCreateText')) {
             return;
         }
-        
         let temporaryId = CurDailyData?.id
         if(!CurDailyData) {
             temporaryId= await createDaily();
