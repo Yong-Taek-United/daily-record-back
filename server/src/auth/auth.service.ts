@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { Profile } from 'passport';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,19 @@ export class AuthService {
       }
     }
     return null;
+  }
+
+  async validateGoodleUser(userData: any): Promise<any> {
+    const user = await this.usersService.getUser(userData.email);
+    if(user !== null) {
+      let isOauth = false;
+      if (user.oauth === 'google') {
+        isOauth = true;
+      }
+      const { password, ...result } = user;
+      return {isOauth: isOauth, userData: result};
+    }
+    return null
   }
 
   async login(user: any) {

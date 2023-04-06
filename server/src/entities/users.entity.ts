@@ -15,14 +15,17 @@ export class Users{
     @PrimaryGeneratedColumn({type:'int',name:'id'})
     id:number;
 
-    @Column('varchar',{name: 'username', length: 45})
-    username:string;
+    @Column('varchar', {name: 'username', length: 45})
+    username: string;
 
     @Column('varchar', {name: 'email', unique: true, length: 45})
-    email:string;  
+    email: string;  
     
     @Column('varchar', {name: 'password', length: 100})
-    password:string;  
+    password: string;
+
+    @Column('varchar', {name: 'oauth', length: 20, default: 'local'})
+    oauth: string;
 
     @CreateDateColumn()
     createdAt: Date;
