@@ -28,6 +28,7 @@ export class AuthController {
 	@UseGuards(GoogleAuthGuard)
     @Get('google')
 	async googleAuth() {
+        console.log('시바것')
 	  // redirect google login page
 	}
 
@@ -36,5 +37,6 @@ export class AuthController {
     @Get('google/callback')
     async googleAuthCallback(@Req() req, @Res() res) {
         console.log(req.user)
+        return req.user
     }
 }

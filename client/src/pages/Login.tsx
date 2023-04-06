@@ -1,6 +1,6 @@
 import { FormEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Container, Grid, TextField, Typography, Link, Paper } from '@mui/material';
+import { Box, Button, Container, TextField, Typography, Link, Paper } from '@mui/material';
 import '../styles/style.css'
 import { api } from '../utils/authInstance';
 
@@ -32,6 +32,21 @@ const Login = () => {
         });
     };
 
+    // 구글 로그인
+    const onSubmitGoogleHandler = async(e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        await api().get(`/auth/google`, { withCredentials: true })
+        .then(res => {
+            console.log('success')
+            // if(res.data.access_token) {
+                // localStorage.setItem('access_token', res.data.access_token);
+                // navigate('/');
+            // }
+        }).catch(err => {
+            console.log(err.response.data)
+        });
+    };
+
     return (
         <Container maxWidth='md'>
             <Box className='sign_area'>
@@ -44,7 +59,6 @@ const Login = () => {
                         component="form" 
                         onSubmit={onSubmitHandler} 
                         noValidate 
-                        
                     >
                         <TextField
                             fullWidth
@@ -77,9 +91,26 @@ const Login = () => {
                         >
                             로그인
                         </Button>
+                        
                         <Link href="/signup" variant="body2">
                             회원가입하기
                         </Link>
+                    </Box>
+                    <Box
+                        className='sign_form_box'
+                        component="form" 
+                        onSubmit={onSubmitGoogleHandler} 
+                        noValidate 
+                    >
+                        <Button
+                            className='sign_button'
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color='error'
+                        >
+                            Google
+                        </Button>
                     </Box>
                 </Paper>
             </Box>
