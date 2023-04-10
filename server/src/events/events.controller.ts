@@ -34,4 +34,10 @@ export class EventsController {
     delete(@Param('id') eventId: number) {
         return this.eventsService.delete(eventId);
     }
+
+    // 이벤트 체크
+    @Patch('/check/:eventId')
+    check(@Param('eventId') eventId: number) {
+        return this.eventsService.check(eventId);
+    }
 }
