@@ -40,4 +40,14 @@ export class EventsController {
     check(@Param('eventId') eventId: number) {
         return this.eventsService.check(eventId);
     }
+
+    // 이벤트 체크 분류 조회
+    @Post('/check/:userId/:dailyId')
+    showCheckList(
+        @Param('userId') userId: number, 
+        @Param('dailyId') dailyId: number, 
+        @Body() eventData
+    ) {
+        return this.eventsService.showCheckList(userId, dailyId, eventData);
+    }
 }

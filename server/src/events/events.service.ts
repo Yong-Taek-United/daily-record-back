@@ -51,4 +51,16 @@ export class EventsService {
         await this.eventsRepository.save(event);
         return {Success: true, statusCode: 201, message: '이벤트 체크가 완료되었습니다.', value: checkValue};
     }
+
+    // 이벤트 전체 조회
+    async showCheckList(userId:number, dailyId:number, eventData) {
+        const events = await this.eventsRepository.find({
+            where: {
+                users: {id: userId}, 
+                dailies: {id: dailyId}, 
+                isChecked: eventData.checkValue 
+            }
+        });
+        return {Success: true, statusCode: 201, message: '이벤트 체크 분류 조회가 완료되었습니다.', events: events};
+    }
 }
