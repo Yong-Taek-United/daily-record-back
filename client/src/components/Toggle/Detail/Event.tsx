@@ -44,7 +44,6 @@ const Event = (props: Tprops) => {
         [dispatch]
     );
 
-    const [EventUpdateText, setEventUpdateText] = useState<string>('');
     const [Checked, setChecked] = useState<boolean>(eventData.isChecked);
 
     // 팝오버 열기
@@ -75,12 +74,12 @@ const Event = (props: Tprops) => {
     };
     
     // 이벤트 수정
-    const updateEvent = async() => {
+    const updateEvent = async(value: string) => {
         if(!CurUserData || !eventId) {
             return;
         }
         let body = {
-            description: EventUpdateText
+            description: value
         }
         await api().patch(`/events/${eventId}`, body)
         .then(res => {
@@ -104,8 +103,7 @@ const Event = (props: Tprops) => {
 
     // 이벤트 수정 텍스트 업데이트
     const eventUpdateHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        setEventUpdateText(e.currentTarget.value);
-        updateEvent();
+        updateEvent(e.currentTarget.value);
     };
 
     const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
