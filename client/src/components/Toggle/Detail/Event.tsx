@@ -1,18 +1,16 @@
-import { ChangeEvent, MouseEvent, useCallback, useEffect, useState } from 'react';
-import { Box, IconButton, TextField, List, Button, Checkbox } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { ChangeEvent, MouseEvent, useCallback, useState } from 'react';
+import { IconButton, TextField, Checkbox, ListItem } from '@mui/material';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../redux/reducers/rootReducer';
 import * as type from '../../../redux/types';
 import '../../../styles/style.css';
 import { api } from '../../../utils/authInstance';
-import { useDispatch } from 'react-redux';
+import { setTargetElement } from '../../../redux/actions/dailyAction';
 import { setEventId, setEventsData } from '../../../redux/actions/eventAction';
 import { RemoveCircle } from '@mui/icons-material';
-import { setTargetElement } from '../../../redux/actions/dailyAction';
 
 type Tprops = {
-    index: number;
-    eventId: string;
+    eventId: number;
     eventData: type.eventData;
 }
 
@@ -26,13 +24,12 @@ type TServerEventsData = {
 };
 
 const Event = (props: Tprops) => {
-    const {eventId, index, eventData} = props
+    const {eventId, eventData} = props
 
     const dispatch = useDispatch();
 
     const {CurUserData} = useSelector((state: RootState) => state.userReducer);
     const {CurDailyData} = useSelector((state: RootState) => state.dailyReducer);
-    const {TargetEventId} = useSelector((state: RootState) => state.eventReducer);
 
     const setTargetEventId = useCallback(
         (eventId: type.eventId) => dispatch(setEventId(eventId)),
@@ -50,13 +47,6 @@ const Event = (props: Tprops) => {
     const [EventUpdateText, setEventUpdateText] = useState<string>('');
     const [Checked, setChecked] = useState<boolean>(eventData.isChecked);
 
-    // 이벤트 수정 텍스트 업데이트
-    const onEventUpdateHandle = (e: ChangeEvent<HTMLInputElement>) => {
-        setEventUpdateText(e.currentTarget.value)
-        let temporaryId = Number(e.currentTarget.name)
-        setTargetEventId(temporaryId)
-    };
-
     // 팝오버 열기
     const popOverOpenHandler = (eventId: number) => 
         (e: MouseEvent<HTMLButtonElement>) => {
@@ -70,7 +60,7 @@ const Event = (props: Tprops) => {
     const onEventCheckHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setChecked(e.target.checked);
         changeEventCheck();
-      };
+    };
 
     // 이벤트 전체 조회
     const getEvents = async() => {
@@ -86,13 +76,13 @@ const Event = (props: Tprops) => {
     
     // 이벤트 수정
     const updateEvent = async() => {
-        if(!CurUserData || !TargetEventId) {
+        if(!CurUserData || !eventId) {
             return;
         }
         let body = {
             description: EventUpdateText
         }
-        await api().patch(`/events/${TargetEventId}`, body)
+        await api().patch(`/events/${eventId}`, body)
         .then(res => {
         }).catch(Error => {
             console.log(Error);
@@ -112,17 +102,16 @@ const Event = (props: Tprops) => {
         });
     };
 
-    useEffect(() => {
-        setTimeout(() => {
-            updateEvent()
-        }, 100);
-    }, [EventUpdateText]);
+    // 이벤트 수정 텍스트 업데이트
+    const eventUpdateHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        setEventUpdateText(e.currentTarget.value);
+        updateEvent();
+    };
 
     const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
     return (
-        <List
+        <ListItem
             className='eventlist'
-            key={index}
             component="nav"
             aria-label="event-list"
             
@@ -135,12 +124,10 @@ const Event = (props: Tprops) => {
             />
             <TextField
                 sx={{width: 270}}
-                id={eventId}
-                name={eventId}
                 variant="standard"
                 defaultValue={eventData.description}
                 key={eventData.description}
-                onChange={onEventUpdateHandle}
+                onChange={eventUpdateHandler}
             />
             <IconButton
                 aria-label="delete-event-button"
@@ -149,7 +136,7 @@ const Event = (props: Tprops) => {
             >
                 <RemoveCircle color='error'/>
             </IconButton>
-        </List>
+        </ListItem>
     );
 };
 
