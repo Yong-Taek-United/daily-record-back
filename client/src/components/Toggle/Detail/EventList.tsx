@@ -32,7 +32,7 @@ const EventList = () => {
         if(CheckValue === '미완료' && event.isChecked) return
         let temporaryId = String(event.id)
         return (
-            <Event index={i} eventId={temporaryId} eventData={event} checkValue={CheckValue}/>
+            <Event index={i} eventId={temporaryId} eventData={event} />
         );
     });
     
