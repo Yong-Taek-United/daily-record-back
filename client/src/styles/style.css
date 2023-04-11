@@ -64,25 +64,45 @@
     flex-direction: column;
     justify-content: center;
     width: 400px;
-    margin-top: 5px;
 }
 
 .toggle_detail_box {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
+    height: 100vh;
+    padding-top: 20px;
+    padding-bottom: 40px;
 }
 
 .toggle_eventlist_box {
-    margin-top: 2px;
-    height: 60vh;
+    width: 100%;
+    height: 100%;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+.checked_selector_box {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 8px;
+    margin-right: 10px;
+    padding: 5px;
+}
+
+.eventlist_box {
+    width: 100%;
+    height: 92%;
+    overflow: auto;
 }
 
 .eventlist {
     display: flex;
     align-items: center;
     margin-top: 4px;
+    
 }
 
 .toggle_create_box {
@@ -90,6 +110,7 @@
     justify-content: center;
     align-items: center;
 }
+
 
 /* -------------- PopOver -------------- */
 .popover_message {

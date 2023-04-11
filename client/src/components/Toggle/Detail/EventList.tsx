@@ -1,5 +1,5 @@
 import { MouseEvent, useCallback, useState } from 'react';
-import { Box, Button, List } from '@mui/material';
+import { Box, Button, ButtonGroup, Divider, List } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../redux/reducers/rootReducer';
 import * as type from '../../../redux/types';
@@ -54,13 +54,13 @@ const EventList = () => {
     // 이벤트 체크 분류 조회 버튼
     const seletor = ['전체', '완료', '미완료'];
     const checkValueSelector = (
-        <Box>
+        <ButtonGroup variant="text" aria-label="text button group" color='info' sx={{height: 16}}>
             {seletor.map((value, i) => 
-                <Button key={i} variant={"contained"} onClick={checkValueHandler(value)}>
+                <Button key={i} onClick={checkValueHandler(value)} size='small'>
                     {value}
                 </Button>
             )}
-        </Box>
+        </ButtonGroup>
     );
     
     // 내용 이벤트
@@ -76,8 +76,13 @@ const EventList = () => {
     
     return (
         <Box className='toggle_eventlist_box'>
-            {checkValueSelector}
-            {EventsData && renderEvent}
+            <Box className='checked_selector_box'>
+                {checkValueSelector}
+            </Box>
+            <Divider />
+            <Box className='eventlist_box'>
+                {EventsData && renderEvent}
+            </Box>
         </Box>
     );
 };
