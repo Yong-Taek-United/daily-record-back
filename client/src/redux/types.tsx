@@ -65,6 +65,7 @@ export type eventId = number | null;
 export type eventData = {
     id: number;
     description: string;
+    isChecked: boolean;
 }
 
 export type EVENTEDUCERTYPE = {
