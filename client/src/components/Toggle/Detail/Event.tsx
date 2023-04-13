@@ -19,7 +19,7 @@ type TServerEventsData = {
     Success: boolean,
     eventData: {
         id: number;
-        description: string;
+        title: string;
         isChecked: boolean;
     }[]
 };
@@ -139,8 +139,8 @@ const Event = (props: Tprops) => {
                     sx={{maxWidth: 271}}
                     fullWidth
                     variant="standard"
-                    defaultValue={eventData.description}
-                    key={eventData.description}
+                    defaultValue={eventData.title}
+                    key={eventData.title}
                     onChange={eventUpdateHandler}
                     onClick={eventDetailOpenHandler}
                     

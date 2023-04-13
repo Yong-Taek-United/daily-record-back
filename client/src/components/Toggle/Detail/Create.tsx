@@ -14,7 +14,7 @@ type TServerEventsData = {
     Success: boolean,
     eventData: {
         id: number;
-        description: string;
+        title: string;
         isChecked: boolean;
     }[]
 };
@@ -28,7 +28,7 @@ type TServerDailyData = {
         day: number;
         events: {
             id: number;
-            description: string;
+            title: string;
         }[] | null
     };
 };
@@ -116,7 +116,7 @@ const CreateEvent = () => {
         let body = {
             users: CurUserData.id,
             dailies: temporaryId,
-            description: data.get('eventCreateText')
+            title: data.get('eventCreateText')
         };
         await api().post('/events', body)
         .then(res => {

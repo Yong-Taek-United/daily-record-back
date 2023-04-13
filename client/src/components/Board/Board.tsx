@@ -20,7 +20,7 @@ type TServerDailiesData = {
         day: number;
         events: {
             id: number;
-            description: string;
+            title: string;
         }[];
     }[];
 };

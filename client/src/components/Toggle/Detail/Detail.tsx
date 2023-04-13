@@ -22,7 +22,7 @@ type TServerDailyData = {
         day: number;
         events: {
             id: number;
-            description: string;
+            title: string;
         }[] | null
     };
 };

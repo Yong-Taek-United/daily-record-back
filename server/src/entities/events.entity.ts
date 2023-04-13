@@ -15,8 +15,11 @@ export class Events{
     @PrimaryGeneratedColumn({type:'int',name:'id'})
     id:number;
 
-    @Column('varchar',{name: 'description', length: 200})
-    description:string;
+    @Column('varchar',{name: 'title', length: 100})
+    title:string;
+
+    @Column('varchar',{name: 'description', length: 300, default: null})
+    description:string | null;
 
     @CreateDateColumn()
     createdAt: Date;

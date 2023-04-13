@@ -2,7 +2,6 @@ import { setUserData } from './actions/userAction';
 import { OpenDailyToggle, setDailyDate, setDailyData, setDailiesData, setDailyId, setTargetElement, setYearMonth} from './actions/dailyAction';
 import { setEventId, setEventsData } from './actions/eventAction';
 import { Dayjs } from 'dayjs';
-import { MouseEvent } from 'react';
 
 // User
 export type userData = {
@@ -35,7 +34,7 @@ export type dailyData = {
     day: number;
     events: {
         id: number;
-        description: string;
+        title: string;
     }[] | null
 } | null;
 
@@ -64,7 +63,7 @@ export type eventId = number | null;
 
 export type eventData = {
     id: number;
-    description: string;
+    title: string;
     isChecked: boolean;
 }
 
