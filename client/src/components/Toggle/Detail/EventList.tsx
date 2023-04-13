@@ -1,5 +1,5 @@
 import { MouseEvent, useCallback, useState } from 'react';
-import { Box, Button, ButtonGroup, Divider, List } from '@mui/material';
+import { Box, Button, ButtonGroup, Divider, List, Tab, Tabs } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../redux/reducers/rootReducer';
 import * as type from '../../../redux/types';
@@ -30,13 +30,19 @@ const EventList = () => {
         [dispatch]
     );
 
-    const [CheckValue, setCheckValue] = useState<string>('전체');
+    const [CheckValue, setCheckValue] = useState<number>(0);
 
     // 이벤트 체크 분류 조회 핸들러
-    const checkValueHandler = (value: string) =>
-        (e: MouseEvent<HTMLButtonElement>) => {
-            setCheckValue(value);
-            getEvents();
+    // const checkValueHandler = (value: string) =>
+    //     (e: MouseEvent<HTMLButtonElement>) => {
+    //         setCheckValue(value);
+    //         getEvents();
+    // };
+
+    const checkValueHandler = (e: React.SyntheticEvent, newValue: number) => {
+        console.log(newValue)
+        setCheckValue(newValue);
+        getEvents();
     };
 
     // 이벤트 전체 조회
@@ -52,21 +58,30 @@ const EventList = () => {
     };
 
     // 이벤트 체크 분류 조회 버튼
-    const seletor = ['전체', '완료', '미완료'];
+    // const seletor = ['전체', '완료', '미완료'];
+    // const checkValueSelector = (
+    //     <ButtonGroup variant="text" aria-label="text button group" color='info' sx={{height: 16}}>
+    //         {seletor.map((value, i) => 
+    //             <Button key={i} onClick={checkValueHandler(value)} size='small'>
+    //                 {value}
+    //             </Button>
+    //         )}
+    //     </ButtonGroup>
+    // );
+
+    const seletor = ['전체', '완료', '미완료']; // 0: 전체, 1: 완료, 2: 미완료
     const checkValueSelector = (
-        <ButtonGroup variant="text" aria-label="text button group" color='info' sx={{height: 16}}>
+        <Tabs value={CheckValue} onChange={checkValueHandler} aria-label="basic tabs example" color='info' sx={{padding: 1}}>
             {seletor.map((value, i) => 
-                <Button key={i} onClick={checkValueHandler(value)} size='small'>
-                    {value}
-                </Button>
+                <Tab key={i} label={value} sx={{minWidth: 50, minHeight: 5, padding: 1, fontSize: 12.5}}/>
             )}
-        </ButtonGroup>
+        </Tabs>
     );
     
     // 내용 이벤트
     const renderEvent = EventsData.map((event, i) => {
-        if(CheckValue === '완료' && !event.isChecked) return
-        if(CheckValue === '미완료' && event.isChecked) return
+        if(CheckValue === 1 && !event.isChecked) return
+        if(CheckValue === 2 && event.isChecked) return
         return (
             <List key={i}>
                 <Event eventId={event.id} eventData={event} />
