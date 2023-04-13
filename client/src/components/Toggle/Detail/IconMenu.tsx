@@ -5,7 +5,7 @@ import * as type from '../../../redux/types';
 import '../../../styles/style.css';
 import { setTargetElement } from '../../../redux/actions/dailyAction';
 import { setEventId } from '../../../redux/actions/eventAction';
-import { RemoveCircle, NextPlan } from '@mui/icons-material';
+import { RemoveCircle, NextPlan, KeyboardDoubleArrowDown } from '@mui/icons-material';
 
 type Tprops = {
     eventId: number;
@@ -36,6 +36,7 @@ const IconMenu = (props: Tprops) => {
 
     return (
         <Box className='event_iconmenu_box'>
+            
             <IconButton
                 aria-label="delete-event-button"
             >

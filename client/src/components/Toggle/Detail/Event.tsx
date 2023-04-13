@@ -1,5 +1,6 @@
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
-import { TextField, Checkbox, ListItem } from '@mui/material';
+import { TextField, Checkbox, ListItem, Box, IconButton } from '@mui/material';
+import { KeyboardDoubleArrowUp } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../redux/reducers/rootReducer';
 import * as type from '../../../redux/types';
@@ -7,6 +8,7 @@ import '../../../styles/style.css';
 import { api } from '../../../utils/authInstance';
 import { setEventsData } from '../../../redux/actions/eventAction';
 import IconMenu from './IconMenu';
+import EventDetail from './EventDetail';
 
 type Tprops = {
     eventId: number;
@@ -37,6 +39,7 @@ const Event = (props: Tprops) => {
 
     const [Checked, setChecked] = useState<boolean>(eventData.isChecked);
     const [IconMenuOpened, setIconMenuOpened] = useState<null | HTMLElement>(null);
+    const [EventDetailOpened, setEventDetailOpened] = useState<boolean>(false);
 
     // 이벤트 서브 메뉴 열기
     const iconMenuOpenHandler = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -49,7 +52,15 @@ const Event = (props: Tprops) => {
             return;
         }
         setIconMenuOpened(null);
-    };    
+    };
+
+    const eventDetailOpenHandler = () => {
+        setEventDetailOpened(true);
+    };
+    
+    const eventDetailCloseHandler = () => {
+        setEventDetailOpened(false);
+    };
 
     // 이벤트 체크
     const onEventCheckHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -110,28 +121,34 @@ const Event = (props: Tprops) => {
     return (
         <ListItem
             className='eventlist'
-            component="nav"
+            component="div"
             aria-label="event-list"
             onMouseEnter={iconMenuOpenHandler}
             onMouseLeave={iconMenuCloseHandler}
         >
-            <Checkbox 
-                {...label} 
-                checked={Checked} 
-                color="success" 
-                onChange={onEventCheckHandler}
-                
-            />
-            <TextField
-                sx={{width: 310}}
-                variant="standard"
-                defaultValue={eventData.description}
-                key={eventData.description}
-                onChange={eventUpdateHandler}
-                
-            />
-            {Boolean(IconMenuOpened) && 
-                <IconMenu eventId={eventId} />
+            <Box className='event_title_box'>
+                <Checkbox 
+                    {...label} 
+                    checked={Checked} 
+                    color="success" 
+                    onChange={onEventCheckHandler}
+                    
+                />
+                <TextField
+                    fullWidth
+                    variant="standard"
+                    defaultValue={eventData.description}
+                    key={eventData.description}
+                    onChange={eventUpdateHandler}
+                    onClick={eventDetailOpenHandler}
+                    
+                />
+                {Boolean(IconMenuOpened) && 
+                    <IconMenu eventId={eventId} />
+                }
+            </Box>
+            {EventDetailOpened &&
+                <EventDetail eventDetailCloseHandler={eventDetailCloseHandler}/>
             }
         </ListItem>
     );
