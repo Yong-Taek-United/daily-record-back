@@ -79,6 +79,7 @@ const EventList = () => {
             <Divider />
             <Box className='eventlist_box'>
                 {EventsData && renderEvent}
+                <Box sx={{mb: 8}}></Box>
             </Box>
         </Box>
     );

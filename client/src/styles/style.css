@@ -96,6 +96,7 @@
     width: 100%;
     height: 92%;
     overflow: auto;
+    margin-top: 20px;
 }
 
 .event_iconmenu_box {
