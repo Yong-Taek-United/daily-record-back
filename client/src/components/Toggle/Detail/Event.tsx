@@ -1,13 +1,12 @@
-import { ChangeEvent, MouseEvent, useCallback, useState } from 'react';
-import { IconButton, TextField, Checkbox, ListItem } from '@mui/material';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { TextField, Checkbox, ListItem } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../redux/reducers/rootReducer';
 import * as type from '../../../redux/types';
 import '../../../styles/style.css';
 import { api } from '../../../utils/authInstance';
-import { setTargetElement } from '../../../redux/actions/dailyAction';
-import { setEventId, setEventsData } from '../../../redux/actions/eventAction';
-import { RemoveCircle } from '@mui/icons-material';
+import { setEventsData } from '../../../redux/actions/eventAction';
+import IconMenu from './IconMenu';
 
 type Tprops = {
     eventId: number;
@@ -29,31 +28,28 @@ const Event = (props: Tprops) => {
     const dispatch = useDispatch();
 
     const {CurUserData} = useSelector((state: RootState) => state.userReducer);
-    const {CurDailyData} = useSelector((state: RootState) => state.dailyReducer);
-
-    const setTargetEventId = useCallback(
-        (eventId: type.eventId) => dispatch(setEventId(eventId)),
-        [dispatch]
-    );
-    const setCurElement = useCallback(
-        (targetElement: type.targetElement) => dispatch(setTargetElement(targetElement)),
-        [dispatch]
-    );
+    const {CurDailyData, TargetElement} = useSelector((state: RootState) => state.dailyReducer);
+    
     const setEvents = useCallback(
         (eventsData: type.eventData[]) => dispatch(setEventsData(eventsData)),
         [dispatch]
     );
 
     const [Checked, setChecked] = useState<boolean>(eventData.isChecked);
+    const [IconMenuOpened, setIconMenuOpened] = useState<null | HTMLElement>(null);
 
-    // 팝오버 열기
-    const popOverOpenHandler = (eventId: number) => 
-        (e: MouseEvent<HTMLButtonElement>) => {
-            if(eventId) {
-                setTargetEventId(eventId);
-            }
-            setCurElement(e.currentTarget);
+    // 이벤트 서브 메뉴 열기
+    const iconMenuOpenHandler = (e: React.MouseEvent<HTMLDivElement>) => {
+        setIconMenuOpened(e.currentTarget);
     };
+    
+    // 이벤트 서브 메뉴 닫기
+    const iconMenuCloseHandler = () => {
+        if(IconMenuOpened && TargetElement) {
+            return;
+        }
+        setIconMenuOpened(null);
+    };    
 
     // 이벤트 체크
     const onEventCheckHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -106,34 +102,37 @@ const Event = (props: Tprops) => {
         updateEvent(e.currentTarget.value);
     };
 
+    useEffect(() => {
+        iconMenuCloseHandler();
+    }, [TargetElement])
+    
     const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
     return (
         <ListItem
             className='eventlist'
             component="nav"
             aria-label="event-list"
-            
+            onMouseEnter={iconMenuOpenHandler}
+            onMouseLeave={iconMenuCloseHandler}
         >
             <Checkbox 
                 {...label} 
                 checked={Checked} 
                 color="success" 
                 onChange={onEventCheckHandler}
+                
             />
             <TextField
-                sx={{width: 270}}
+                sx={{width: 310}}
                 variant="standard"
                 defaultValue={eventData.description}
                 key={eventData.description}
                 onChange={eventUpdateHandler}
+                
             />
-            <IconButton
-                aria-label="delete-event-button"
-                sx={{ ml: 2}}
-                onClick={popOverOpenHandler(eventData.id)}
-            >
-                <RemoveCircle color='error'/>
-            </IconButton>
+            {Boolean(IconMenuOpened) && 
+                <IconMenu eventId={eventId} />
+            }
         </ListItem>
     );
 };

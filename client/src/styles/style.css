@@ -101,8 +101,13 @@
 .eventlist {
     display: flex;
     align-items: center;
-    margin-top: 4px;
-    
+    margin-top: 4px; 
+}
+
+.event_iconmenu_box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .toggle_create_box {
