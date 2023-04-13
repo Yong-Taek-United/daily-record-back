@@ -13,6 +13,7 @@ type TServerEventsData = {
     eventData: {
         id: number;
         title: string;
+        description: string | null;
         isChecked: boolean;
     }[]
 };

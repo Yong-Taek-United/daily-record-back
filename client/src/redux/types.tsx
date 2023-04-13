@@ -64,6 +64,7 @@ export type eventId = number | null;
 export type eventData = {
     id: number;
     title: string;
+    description: string | null;
     isChecked: boolean;
 }
 

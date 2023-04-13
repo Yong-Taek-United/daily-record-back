@@ -20,6 +20,7 @@ type TServerEventsData = {
     eventData: {
         id: number;
         title: string;
+        description: string | null;
         isChecked: boolean;
     }[]
 };
@@ -55,12 +56,17 @@ const Event = (props: Tprops) => {
     };
 
     const eventDetailOpenHandler = () => {
-        setEventDetailOpened(true);
+        setEventDetailOpened(!EventDetailOpened);
+        if(EventDetailOpened) {
+            getEvents();
+        }
+
     };
     
     const eventDetailCloseHandler = () => {
         setEventDetailOpened(false);
         iconMenuCloseHandler();
+        getEvents();
     };
 
     // 이벤트 체크
@@ -82,12 +88,12 @@ const Event = (props: Tprops) => {
     };
     
     // 이벤트 수정
-    const updateEvent = async(value: string) => {
+    const updateEventTitle = async(value: string) => {
         if(!CurUserData || !eventId) {
             return;
         }
         let body = {
-            description: value
+            title: value
         }
         await api().patch(`/events/${eventId}`, body)
         .then(res => {
@@ -111,7 +117,7 @@ const Event = (props: Tprops) => {
 
     // 이벤트 수정 텍스트 업데이트
     const eventUpdateHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        updateEvent(e.currentTarget.value);
+        updateEventTitle(e.currentTarget.value);
     };
 
     useEffect(() => {
@@ -140,7 +146,6 @@ const Event = (props: Tprops) => {
                     fullWidth
                     variant="standard"
                     defaultValue={eventData.title}
-                    key={eventData.title}
                     onChange={eventUpdateHandler}
                     onClick={eventDetailOpenHandler}
                     
@@ -150,7 +155,7 @@ const Event = (props: Tprops) => {
                 }
             </Box>
             {EventDetailOpened &&
-                <EventDetail eventDetailCloseHandler={eventDetailCloseHandler}/>
+                <EventDetail eventId={eventId} eventData={eventData} eventDetailCloseHandler={eventDetailCloseHandler}/>
             }
         </ListItem>
     );
