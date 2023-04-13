@@ -98,12 +98,6 @@
     overflow: auto;
 }
 
-.eventlist {
-    flex-direction: column;
-    margin-top: 4px; 
-    margin-right: 4px; 
-}
-
 .event_iconmenu_box {
     display: flex;
     justify-content: center;
@@ -113,6 +107,7 @@
 .event_title_box {
     display: flex;
     align-items: center;
+    justify-content: center;
     width: 100%;
 }
 

@@ -60,6 +60,7 @@ const Event = (props: Tprops) => {
     
     const eventDetailCloseHandler = () => {
         setEventDetailOpened(false);
+        iconMenuCloseHandler();
     };
 
     // 이벤트 체크
@@ -120,7 +121,7 @@ const Event = (props: Tprops) => {
     const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
     return (
         <ListItem
-            className='eventlist'
+            sx={{pt:0, pb: 0, flexDirection: 'column'}}
             component="div"
             aria-label="event-list"
             onMouseEnter={iconMenuOpenHandler}
@@ -135,6 +136,7 @@ const Event = (props: Tprops) => {
                     
                 />
                 <TextField
+                    sx={{maxWidth: 271}}
                     fullWidth
                     variant="standard"
                     defaultValue={eventData.description}

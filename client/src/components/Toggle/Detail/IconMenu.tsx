@@ -38,11 +38,13 @@ const IconMenu = (props: Tprops) => {
         <Box className='event_iconmenu_box'>
             
             <IconButton
+                sx={{m:0, p:0.2}}
                 aria-label="delete-event-button"
             >
                 <NextPlan color='secondary' />
             </IconButton>
             <IconButton
+                sx={{m:0, p:0.2}}
                 aria-label="delete-event-button"
                 onClick={popOverOpenHandler(eventId)}
             >
