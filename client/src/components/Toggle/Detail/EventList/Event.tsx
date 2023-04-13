@@ -1,12 +1,11 @@
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
-import { TextField, Checkbox, ListItem, Box, IconButton } from '@mui/material';
-import { KeyboardDoubleArrowUp } from '@mui/icons-material';
+import { TextField, Checkbox, ListItem, Box } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../../redux/reducers/rootReducer';
-import * as type from '../../../redux/types';
-import '../../../styles/style.css';
-import { api } from '../../../utils/authInstance';
-import { setEventsData } from '../../../redux/actions/eventAction';
+import { RootState } from '../../../../redux/reducers/rootReducer';
+import * as type from '../../../../redux/types';
+import '../../../../styles/style.css';
+import { api } from '../../../../utils/authInstance';
+import { setEventsData } from '../../../../redux/actions/eventAction';
 import IconMenu from './IconMenu';
 import EventDetail from './EventDetail';
 

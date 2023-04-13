@@ -2,10 +2,10 @@ import { ChangeEvent } from 'react';
 import { TextField, Box, IconButton } from '@mui/material';
 import { KeyboardDoubleArrowUp } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/reducers/rootReducer';
-import * as type from '../../../redux/types';
-import '../../../styles/style.css';
-import { api } from '../../../utils/authInstance';
+import { RootState } from '../../../../redux/reducers/rootReducer';
+import * as type from '../../../../redux/types';
+import '../../../../styles/style.css';
+import { api } from '../../../../utils/authInstance';
 
 type Tprops = {
     eventId: number;

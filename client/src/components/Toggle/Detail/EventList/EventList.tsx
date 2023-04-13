@@ -1,11 +1,11 @@
-import { MouseEvent, useCallback, useState } from 'react';
-import { Box, Button, ButtonGroup, Divider, List, Tab, Tabs } from '@mui/material';
+import { useCallback, useState } from 'react';
+import { Box, Divider, List, Tab, Tabs } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../../redux/reducers/rootReducer';
-import * as type from '../../../redux/types';
-import { setEventsData } from '../../../redux/actions/eventAction';
-import '../../../styles/style.css';
-import { api } from '../../../utils/authInstance';
+import { RootState } from '../../../../redux/reducers/rootReducer';
+import * as type from '../../../../redux/types';
+import { setEventsData } from '../../../../redux/actions/eventAction';
+import '../../../../styles/style.css';
+import { api } from '../../../../utils/authInstance';
 import Event from './Event';
 
 type TServerEventsData = {
@@ -33,13 +33,6 @@ const EventList = () => {
 
     const [CheckValue, setCheckValue] = useState<number>(0);
 
-    // 이벤트 체크 분류 조회 핸들러
-    // const checkValueHandler = (value: string) =>
-    //     (e: MouseEvent<HTMLButtonElement>) => {
-    //         setCheckValue(value);
-    //         getEvents();
-    // };
-
     const checkValueHandler = (e: React.SyntheticEvent, newValue: number) => {
         console.log(newValue)
         setCheckValue(newValue);
@@ -57,18 +50,6 @@ const EventList = () => {
             });
         }
     };
-
-    // 이벤트 체크 분류 조회 버튼
-    // const seletor = ['전체', '완료', '미완료'];
-    // const checkValueSelector = (
-    //     <ButtonGroup variant="text" aria-label="text button group" color='info' sx={{height: 16}}>
-    //         {seletor.map((value, i) => 
-    //             <Button key={i} onClick={checkValueHandler(value)} size='small'>
-    //                 {value}
-    //             </Button>
-    //         )}
-    //     </ButtonGroup>
-    // );
 
     const seletor = ['전체', '완료', '미완료']; // 0: 전체, 1: 완료, 2: 미완료
     const checkValueSelector = (

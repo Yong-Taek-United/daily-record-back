@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux';
 import { setEventsData } from '../../../redux/actions/eventAction';
 import { setDailyData } from '../../../redux/actions/dailyAction';
 import DailyDatePicker from './DatePicker';
-import EventList from './EventList';
+import EventList from './EventList/EventList';
 import CreateEvent from './Create';
 
 type TServerDailyData = {

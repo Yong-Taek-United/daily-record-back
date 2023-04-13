@@ -1,11 +1,11 @@
 import { MouseEvent, useCallback } from 'react';
 import { IconButton, Box } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import * as type from '../../../redux/types';
-import '../../../styles/style.css';
-import { setTargetElement } from '../../../redux/actions/dailyAction';
-import { setEventId } from '../../../redux/actions/eventAction';
-import { RemoveCircle, NextPlan, KeyboardDoubleArrowDown } from '@mui/icons-material';
+import * as type from '../../../../redux/types';
+import '../../../../styles/style.css';
+import { setTargetElement } from '../../../../redux/actions/dailyAction';
+import { setEventId } from '../../../../redux/actions/eventAction';
+import { RemoveCircle, NextPlan } from '@mui/icons-material';
 
 type Tprops = {
     eventId: number;
