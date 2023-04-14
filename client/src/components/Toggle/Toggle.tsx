@@ -7,7 +7,7 @@ import { api } from '../../utils/authInstance';
 import { useDispatch } from 'react-redux';
 import { setEventId, setEventsData } from '../../redux/actions/eventAction';
 import { OpenDailyToggle, setDailyData } from '../../redux/actions/dailyAction';
-import MessagePopover from '../PopOver';
+import MessagePopover from '../Popover';
 import DailyDetail from './Detail/Detail';
 
 type TServerEventsData = {

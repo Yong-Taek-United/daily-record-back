@@ -9,7 +9,7 @@ import '../../styles/style.css'
 import { api } from '../../utils/authInstance';
 import DailySelector from './Selector';
 import DailyCard from './Card';
-import MessagePopover from '../PopOver';
+import MessagePopover from '../Popover';
 
 type TServerDailiesData = {
     Success: boolean,
