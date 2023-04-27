@@ -4,17 +4,17 @@ import { Entity,
     CreateDateColumn, 
     UpdateDateColumn, 
     DeleteDateColumn,
-    ManyToOne
+    ManyToOne,
+    OneToMany
 } from "typeorm";
-import { Dailies } from "./dailies.entity";
 import { Users } from "./users.entity";
 import { Categories } from "./categories.entity";
 import { Plans } from "./plans.entity";
-import { Works } from "./works.entity";
+import { Events } from "./events.entity";
 
 
-@Entity({ schema: 'dairy-record', name: 'events' })
-export class Events{
+@Entity({ schema: 'dairy-record', name: 'works' })
+export class Works{
     @PrimaryGeneratedColumn({type:'int',name:'id'})
     id:number;
 
@@ -33,39 +33,30 @@ export class Events{
     @DeleteDateColumn()
     deletedAt: Date | null;
 
-    @Column({default: false})
-    isChecked: Boolean;
+    @Column({default: true})
+    isActive: Boolean;
 
     @Column({default: false})
-    isDeleted: Boolean;
+    isComplated: Boolean;
+
+    @OneToMany(type => Events, events => events.categories)
+    events: Events[]
     
-    @ManyToOne(type => Users, users => users.events, {
+    @ManyToOne(type => Users, users => users.works, {
         nullable: false, 
         onDelete: 'CASCADE'
     })
     users: Users
 
-    @ManyToOne(type => Dailies, dailies => dailies.events, {
-        nullable: false, 
-        onDelete: 'CASCADE'
-    })
-    dailies: Dailies
-
-    @ManyToOne(type => Categories, categories => categories.events, {
-        nullable: false, 
-        onDelete: 'CASCADE'
+    @ManyToOne(type => Categories, categories => categories.works, {
+        nullable: true, 
+        onDelete: 'SET NULL'
     })
     categories: Categories
 
-    @ManyToOne(type => Plans, plans => plans.events, {
+    @ManyToOne(type => Plans, plans => plans.works, {
         nullable: true, 
-        onDelete: 'CASCADE'
+        onDelete: 'SET NULL'
     })
     plans: Plans
-
-    @ManyToOne(type => Works, works => works.events, {
-        nullable: true, 
-        onDelete: 'CASCADE'
-    })
-    works: Works
 }

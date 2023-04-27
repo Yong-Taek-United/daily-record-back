@@ -10,6 +10,9 @@ import { EventsModule } from './events/events.module';
 import { Users } from './entities/users.entity';
 import { Dailies } from './entities/dailies.entity';
 import { Events } from './entities/events.entity';
+import { Categories } from './entities/categories.entity';
+import { Plans } from './entities/plans.entity';
+import { Works } from './entities/works.entity';
 
 @Module({
   imports: [
@@ -27,7 +30,7 @@ import { Events } from './entities/events.entity';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [
-          Users, Dailies, Events
+          Users, Dailies, Events, Categories, Plans, Works
       ],
       "synchronize": true,
       // timezone: 'z',
