@@ -13,6 +13,7 @@ import { Events } from './entities/events.entity';
 import { Categories } from './entities/categories.entity';
 import { Plans } from './entities/plans.entity';
 import { Works } from './entities/works.entity';
+import { PlansModule } from './plans/plans.module';
 
 @Module({
   imports: [
@@ -39,7 +40,8 @@ import { Works } from './entities/works.entity';
     UsersModule,
     AuthModule,
     DailiesModule,
-    EventsModule
+    EventsModule,
+    PlansModule
   ],
   controllers: [AppController],
   providers: [AppService],
