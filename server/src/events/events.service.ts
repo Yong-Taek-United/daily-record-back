@@ -18,13 +18,22 @@ export class EventsService {
 
     // 이벤트 전체 조회
     async getEvents(userId:number, dailyId:number) {
-        const events = await this.eventsRepository.find({where: { users: {id: userId}, dailies: {id: dailyId} }});
+        const events = await this.eventsRepository.find({
+            relations: ['works'], 
+            where: { 
+                users: {id: userId}, 
+                dailies: {id: dailyId} 
+            }
+        });
         return {Success: true, statusCode: 201, message: '이벤트 전체 조회가 완료되었습니다.', eventData: events};
     }
 
     // 이벤트 개별 조회
     async getEvent(id: number) {
-        const event = await this.eventsRepository.findOne({where: {id}});
+        const event = await this.eventsRepository.findOne({
+            relations: ['works'], 
+            where: {id}
+        });
         return {Success: true, statusCode: 201, message: '이벤트 조회가 완료되었습니다.', eventData: event};
     }
 

@@ -11,9 +11,9 @@ export class WorksService {
         ){}
     
     // 할일 생성
-    async create(workData) {
-        const work = await this.worksRepository.save(workData);
-        return {Success: true, statusCode: 201, message: '할일 생성이 완료되었습니다.', workData: work};
+    async create(workDatas) {
+        workDatas.map(async(workData) => await this.worksRepository.save(workData));
+        return {Success: true, statusCode: 201, message: '할일 생성이 완료되었습니다.'};
     }
 
     // 할일 전체 조회
