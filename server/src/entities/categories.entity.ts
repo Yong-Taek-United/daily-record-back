@@ -15,7 +15,7 @@ export class Categories{
     @Column('varchar',{name: 'name', length: 45})
     name: string;
 
-    @Column('varchar', {name: 'color', unique: true, length: 45})
+    @Column('varchar', {name: 'color', length: 45})
     color: string;  
   
     @Column({default: true})
