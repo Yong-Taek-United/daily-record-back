@@ -14,6 +14,7 @@ import { Categories } from './entities/categories.entity';
 import { Plans } from './entities/plans.entity';
 import { Works } from './entities/works.entity';
 import { PlansModule } from './plans/plans.module';
+import { WorksModule } from './works/works.module';
 
 @Module({
   imports: [
@@ -41,7 +42,8 @@ import { PlansModule } from './plans/plans.module';
     AuthModule,
     DailiesModule,
     EventsModule,
-    PlansModule
+    PlansModule,
+    WorksModule
   ],
   controllers: [AppController],
   providers: [AppService],
