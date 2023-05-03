@@ -38,8 +38,8 @@ export class Dailies{
     isDeleted: Boolean;
 
     @ManyToOne(type => Users, users => users.dailies, {
-        nullable: false, 
-        onDelete: 'CASCADE'
+        nullable: true, 
+        onDelete: 'SET NULL'
     })
     users: Users
 

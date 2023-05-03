@@ -40,32 +40,32 @@ export class Events{
     isDeleted: Boolean;
     
     @ManyToOne(type => Users, users => users.events, {
-        nullable: false, 
-        onDelete: 'CASCADE'
+        nullable: true, 
+        onDelete: 'SET NULL'
     })
     users: Users
 
     @ManyToOne(type => Dailies, dailies => dailies.events, {
-        nullable: false, 
-        onDelete: 'CASCADE'
+        nullable: true, 
+        onDelete: 'SET NULL'
     })
     dailies: Dailies
 
     @ManyToOne(type => Categories, categories => categories.events, {
-        nullable: false, 
-        onDelete: 'CASCADE'
+        nullable: true, 
+        onDelete: 'SET NULL'
     })
     categories: Categories
 
     @ManyToOne(type => Plans, plans => plans.events, {
         nullable: true, 
-        onDelete: 'CASCADE'
+        onDelete: 'SET NULL'
     })
     plans: Plans
 
     @ManyToOne(type => Works, works => works.events, {
         nullable: true, 
-        onDelete: 'CASCADE'
+        onDelete: 'SET NULL'
     })
     works: Works
 }

@@ -51,8 +51,8 @@ export class Plans{
     events: Events[]
     
     @ManyToOne(type => Users, users => users.plans, {
-        nullable: false, 
-        onDelete: 'CASCADE'
+        nullable: true, 
+        onDelete: 'SET NULL'
     })
     users: Users
 }

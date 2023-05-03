@@ -43,8 +43,8 @@ export class Works{
     events: Events[]
     
     @ManyToOne(type => Users, users => users.works, {
-        nullable: false, 
-        onDelete: 'CASCADE'
+        nullable: true, 
+        onDelete: 'SET NULL'
     })
     users: Users
 
@@ -55,8 +55,8 @@ export class Works{
     categories: Categories
 
     @ManyToOne(type => Plans, plans => plans.works, {
-        nullable: false,
-        onDelete: 'CASCADE'
+        nullable: true, 
+        onDelete: 'SET NULL'
     })
     plans: Plans
 }
