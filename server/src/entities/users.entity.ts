@@ -44,12 +44,12 @@ export class Users{
     @OneToMany(type => Dailies, dailies => dailies.users)
     dailies: Dailies[]
 
-    @OneToMany(type => Events, events => events.users)
-    events: Events[]
-
     @OneToMany(type => Plans, plans => plans.users)
     plans: Plans[]
-
+    
     @OneToMany(type => Works, works => works.users)
     works: Works[]
+    
+    @OneToMany(type => Events, events => events.users)
+    events: Events[]
 }

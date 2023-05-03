@@ -44,15 +44,18 @@ export class Plans{
     @Column({default: false})
     isComplated: Boolean;
 
-    @OneToMany(type => Works, works => works.plans)
-    works: Works[]
+    @Column({default: false})
+    isDeleted: Boolean;
 
-    @OneToMany(type => Events, events => events.plans)
-    events: Events[]
-    
     @ManyToOne(type => Users, users => users.plans, {
         nullable: true, 
         onDelete: 'SET NULL'
     })
     users: Users
+    
+    @OneToMany(type => Works, works => works.plans)
+    works: Works[]
+
+    @OneToMany(type => Events, events => events.plans)
+    events: Events[]
 }

@@ -45,17 +45,17 @@ export class Events{
     })
     users: Users
 
+    @ManyToOne(type => Categories, categories => categories.events, {
+        nullable: true,
+        onDelete: 'SET NULL'
+    })
+    categories: Categories
+    
     @ManyToOne(type => Dailies, dailies => dailies.events, {
         nullable: true, 
         onDelete: 'SET NULL'
     })
     dailies: Dailies
-
-    @ManyToOne(type => Categories, categories => categories.events, {
-        nullable: true, 
-        onDelete: 'SET NULL'
-    })
-    categories: Categories
 
     @ManyToOne(type => Plans, plans => plans.events, {
         nullable: true, 

@@ -39,8 +39,8 @@ export class Works{
     @Column({default: false})
     isComplated: Boolean;
 
-    @OneToMany(type => Events, events => events.works)
-    events: Events[]
+    @Column({default: false})
+    isDeleted: Boolean;
     
     @ManyToOne(type => Users, users => users.works, {
         nullable: true, 
@@ -59,4 +59,7 @@ export class Works{
         onDelete: 'SET NULL'
     })
     plans: Plans
+
+    @OneToMany(type => Events, events => events.works)
+    events: Events[]
 }
