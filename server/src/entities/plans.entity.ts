@@ -44,10 +44,10 @@ export class Plans{
     @Column({default: false})
     isComplated: Boolean;
 
-    @OneToMany(type => Works, works => works.users)
+    @OneToMany(type => Works, works => works.plans)
     works: Works[]
 
-    @OneToMany(type => Events, events => events.categories)
+    @OneToMany(type => Events, events => events.plans)
     events: Events[]
     
     @ManyToOne(type => Users, users => users.plans, {
