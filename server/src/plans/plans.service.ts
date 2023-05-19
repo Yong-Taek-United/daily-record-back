@@ -20,7 +20,8 @@ export class PlansService {
     // 계획 전체 조회
     async getPlans(userId: number) {
         const plans = await this.plansRepository.find({
-            relations: ['works'], 
+            relations: {works: true},
+            select: {works: true}, 
             where: {
                 users: {id: userId},
             }
@@ -30,7 +31,11 @@ export class PlansService {
 
     // 계획 개별 조회
     async getPlan(id: number) {
-        const plan = await this.plansRepository.findOne({where: {id}});
+        const plan = await this.plansRepository.findOne({
+            relations: {works: true},
+            select: {works: true}, 
+            where: {id}
+        });
         return {Success: true, statusCode: 201, message: '계획 조회가 완료되었습니다.', planData: plan};
     }
 
