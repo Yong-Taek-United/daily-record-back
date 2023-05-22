@@ -1,9 +1,9 @@
-import { Entity, 
+import { 
+    Entity, 
     PrimaryGeneratedColumn,
     Column, 
     CreateDateColumn, 
     UpdateDateColumn, 
-    DeleteDateColumn,
     OneToMany,
     ManyToOne,
 } from "typeorm";
@@ -14,48 +14,46 @@ import { Events } from "./events.entity";
 
 @Entity({ schema: 'dairy-record', name: 'plans' })
 export class Plans{
-    @PrimaryGeneratedColumn({type:'int',name:'id'})
-    id:number;
+    
+    @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
+    id: number;
 
-    @Column('varchar',{name: 'title', length: 100})
-    title:string;
+    @Column({ type: 'varchar', length: 100 })
+    title: string;
 
-    @Column('varchar',{name: 'description', length: 300, default: null})
-    description:string | null;
+    @Column({ type: 'varchar', length: 300, default: null })
+    description: string | null;
 
-    @Column()
+    @Column({ type: 'date' })
     startedAt: Date;
   
-    @Column()
+    @Column({ type: 'date' })
     finishedAt: Date;
+
+    @Column({ type: 'tinyint', default: true })
+    isActive: Boolean;
+
+    @Column({ type: 'tinyint', default: false })
+    isComplated: Boolean;
+
+    @Column({ type: 'tinyint', default: false })
+    isDeleted: Boolean;
 
     @CreateDateColumn()
     createdAt: Date;
   
     @UpdateDateColumn()
     updatedAt: Date;
-  
-    @DeleteDateColumn()
-    deletedAt: Date | null;
 
-    @Column({default: true})
-    isActive: Boolean;
-
-    @Column({default: false})
-    isComplated: Boolean;
-
-    @Column({default: false})
-    isDeleted: Boolean;
-
-    @ManyToOne(type => Users, users => users.plans, {
-        nullable: true, 
-        onDelete: 'SET NULL'
+    @ManyToOne(() => Users, users => users.plans, {
+        nullable: false, 
+        onDelete: 'CASCADE'
     })
-    users: Users
+    users: Users;
     
-    @OneToMany(type => Works, works => works.plans)
-    works: Works[]
+    @OneToMany(() => Works, works => works.plans)
+    works: Works[];
 
-    @OneToMany(type => Events, events => events.plans)
-    events: Events[]
+    @OneToMany(() => Events, events => events.plans)
+    events: Events[];
 }

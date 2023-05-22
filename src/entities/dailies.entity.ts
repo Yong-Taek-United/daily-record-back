@@ -1,9 +1,9 @@
-import { Entity, 
+import { 
+    Entity, 
     PrimaryGeneratedColumn,
     Column, 
     CreateDateColumn, 
     UpdateDateColumn, 
-    DeleteDateColumn,
     ManyToOne,
     OneToMany
 } from "typeorm";
@@ -13,36 +13,34 @@ import { Users } from "./users.entity";
 
 @Entity({ schema: 'dairy-record', name: 'dailies' })
 export class Dailies{
-    @PrimaryGeneratedColumn({type:'int',name:'id'})
+    
+    @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
     id: number;
 
-    @Column('int',{name: 'year'})
+    @Column({ type: 'int' })
     year: number;
 
-    @Column('int',{name: 'month'})
+    @Column({ type: 'int' })
     month: number;
 
-    @Column('int',{name: 'day'})
+    @Column({ type: 'int' })
     day: number;
+    
+    @Column({ type: 'tinyint', default: false })
+    isDeleted: Boolean;
 
     @CreateDateColumn()
     createdAt: Date;
   
     @UpdateDateColumn()
     updatedAt: Date;
-  
-    @DeleteDateColumn()
-    deletedAt: Date | null;
 
-    @Column({default: false})
-    isDeleted: Boolean;
-
-    @ManyToOne(type => Users, users => users.dailies, {
+    @ManyToOne(() => Users, users => users.dailies, {
         nullable: true, 
         onDelete: 'SET NULL'
     })
-    users: Users
+    users: Users;
 
-    @OneToMany(type => Events, events => events.dailies)
-    events: Events[]
+    @OneToMany(() => Events, events => events.dailies)
+    events: Events[];
 }

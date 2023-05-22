@@ -1,9 +1,9 @@
-import { Entity, 
+import { 
+    Entity, 
     PrimaryGeneratedColumn,
     Column, 
     CreateDateColumn, 
     UpdateDateColumn, 
-    DeleteDateColumn,
     OneToMany
 } from "typeorm";
 import { Dailies } from "./dailies.entity";
@@ -14,42 +14,43 @@ import { Works } from "./works.entity";
 
 @Entity({ schema: 'dairy-record', name: 'users' })
 export class Users{
-    @PrimaryGeneratedColumn({type:'int',name:'id'})
-    id:number;
 
-    @Column('varchar',{name: 'username', length: 45})
-    username:string;
+    @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
+    id: number;
 
-    @Column('varchar', {name: 'email', unique: true, length: 45})
-    email:string;  
+    @Column({ type: 'varchar', length: 50 })
+    username: string;
+
+    @Column({ type: 'varchar', length: 50, unique: true })
+    email: string;  
     
-    @Column('varchar', {name: 'password', length: 100})
-    password:string;  
+    @Column({ type: 'varchar', length: 100 })
+    password: string;  
+
+    @Column({ type: 'tinyint', default: true})
+    isActive: Boolean;
+
+    @Column({ type: 'tinyint', default: false})
+    isAdmin: Boolean;
+
+    @Column({ type: 'tinyint', default: false})
+    isDeleted: Boolean;
 
     @CreateDateColumn()
     createdAt: Date;
   
     @UpdateDateColumn()
     updatedAt: Date;
-  
-    @DeleteDateColumn()
-    deletedAt: Date | null;
 
-    @Column({default: true})
-    isActive: Boolean;
+    @OneToMany(() => Dailies, dailies => dailies.users)
+    dailies: Dailies[];
 
-    @Column({default: false})
-    isAdmin: Boolean;
-
-    @OneToMany(type => Dailies, dailies => dailies.users)
-    dailies: Dailies[]
-
-    @OneToMany(type => Plans, plans => plans.users)
-    plans: Plans[]
+    @OneToMany(() => Plans, plans => plans.users)
+    plans: Plans[];
     
-    @OneToMany(type => Works, works => works.users)
-    works: Works[]
+    @OneToMany(() => Works, works => works.users)
+    works: Works[];
     
-    @OneToMany(type => Events, events => events.users)
-    events: Events[]
+    @OneToMany(() => Events, events => events.users)
+    events: Events[];
 }

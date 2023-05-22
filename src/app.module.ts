@@ -13,6 +13,7 @@ import { Events } from './entities/events.entity';
 import { Categories } from './entities/categories.entity';
 import { Plans } from './entities/plans.entity';
 import { Works } from './entities/works.entity';
+import { Goals } from './entities/goals.entity';
 import { PlansModule } from './plans/plans.module';
 import { WorksModule } from './works/works.module';
 import { CategoriesModule } from './categories/categories.module';
@@ -33,7 +34,7 @@ import { CategoriesModule } from './categories/categories.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [
-          Users, Dailies, Events, Categories, Plans, Works
+          Users, Dailies, Events, Categories, Plans, Works, Goals,
       ],
       "synchronize": true,
       // timezone: 'z',
@@ -45,7 +46,7 @@ import { CategoriesModule } from './categories/categories.module';
     EventsModule,
     PlansModule,
     WorksModule,
-    CategoriesModule
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

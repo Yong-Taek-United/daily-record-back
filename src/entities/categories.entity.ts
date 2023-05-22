@@ -1,4 +1,5 @@
-import { Entity, 
+import { 
+    Entity, 
     PrimaryGeneratedColumn,
     Column,
     OneToMany,
@@ -9,21 +10,22 @@ import { Events } from "./events.entity";
 
 @Entity({ schema: 'dairy-record', name: 'categories' })
 export class Categories{
-    @PrimaryGeneratedColumn({type:'int',name:'id'})
+
+    @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
     id:number;
 
-    @Column('varchar',{name: 'name', length: 45})
+    @Column({ type: 'varchar', length: 100 })
     name: string;
 
-    @Column('varchar', {name: 'color', length: 45})
+    @Column({ type: 'varchar', length: 100 })
     color: string;  
   
-    @Column({default: true})
+    @Column({ type: 'tinyint', default: true })
     isActive: Boolean;
 
-    @OneToMany(type => Works, works => works.categories)
-    works: Works[]
+    @OneToMany(() => Works, works => works.categories)
+    works: Works[];
 
-    @OneToMany(type => Events, events => events.categories)
-    events: Events[]
+    @OneToMany(() => Events, events => events.categories)
+    events: Events[];
 }

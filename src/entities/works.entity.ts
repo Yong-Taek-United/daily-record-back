@@ -1,65 +1,68 @@
-import { Entity, 
+import { 
+    Entity, 
     PrimaryGeneratedColumn,
     Column, 
     CreateDateColumn, 
     UpdateDateColumn, 
-    DeleteDateColumn,
     ManyToOne,
-    OneToMany
+    OneToMany,
+    OneToOne
 } from "typeorm";
 import { Users } from "./users.entity";
 import { Categories } from "./categories.entity";
 import { Plans } from "./plans.entity";
 import { Events } from "./events.entity";
+import { Goals } from "./goals.entity";
 
 
 @Entity({ schema: 'dairy-record', name: 'works' })
 export class Works{
-    @PrimaryGeneratedColumn({type:'int',name:'id'})
-    id:number;
 
-    @Column('varchar',{name: 'title', length: 100})
-    title:string;
+    @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
+    id: number;
 
-    @Column('varchar',{name: 'description', length: 300, default: null})
-    description:string | null;
+    @Column({ type: 'varchar', length: 100 })
+    title: string;
+
+    @Column({ type: 'varchar', length: 300, default: null })
+    description: string | null;
+
+    @Column({ type: 'tinyint', default: true })
+    isActive: Boolean;
+
+    @Column({ type: 'tinyint', default: false })
+    isComplated: Boolean;
+
+    @Column({ type: 'tinyint', default: false })
+    isDeleted: Boolean;
 
     @CreateDateColumn()
     createdAt: Date;
   
     @UpdateDateColumn()
     updatedAt: Date;
-  
-    @DeleteDateColumn()
-    deletedAt: Date | null;
-
-    @Column({default: true})
-    isActive: Boolean;
-
-    @Column({default: false})
-    isComplated: Boolean;
-
-    @Column({default: false})
-    isDeleted: Boolean;
     
-    @ManyToOne(type => Users, users => users.works, {
-        nullable: true, 
-        onDelete: 'SET NULL'
+    @ManyToOne(() => Users, users => users.works, {
+        nullable: false, 
+        onDelete: 'CASCADE'
     })
-    users: Users
+    users: Users;
 
-    @ManyToOne(type => Categories, categories => categories.works, {
-        nullable: true, 
-        onDelete: 'SET NULL'
+    @ManyToOne(() => Categories, categories => categories.works, {
+        nullable: false, 
+        onDelete: 'CASCADE'
     })
-    categories: Categories
+    categories: Categories;
 
-    @ManyToOne(type => Plans, plans => plans.works, {
-        nullable: true, 
-        onDelete: 'SET NULL'
+    @ManyToOne(() => Plans, plans => plans.works, {
+        nullable: false, 
+        onDelete: 'CASCADE'
     })
-    plans: Plans
+    plans: Plans;
 
-    @OneToMany(type => Events, events => events.works)
-    events: Events[]
+    @OneToOne(() => Goals, goals => goals.works)
+    goals: Goals;
+
+    @OneToMany(() => Events, events => events.works)
+    events: Events[];
 }

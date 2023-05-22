@@ -1,9 +1,9 @@
-import { Entity, 
+import { 
+    Entity, 
     PrimaryGeneratedColumn,
     Column, 
     CreateDateColumn, 
     UpdateDateColumn, 
-    DeleteDateColumn,
     ManyToOne
 } from "typeorm";
 import { Dailies } from "./dailies.entity";
@@ -15,57 +15,55 @@ import { Works } from "./works.entity";
 
 @Entity({ schema: 'dairy-record', name: 'events' })
 export class Events{
-    @PrimaryGeneratedColumn({type:'int',name:'id'})
-    id:number;
 
-    @Column('varchar',{name: 'title', length: 100})
-    title:string;
+    @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
+    id: number;
 
-    @Column('varchar',{name: 'description', length: 300, default: null})
-    description:string | null;
+    @Column({ type: 'varchar', length: 100 })
+    title: string;
+
+    @Column({ type: 'varchar', length: 300, default: null })
+    description: string | null;
+
+    @Column({ type: 'tinyint', default: false })
+    isChecked: Boolean;
+
+    @Column({ type: 'tinyint', default: false })
+    isDeleted: Boolean;
 
     @CreateDateColumn()
     createdAt: Date;
   
     @UpdateDateColumn()
     updatedAt: Date;
-  
-    @DeleteDateColumn()
-    deletedAt: Date | null;
-
-    @Column({default: false})
-    isChecked: Boolean;
-
-    @Column({default: false})
-    isDeleted: Boolean;
     
-    @ManyToOne(type => Users, users => users.events, {
+    @ManyToOne(() => Users, users => users.events, {
         nullable: true, 
         onDelete: 'SET NULL'
     })
     users: Users
 
-    @ManyToOne(type => Categories, categories => categories.events, {
-        nullable: true,
+    @ManyToOne(() => Categories, categories => categories.events, {
+        nullable: true, 
         onDelete: 'SET NULL'
     })
-    categories: Categories
+    categories: Categories;
     
-    @ManyToOne(type => Dailies, dailies => dailies.events, {
+    @ManyToOne(() => Dailies, dailies => dailies.events, {
         nullable: true, 
         onDelete: 'SET NULL'
     })
-    dailies: Dailies
+    dailies: Dailies;
 
-    @ManyToOne(type => Plans, plans => plans.events, {
+    @ManyToOne(() => Plans, plans => plans.events, {
         nullable: true, 
         onDelete: 'SET NULL'
     })
-    plans: Plans
+    plans: Plans;
 
-    @ManyToOne(type => Works, works => works.events, {
+    @ManyToOne(() => Works, works => works.events, {
         nullable: true, 
         onDelete: 'SET NULL'
     })
-    works: Works
+    works: Works;
 }
