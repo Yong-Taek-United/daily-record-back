@@ -15,7 +15,7 @@ import { Events } from "./events.entity";
 import { Goals } from "./goals.entity";
 
 
-@Entity({ schema: 'dairy-record', name: 'tasks' })
+@Entity({ schema: 'daily-record', name: 'TASK' })
 export class Tasks{
 
     @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
@@ -46,13 +46,13 @@ export class Tasks{
         nullable: false, 
         onDelete: 'CASCADE'
     })
-    users: Users;
+    user: Users;
 
     @ManyToOne(() => Categories, categories => categories.tasks, {
         nullable: false, 
         onDelete: 'CASCADE'
     })
-    categories: Categories;
+    category: Categories;
 
     @ManyToOne(() => Projects, projects => projects.tasks, {
         nullable: false, 
@@ -60,9 +60,9 @@ export class Tasks{
     })
     projects: Projects;
 
-    @OneToOne(() => Goals, goals => goals.tasks)
+    @OneToOne(() => Goals, goals => goals.task)
     goals: Goals;
 
-    @OneToMany(() => Events, events => events.tasks)
+    @OneToMany(() => Events, events => events.task)
     events: Events[];
 }

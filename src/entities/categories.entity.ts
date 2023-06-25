@@ -8,7 +8,7 @@ import { Tasks } from "./tasks.entity";
 import { Events } from "./events.entity";
 
 
-@Entity({ schema: 'dairy-record', name: 'categories' })
+@Entity({ schema: 'daily-record', name: 'CATEGORY' })
 export class Categories{
 
     @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
@@ -23,9 +23,9 @@ export class Categories{
     @Column({ type: 'tinyint', default: true })
     isActive: Boolean;
 
-    @OneToMany(() => Tasks, tasks => tasks.categories)
+    @OneToMany(() => Tasks, tasks => tasks.category)
     tasks: Tasks[];
 
-    @OneToMany(() => Events, events => events.categories)
+    @OneToMany(() => Events, events => events.category)
     events: Events[];
 }

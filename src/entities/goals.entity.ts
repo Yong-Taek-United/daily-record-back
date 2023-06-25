@@ -10,7 +10,7 @@ import {
 import { Tasks } from "./tasks.entity";
 
 
-@Entity({ schema: 'dairy-record', name: 'goals' })
+@Entity({ schema: 'daily-record', name: 'GOAL' })
 export class Goals{
 
     @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
@@ -50,5 +50,5 @@ export class Goals{
     updatedAt: Date;
 
     @OneToOne(() => Tasks, tasks => tasks.goals)
-    tasks: Tasks;
+    task: Tasks;
 }

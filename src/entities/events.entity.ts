@@ -13,7 +13,7 @@ import { Projects } from "./projects.entity";
 import { Tasks } from "./tasks.entity";
 
 
-@Entity({ schema: 'dairy-record', name: 'events' })
+@Entity({ schema: 'daily-record', name: 'EVENT' })
 export class Events{
 
     @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
@@ -41,29 +41,29 @@ export class Events{
         nullable: true, 
         onDelete: 'SET NULL'
     })
-    users: Users
+    user: Users
 
     @ManyToOne(() => Categories, categories => categories.events, {
         nullable: true, 
         onDelete: 'SET NULL'
     })
-    categories: Categories;
+    category: Categories;
     
     @ManyToOne(() => Dailies, dailies => dailies.events, {
         nullable: true, 
         onDelete: 'SET NULL'
     })
-    dailies: Dailies;
+    daily: Dailies;
 
     @ManyToOne(() => Projects, projects => projects.events, {
         nullable: true, 
         onDelete: 'SET NULL'
     })
-    projects: Projects;
+    project: Projects;
 
     @ManyToOne(() => Tasks, tasks => tasks.events, {
         nullable: true, 
         onDelete: 'SET NULL'
     })
-    tasks: Tasks;
+    task: Tasks;
 }

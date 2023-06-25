@@ -11,7 +11,7 @@ import { Events } from "./events.entity";
 import { Users } from "./users.entity";
 
 
-@Entity({ schema: 'dairy-record', name: 'dailies' })
+@Entity({ schema: 'daily-record', name: 'DAILY' })
 export class Dailies{
     
     @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
@@ -39,8 +39,8 @@ export class Dailies{
         nullable: true, 
         onDelete: 'SET NULL'
     })
-    users: Users;
+    user: Users;
 
-    @OneToMany(() => Events, events => events.dailies)
+    @OneToMany(() => Events, events => events.daily)
     events: Events[];
 }

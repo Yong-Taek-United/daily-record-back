@@ -22,7 +22,7 @@ export class ProjectsService {
             relations: {tasks: true},
             select: {tasks: true}, 
             where: {
-                users: {id: userId},
+                user: {id: userId},
             }
         });
         return {Success: true, statusCode: 201, message: '프로젝트 전체 조회가 완료되었습니다.', projectData: projects};

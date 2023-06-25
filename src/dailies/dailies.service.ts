@@ -21,7 +21,7 @@ export class DailiesService {
         const dailies = await this.dailiesRepository.find({
             relations: ['events'], 
             where: {
-                users: {id: userId},
+                user: {id: userId},
                 year,
                 month
             }, 
@@ -40,7 +40,7 @@ export class DailiesService {
     async getDailyByDate(userId:number, year:number, month:number, day:number) {
         const daily = await this.dailiesRepository.findOne({
             where: { 
-                users: {id: userId}, 
+                user: {id: userId}, 
                 year, 
                 month, 
                 day 

@@ -21,8 +21,8 @@ export class EventsService {
         const events = await this.eventsRepository.find({
             relations: ['works'], 
             where: { 
-                users: {id: userId}, 
-                dailies: {id: dailyId} 
+                user: {id: userId}, 
+                daily: {id: dailyId} 
             }
         });
         return {Success: true, statusCode: 201, message: '이벤트 전체 조회가 완료되었습니다.', eventData: events};
@@ -65,8 +65,8 @@ export class EventsService {
     async showCheckList(userId:number, dailyId:number, eventData) {
         const events = await this.eventsRepository.find({
             where: {
-                users: {id: userId}, 
-                dailies: {id: dailyId}, 
+                user: {id: userId}, 
+                daily: {id: dailyId}, 
                 isChecked: eventData.checkValue 
             }
         });

@@ -20,7 +20,7 @@ export class TasksService {
     async getTasks(userId: number) {
         const tasks = await this.tasksRepository.find({
             where: {
-                users: {id: userId},
+                user: {id: userId},
             }
         });
         return {Success: true, statusCode: 201, message: '할일 전체 조회가 완료되었습니다.', taskData: tasks};
@@ -30,7 +30,7 @@ export class TasksService {
     async getTasksInProject(userId: number, projectId: number) {
         const tasks = await this.tasksRepository.find({
             where: {
-                users: {id: userId},
+                user: {id: userId},
                 projects: {id: projectId}
             }
         });

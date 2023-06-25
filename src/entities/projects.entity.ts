@@ -12,7 +12,7 @@ import { Tasks } from "./tasks.entity";
 import { Events } from "./events.entity";
 
 
-@Entity({ schema: 'dairy-record', name: 'Projects' })
+@Entity({ schema: 'daily-record', name: 'PROJECT' })
 export class Projects{
     
     @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
@@ -49,11 +49,11 @@ export class Projects{
         nullable: false, 
         onDelete: 'CASCADE'
     })
-    users: Users;
+    user: Users;
     
     @OneToMany(() => Tasks, tasks => tasks.projects)
     tasks: Tasks[];
 
-    @OneToMany(() => Events, events => events.projects)
+    @OneToMany(() => Events, events => events.project)
     events: Events[];
 }

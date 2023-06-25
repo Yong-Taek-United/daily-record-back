@@ -12,7 +12,7 @@ import { Projects } from "./projects.entity";
 import { Tasks } from "./tasks.entity";
 
 
-@Entity({ schema: 'dairy-record', name: 'users' })
+@Entity({ schema: 'daily-record', name: 'USER' })
 export class Users{
 
     @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
@@ -42,15 +42,15 @@ export class Users{
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @OneToMany(() => Dailies, dailies => dailies.users)
+    @OneToMany(() => Dailies, dailies => dailies.user)
     dailies: Dailies[];
 
-    @OneToMany(() => Projects, projects => projects.users)
+    @OneToMany(() => Projects, projects => projects.user)
     projects: Projects[];
     
-    @OneToMany(() => Tasks, tasks => tasks.users)
+    @OneToMany(() => Tasks, tasks => tasks.user)
     tasks: Tasks[];
     
-    @OneToMany(() => Events, events => events.users)
+    @OneToMany(() => Events, events => events.user)
     events: Events[];
 }
