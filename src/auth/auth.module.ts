@@ -10,7 +10,7 @@ import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
-    UsersModule, 
+    UsersModule,
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,

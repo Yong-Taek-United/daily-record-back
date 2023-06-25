@@ -21,10 +21,7 @@ import { Goals } from './entities/goals.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath:
-        process.env.NODE_ENV === 'production'
-          ? '.env.production'
-          : '.env.development',
+      envFilePath: process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development',
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -33,10 +30,8 @@ import { Goals } from './entities/goals.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [
-          Users, Dailies, Events, Categories, Projects, Tasks, Goals,
-      ],
-      "synchronize": true,
+      entities: [Users, Dailies, Events, Categories, Projects, Tasks, Goals],
+      synchronize: true,
       // timezone: 'z',
       charset: 'utf8mb4',
     }),

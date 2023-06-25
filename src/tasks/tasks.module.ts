@@ -7,6 +7,6 @@ import { TasksService } from './tasks.service';
 @Module({
   imports: [TypeOrmModule.forFeature([Tasks])],
   controllers: [TasksController],
-  providers: [TasksService]
+  providers: [TasksService],
 })
 export class TasksModule {}
