@@ -7,7 +7,7 @@ import {
     ManyToOne,
     OneToOne
 } from "typeorm";
-import { Works } from "./works.entity";
+import { Tasks } from "./tasks.entity";
 
 
 @Entity({ schema: 'dairy-record', name: 'goals' })
@@ -49,6 +49,6 @@ export class Goals{
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @OneToOne(() => Works, works => works.goals)
-    works: Works;
+    @OneToOne(() => Tasks, tasks => tasks.goals)
+    tasks: Tasks;
 }

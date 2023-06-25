@@ -4,7 +4,7 @@ import {
     Column,
     OneToMany,
 } from "typeorm";
-import { Works } from "./works.entity";
+import { Tasks } from "./tasks.entity";
 import { Events } from "./events.entity";
 
 
@@ -23,8 +23,8 @@ export class Categories{
     @Column({ type: 'tinyint', default: true })
     isActive: Boolean;
 
-    @OneToMany(() => Works, works => works.categories)
-    works: Works[];
+    @OneToMany(() => Tasks, tasks => tasks.categories)
+    tasks: Tasks[];
 
     @OneToMany(() => Events, events => events.categories)
     events: Events[];

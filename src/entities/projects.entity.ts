@@ -4,20 +4,17 @@ import {
     Column, 
     CreateDateColumn, 
     UpdateDateColumn, 
-    ManyToOne,
     OneToMany,
-    OneToOne
+    ManyToOne,
 } from "typeorm";
 import { Users } from "./users.entity";
-import { Categories } from "./categories.entity";
-import { Plans } from "./plans.entity";
+import { Tasks } from "./tasks.entity";
 import { Events } from "./events.entity";
-import { Goals } from "./goals.entity";
 
 
-@Entity({ schema: 'dairy-record', name: 'works' })
-export class Works{
-
+@Entity({ schema: 'dairy-record', name: 'Projects' })
+export class Projects{
+    
     @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
     id: number;
 
@@ -26,6 +23,12 @@ export class Works{
 
     @Column({ type: 'varchar', length: 300, default: null })
     description: string | null;
+
+    @Column({ type: 'date' })
+    startedAt: Date;
+  
+    @Column({ type: 'date' })
+    finishedAt: Date;
 
     @Column({ type: 'tinyint', default: true })
     isActive: Boolean;
@@ -41,28 +44,16 @@ export class Works{
   
     @UpdateDateColumn()
     updatedAt: Date;
-    
-    @ManyToOne(() => Users, users => users.works, {
+
+    @ManyToOne(() => Users, users => users.projects, {
         nullable: false, 
         onDelete: 'CASCADE'
     })
     users: Users;
+    
+    @OneToMany(() => Tasks, tasks => tasks.projects)
+    tasks: Tasks[];
 
-    @ManyToOne(() => Categories, categories => categories.works, {
-        nullable: false, 
-        onDelete: 'CASCADE'
-    })
-    categories: Categories;
-
-    @ManyToOne(() => Plans, plans => plans.works, {
-        nullable: false, 
-        onDelete: 'CASCADE'
-    })
-    plans: Plans;
-
-    @OneToOne(() => Goals, goals => goals.works)
-    goals: Goals;
-
-    @OneToMany(() => Events, events => events.works)
+    @OneToMany(() => Events, events => events.projects)
     events: Events[];
 }

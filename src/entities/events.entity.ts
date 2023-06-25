@@ -9,8 +9,8 @@ import {
 import { Dailies } from "./dailies.entity";
 import { Users } from "./users.entity";
 import { Categories } from "./categories.entity";
-import { Plans } from "./plans.entity";
-import { Works } from "./works.entity";
+import { Projects } from "./projects.entity";
+import { Tasks } from "./tasks.entity";
 
 
 @Entity({ schema: 'dairy-record', name: 'events' })
@@ -55,15 +55,15 @@ export class Events{
     })
     dailies: Dailies;
 
-    @ManyToOne(() => Plans, plans => plans.events, {
+    @ManyToOne(() => Projects, projects => projects.events, {
         nullable: true, 
         onDelete: 'SET NULL'
     })
-    plans: Plans;
+    projects: Projects;
 
-    @ManyToOne(() => Works, works => works.events, {
+    @ManyToOne(() => Tasks, tasks => tasks.events, {
         nullable: true, 
         onDelete: 'SET NULL'
     })
-    works: Works;
+    tasks: Tasks;
 }

@@ -8,8 +8,8 @@ import {
 } from "typeorm";
 import { Dailies } from "./dailies.entity";
 import { Events } from "./events.entity";
-import { Plans } from "./plans.entity";
-import { Works } from "./works.entity";
+import { Projects } from "./projects.entity";
+import { Tasks } from "./tasks.entity";
 
 
 @Entity({ schema: 'dairy-record', name: 'users' })
@@ -45,11 +45,11 @@ export class Users{
     @OneToMany(() => Dailies, dailies => dailies.users)
     dailies: Dailies[];
 
-    @OneToMany(() => Plans, plans => plans.users)
-    plans: Plans[];
+    @OneToMany(() => Projects, projects => projects.users)
+    projects: Projects[];
     
-    @OneToMany(() => Works, works => works.users)
-    works: Works[];
+    @OneToMany(() => Tasks, tasks => tasks.users)
+    tasks: Tasks[];
     
     @OneToMany(() => Events, events => events.users)
     events: Events[];

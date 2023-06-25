@@ -7,16 +7,16 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { DailiesModule } from './dailies/dailies.module';
 import { EventsModule } from './events/events.module';
+import { CategoriesModule } from './categories/categories.module';
+import { ProjectsModule } from './projects/projects.module';
+import { TasksModule } from './tasks/tasks.module';
 import { Users } from './entities/users.entity';
 import { Dailies } from './entities/dailies.entity';
 import { Events } from './entities/events.entity';
 import { Categories } from './entities/categories.entity';
-import { Plans } from './entities/plans.entity';
-import { Works } from './entities/works.entity';
+import { Projects } from './entities/projects.entity';
+import { Tasks } from './entities/tasks.entity';
 import { Goals } from './entities/goals.entity';
-import { PlansModule } from './plans/plans.module';
-import { WorksModule } from './works/works.module';
-import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -34,7 +34,7 @@ import { CategoriesModule } from './categories/categories.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [
-          Users, Dailies, Events, Categories, Plans, Works, Goals,
+          Users, Dailies, Events, Categories, Projects, Tasks, Goals,
       ],
       "synchronize": true,
       // timezone: 'z',
@@ -44,9 +44,11 @@ import { CategoriesModule } from './categories/categories.module';
     AuthModule,
     DailiesModule,
     EventsModule,
-    PlansModule,
-    WorksModule,
+    ProjectsModule,
+    TasksModule,
     CategoriesModule,
+    ProjectsModule,
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [AppService],
