@@ -68,7 +68,7 @@ export class UsersService {
     const isMatch = await bcrypt.compare(userData.password, password);
     if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
 
-    await this.usersRepository.delete(id);
+    await this.usersRepository.update(id, { isDeleted: true });
 
     return { Success: true, statusCode: 200, message: '회원 탈퇴가 완료되었습니다.' };
   }
