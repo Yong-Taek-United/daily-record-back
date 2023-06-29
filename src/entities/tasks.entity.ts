@@ -14,7 +14,7 @@ import { Projects } from './projects.entity';
 import { Events } from './events.entity';
 import { Goals } from './goals.entity';
 
-@Entity({ schema: 'daily-record', name: 'TASK' })
+@Entity({ schema: 'dailyrecord', name: 'Tasks' })
 export class Tasks {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;

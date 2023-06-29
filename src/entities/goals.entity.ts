@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Tasks } from './tasks.entity';
 
-@Entity({ schema: 'daily-record', name: 'GOAL' })
+@Entity({ schema: 'dailyrecord', name: 'Goals' })
 export class Goals {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;

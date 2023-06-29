@@ -10,7 +10,7 @@ import {
 import { Events } from './events.entity';
 import { Users } from './users.entity';
 
-@Entity({ schema: 'daily-record', name: 'DAILY' })
+@Entity({ schema: 'dailyrecord', name: 'Dailies' })
 export class Dailies {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
