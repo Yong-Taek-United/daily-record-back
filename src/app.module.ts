@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -17,6 +17,8 @@ import { Categories } from './entities/categories.entity';
 import { Projects } from './entities/projects.entity';
 import { Tasks } from './entities/tasks.entity';
 import { Goals } from './entities/goals.entity';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ApiResponseInterceptor } from './interceptor/api-response.interceptor';
 
 @Module({
   imports: [
@@ -46,6 +48,12 @@ import { Goals } from './entities/goals.entity';
     TasksModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ApiResponseInterceptor,
+    },
+    AppService,
+  ],
 })
 export class AppModule {}
