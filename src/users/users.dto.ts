@@ -1,20 +1,33 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
+import { textLength } from './constant';
 
 export class CreateUserDto {
   @IsEmail()
+  @Length(textLength.email.min, textLength.email.max, {
+    message: `이메일을 다시 확인해주십시오.(${textLength.email.min}~${textLength.email.max}자)`,
+  })
   @ApiProperty({ format: 'email' })
   readonly email: string;
 
   @IsString()
+  @Length(textLength.username.min, textLength.username.max, {
+    message: `이름을 다시 확인해주십시오.(${textLength.username.min}~${textLength.username.max}자)`,
+  })
   @ApiProperty({ example: '테스트' })
   readonly username: string;
 
   @IsString()
+  @Length(textLength.password.min, textLength.password.max, {
+    message: `비밀번호를 다시 확인해주십시오.(${textLength.password.min}~${textLength.password.max}자)`,
+  })
   @ApiProperty({ example: 'qwer1234' })
   password: string;
 
   @IsString()
+  @Length(textLength.password.min, textLength.password.max, {
+    message: `비밀번호를 다시 확인해주십시오.(${textLength.password.min}~${textLength.password.max}자)`,
+  })
   @ApiProperty({ example: 'qwer1234' })
   password2: string;
 }
@@ -22,8 +35,19 @@ export class CreateUserDto {
 export class UpdateUserDto {
   @IsOptional()
   @IsString()
+  @Length(textLength.password.min, textLength.password.max, {
+    message: `비밀번호를 다시 확인해주십시오.(${textLength.password.min}~${textLength.password.max}자)`,
+  })
   @ApiProperty({ example: 'qwer1234' })
   password?: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(textLength.password.min, textLength.password.max, {
+    message: `비밀번호를 다시 확인해주십시오.(${textLength.password.min}~${textLength.password.max}자)`,
+  })
+  @ApiProperty({ example: 'qwer1234' })
+  password2?: string;
 
   @IsOptional()
   @IsBoolean()

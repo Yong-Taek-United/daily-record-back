@@ -17,8 +17,8 @@ export class UsersController {
   @Get('/:id')
   @ApiOperation({ summary: '회원 조회', description: '' })
   @ApiParam({ name: 'id', type: 'number', example: 1 })
-  get(@Param('id') userId: number) {
-    return this.usersService.get(userId);
+  async get(@Param('id') userId: number) {
+    return await this.usersService.get(userId);
   }
 
   @Patch('/:id')
