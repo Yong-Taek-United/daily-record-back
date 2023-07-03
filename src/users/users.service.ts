@@ -62,7 +62,7 @@ export class UsersService {
     const isMatch = await bcrypt.compare(userData.password, password);
     if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
 
-    await this.usersRepository.update(userId, { isDeleted: true });
+    await this.usersRepository.update(userId, { isDeleted: true, deletedAt: new Date() });
 
     return { statusCode: 200 };
   }

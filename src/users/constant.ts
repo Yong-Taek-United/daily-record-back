@@ -5,7 +5,7 @@ export const textLength = {
   },
   username: {
     min: 2,
-    max: 10,
+    max: 15,
   },
   password: {
     min: 8,

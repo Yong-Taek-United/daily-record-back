@@ -11,6 +11,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { ProjectsModule } from './projects/projects.module';
 import { TasksModule } from './tasks/tasks.module';
 import { Users } from './entities/users.entity';
+import { UserFiles } from './entities/userFiles.entity';
 import { Dailies } from './entities/dailies.entity';
 import { Events } from './entities/events.entity';
 import { Categories } from './entities/categories.entity';
@@ -32,7 +33,7 @@ import { ApiResponseInterceptor } from './interceptor/api-response.interceptor';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [Users, Dailies, Events, Categories, Projects, Tasks, Goals],
+      entities: [Users, UserFiles, Dailies, Events, Categories, Projects, Tasks, Goals],
       synchronize: true,
       // timezone: 'z',
       charset: 'utf8mb4',

@@ -1,21 +1,42 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { UserFiles } from './userFiles.entity';
 import { Dailies } from './dailies.entity';
 import { Events } from './events.entity';
 import { Projects } from './projects.entity';
 import { Tasks } from './tasks.entity';
+
+enum UserType {
+  BASIC = 'basic',
+  ADMIN = 'admin',
+}
+
+enum AuthType {
+  BASIC = 'basic',
+  GOOGLE = 'google',
+  KAKAO = 'kakao',
+}
 
 @Entity({ schema: 'dailyrecord', name: 'Users' })
 export class Users {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
-  @Column({ type: 'varchar', length: 50 })
-  username: string;
+  @Column({ type: 'enum', enum: UserType, default: UserType.BASIC })
+  userType: string;
 
-  @Column({ type: 'varchar', length: 50, unique: true })
+  @Column({ type: 'enum', enum: AuthType, default: AuthType.BASIC })
+  authType: string;
+
+  @Column({ type: 'varchar', length: 30, unique: true })
   email: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 15, unique: true })
+  username: string;
+
+  @Column({ type: 'varchar', length: 15 })
+  nickname: string;
+
+  @Column({ type: 'varchar', length: 20 })
   password: string;
 
   @Column({ type: 'tinyint', default: true })
@@ -32,6 +53,12 @@ export class Users {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column({ type: 'datetime', default: null })
+  deletedAt: Date;
+
+  @OneToMany(() => UserFiles, (userFiles) => userFiles.user)
+  userFiles: UserFiles[];
 
   @OneToMany(() => Dailies, (dailies) => dailies.user)
   dailies: Dailies[];
