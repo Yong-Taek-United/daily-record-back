@@ -52,7 +52,10 @@ export class UsersService {
 
     await this.usersRepository.update(userId, userData);
 
-    return { statusCode: 200 };
+    const data = await this.usersRepository.findOne({ where: { id: userId } });
+    delete data.password;
+
+    return { statusCode: 200, data };
   }
 
   // 회원 탈퇴
