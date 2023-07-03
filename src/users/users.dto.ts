@@ -12,10 +12,17 @@ export class CreateUserDto {
 
   @IsString()
   @Length(textLength.username.min, textLength.username.max, {
-    message: `이름을 다시 확인해주십시오.(${textLength.username.min}~${textLength.username.max}자)`,
+    message: `계정을 다시 확인해주십시오.(${textLength.username.min}~${textLength.username.max}자)`,
+  })
+  @ApiProperty({ example: 'test0001' })
+  readonly username: string;
+
+  @IsString()
+  @Length(textLength.nickname.min, textLength.nickname.max, {
+    message: `닉네임을 다시 확인해주십시오.(${textLength.nickname.min}~${textLength.nickname.max}자)`,
   })
   @ApiProperty({ example: '테스트' })
-  readonly username: string;
+  readonly nickname: string;
 
   @IsString()
   @Length(textLength.password.min, textLength.password.max, {
@@ -48,6 +55,13 @@ export class UpdateUserDto {
   })
   @ApiProperty({ example: 'qwer1234' })
   password2?: string;
+
+  @IsString()
+  @Length(textLength.username.min, textLength.username.max, {
+    message: `계정을 다시 확인해주십시오.(${textLength.username.min}~${textLength.username.max}자)`,
+  })
+  @ApiProperty({ example: 'test0002' })
+  username?: string;
 
   @IsOptional()
   @IsBoolean()

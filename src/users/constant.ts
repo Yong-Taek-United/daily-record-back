@@ -7,6 +7,10 @@ export const textLength = {
     min: 2,
     max: 15,
   },
+  nickname: {
+    min: 2,
+    max: 15,
+  },
   password: {
     min: 8,
     max: 20,
