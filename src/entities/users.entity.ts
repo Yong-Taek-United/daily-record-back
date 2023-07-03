@@ -36,7 +36,7 @@ export class Users {
   @Column({ type: 'varchar', length: 15 })
   nickname: string;
 
-  @Column({ type: 'varchar', length: 20 })
+  @Column({ type: 'varchar', length: 100 })
   password: string;
 
   @Column({ type: 'tinyint', default: true })
