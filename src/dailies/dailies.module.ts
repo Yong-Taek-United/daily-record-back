@@ -7,6 +7,6 @@ import { DailiesService } from './dailies.service';
 @Module({
   imports: [TypeOrmModule.forFeature([Dailies])],
   controllers: [DailiesController],
-  providers: [DailiesService]
+  providers: [DailiesService],
 })
 export class DailiesModule {}
