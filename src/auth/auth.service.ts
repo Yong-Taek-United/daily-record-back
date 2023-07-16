@@ -32,13 +32,7 @@ export class AuthService {
 
     await this.usersService.setRefreshToken(refreshToken, user.id);
 
-    return {
-      statusCode: 200,
-      data: {
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-      },
-    };
+    return { accessToken, refreshToken };
   }
 
   async generateAccessToken(payload: any) {
