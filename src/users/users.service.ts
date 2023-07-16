@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from '../entities/users.entity';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto, UpdateUserDto, DeleteUserDto } from './users.dto';
 import * as bcrypt from 'bcrypt';
 
@@ -12,6 +13,7 @@ export class UsersService {
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
     private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
   ) {}
 
   // 회원가입
@@ -80,7 +82,7 @@ export class UsersService {
   // 리프레시 토큰 저장
   async setRefreshToken(refreshToken: string, userId: number) {
     const hashedRefreshToken = await this.getHashedRefreshToken(refreshToken);
-    const refreshTokenExp = await this.getRefreshTokenExp();
+    const refreshTokenExp = await this.getRefreshTokenExp(refreshToken);
     await this.usersRepository.update(userId, {
       refreshToken: hashedRefreshToken,
       refreshTokenExp: refreshTokenExp,
@@ -94,11 +96,14 @@ export class UsersService {
   }
 
   // 리프레시 토큰 만료일 생성
-  async getRefreshTokenExp(): Promise<Date> {
-    const currentDate = new Date();
-    const refreshTokenExp = new Date(
-      currentDate.getTime() + parseInt(this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME')),
-    );
+  async getRefreshTokenExp(refreshToken: string): Promise<Date> {
+    const decodedToken = this.jwtService.verify(refreshToken, {
+      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+    });
+    const expiration = decodedToken.exp;
+
+    const refreshTokenExp = new Date(expiration * 1000);
+    
     return refreshTokenExp;
   }
 }
