@@ -2,6 +2,7 @@ import { BadRequestException, ConflictException, Injectable, UnauthorizedExcepti
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from '../entities/users.entity';
+import { ConfigService } from '@nestjs/config';
 import { CreateUserDto, UpdateUserDto, DeleteUserDto } from './users.dto';
 import * as bcrypt from 'bcrypt';
 
@@ -9,7 +10,8 @@ import * as bcrypt from 'bcrypt';
 export class UsersService {
   constructor(
     @InjectRepository(Users)
-    private usersRepository: Repository<Users>,
+    private readonly usersRepository: Repository<Users>,
+    private readonly configService: ConfigService,
   ) {}
 
   // 회원가입
@@ -73,5 +75,27 @@ export class UsersService {
   // 회원 조회(로그인 인증용)
   async getUser(email: string) {
     return await this.usersRepository.findOne({ where: { email } });
+  }
+
+  async setRefreshToken(refreshToken: string, userId: number) {
+    const hashedRefreshToken = await this.getHashedRefreshToken(refreshToken);
+    const refreshTokenExp = await this.getRefreshTokenExp();
+    await this.usersRepository.update(userId, {
+      refreshToken: hashedRefreshToken,
+      refreshTokenExp: refreshTokenExp,
+    });
+  }
+
+  async getHashedRefreshToken(refreshToken: string) {
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    return hashedRefreshToken;
+  }
+
+  async getRefreshTokenExp(): Promise<Date> {
+    const currentDate = new Date();
+    const refreshTokenExp = new Date(
+      currentDate.getTime() + parseInt(this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME')),
+    );
+    return refreshTokenExp;
   }
 }
