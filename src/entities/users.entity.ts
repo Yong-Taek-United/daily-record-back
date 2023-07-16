@@ -57,6 +57,12 @@ export class Users {
   @Column({ type: 'datetime', default: null })
   deletedAt: Date;
 
+  @Column({ type: 'varchar', length: 100, default: null })
+  refreshToken: string;
+
+  @Column({ type: 'datetime', default: null })
+  refreshTokenExp: Date;
+
   @OneToMany(() => UserFiles, (userFiles) => userFiles.user)
   userFiles: UserFiles[];
 

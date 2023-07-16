@@ -2,6 +2,8 @@ import { BadRequestException, ConflictException, Injectable, UnauthorizedExcepti
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from '../entities/users.entity';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto, UpdateUserDto, DeleteUserDto } from './users.dto';
 import * as bcrypt from 'bcrypt';
 
@@ -9,7 +11,9 @@ import * as bcrypt from 'bcrypt';
 export class UsersService {
   constructor(
     @InjectRepository(Users)
-    private usersRepository: Repository<Users>,
+    private readonly usersRepository: Repository<Users>,
+    private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
   ) {}
 
   // 회원가입
@@ -73,5 +77,33 @@ export class UsersService {
   // 회원 조회(로그인 인증용)
   async getUser(email: string) {
     return await this.usersRepository.findOne({ where: { email } });
+  }
+
+  // 리프레시 토큰 저장
+  async setRefreshToken(refreshToken: string, userId: number) {
+    const hashedRefreshToken = await this.getHashedRefreshToken(refreshToken);
+    const refreshTokenExp = await this.getRefreshTokenExp(refreshToken);
+    await this.usersRepository.update(userId, {
+      refreshToken: hashedRefreshToken,
+      refreshTokenExp: refreshTokenExp,
+    });
+  }
+
+  // 리프레시 토큰 해시
+  async getHashedRefreshToken(refreshToken: string) {
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    return hashedRefreshToken;
+  }
+
+  // 리프레시 토큰 만료일 생성
+  async getRefreshTokenExp(refreshToken: string): Promise<Date> {
+    const decodedToken = this.jwtService.verify(refreshToken, {
+      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+    });
+    const expiration = decodedToken.exp;
+
+    const refreshTokenExp = new Date(expiration * 1000);
+    
+    return refreshTokenExp;
   }
 }
