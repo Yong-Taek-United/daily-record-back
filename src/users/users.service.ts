@@ -77,6 +77,7 @@ export class UsersService {
     return await this.usersRepository.findOne({ where: { email } });
   }
 
+  // 리프레시 토큰 저장
   async setRefreshToken(refreshToken: string, userId: number) {
     const hashedRefreshToken = await this.getHashedRefreshToken(refreshToken);
     const refreshTokenExp = await this.getRefreshTokenExp();
@@ -86,11 +87,13 @@ export class UsersService {
     });
   }
 
+  // 리프레시 토큰 해시
   async getHashedRefreshToken(refreshToken: string) {
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     return hashedRefreshToken;
   }
 
+  // 리프레시 토큰 만료일 생성
   async getRefreshTokenExp(): Promise<Date> {
     const currentDate = new Date();
     const refreshTokenExp = new Date(
