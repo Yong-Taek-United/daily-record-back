@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './jwt-auth.guard';
-import { JwtRefreshAuthGuard } from './jwtRefresh-auth.guard';
+import { JwtAuthGuard } from './jwt/jwt-auth.guard';
+import { JwtRefreshAuthGuard } from './jwt/jwt-refresh-auth.guard';
 import { LocalAuthGuard } from './local-auth.guard';
 import { ApiBearerAuth, ApiBody, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './auth.dto';
