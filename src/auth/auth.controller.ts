@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { JwtAuthGuard } from './jwt/jwt-auth.guard';
+import { JwtRefreshAuthGuard } from './jwt/jwt-refresh-auth.guard';
 import { LocalAuthGuard } from './local-auth.guard';
 import { ApiBearerAuth, ApiBody, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './auth.dto';
@@ -18,13 +19,7 @@ export class AuthController {
   async login(@Req() req, @Res({ passthrough: true }) res: Response) {
     const tokens = await this.authService.login(req.user);
 
-    res.cookie('accessToken', tokens.accessToken, {
-      httpOnly: true,
-    });
-
-    res.cookie('refreshToken', tokens.refreshToken, {
-      httpOnly: true,
-    });
+    await this.authService.saveTokensToCookies(res, tokens);
 
     return {
       statusCode: 200,
@@ -34,16 +29,35 @@ export class AuthController {
 
   @Get()
   @ApiBearerAuth()
-  @ApiOperation({ summary: '로그인 인증', description: 'accessToken을 이용해 로그인 상태를 인증합니다.' })
-  @UseGuards(JwtAuthGuard)
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Login "accessToken" (자물쇠를 accessToken으로 먼저 잠그고 실행해야합니다.)',
-    schema: {
-      type: 'string',
-    },
+  @ApiOperation({
+    summary: 'Access Token 인증',
+    description: 'accessToken을 이용해 로그인 회원을 인증합니다. <br> (accessToken으로 자물쇠를 잠그십시오.)',
   })
+  @UseGuards(JwtAuthGuard)
   userAuth(@Req() req) {
-    return req.user;
+    return {
+      statusCode: 200,
+      data: req.user,
+    };
+  }
+
+  @Get('refresh')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Refresh Token 재발급',
+    description: 'refreshToken을 이용해 token을 재발급합니다. <br> (refreshToken으로 자물쇠를 잠그십시오.)',
+  })
+  @UseGuards(JwtRefreshAuthGuard)
+  async refreshTokens(@Req() req, @Res({ passthrough: true }) res: Response) {
+    const userId = req.user['sub'];
+    const refreshToken = req.user['refreshToken'];
+    const tokens = await this.authService.refreshTokens(userId, refreshToken);
+
+    await this.authService.saveTokensToCookies(res, tokens);
+
+    return {
+      statusCode: 200,
+      data: tokens,
+    };
   }
 }

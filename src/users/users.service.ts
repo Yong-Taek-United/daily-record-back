@@ -79,8 +79,13 @@ export class UsersService {
     return await this.usersRepository.findOne({ where: { email } });
   }
 
+  // 회원 조회(by id)
+  async findById(userId: number) {
+    return await this.usersRepository.findOne({ where: { id: userId } });
+  }
+
   // 리프레시 토큰 저장
-  async setRefreshToken(refreshToken: string, userId: number) {
+  async setRefreshToken(userId: number, refreshToken: string) {
     const hashedRefreshToken = await this.getHashedRefreshToken(refreshToken);
     const refreshTokenExp = await this.getRefreshTokenExp(refreshToken);
     await this.usersRepository.update(userId, {
@@ -103,7 +108,7 @@ export class UsersService {
     const expiration = decodedToken.exp;
 
     const refreshTokenExp = new Date(expiration * 1000);
-    
+
     return refreshTokenExp;
   }
 }

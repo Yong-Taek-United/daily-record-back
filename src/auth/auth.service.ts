@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -25,12 +26,29 @@ export class AuthService {
   }
 
   async login(user: any) {
+    const tokens = await this.generateTokens(user);
+    return tokens;
+  }
+
+  async refreshTokens(userId: number, refreshToken: string) {
+    const user = await this.usersService.findById(userId);
+    if (!user || !user.refreshToken) throw new ForbiddenException('접근 권한이 없습니다.');
+
+    const isMatch = await bcrypt.compare(refreshToken, user.refreshToken);
+    if (!isMatch) throw new ForbiddenException('접근 권한이 없습니다.');
+
+    const tokens = await this.generateTokens(user);
+
+    return tokens;
+  }
+
+  async generateTokens(user: any) {
     const payload = { sub: user.id, email: user.email, username: user.username, nickname: user.nickname };
 
     const accessToken = await this.generateAccessToken(payload);
     const refreshToken = await this.generateRefreshToken(payload);
 
-    await this.usersService.setRefreshToken(refreshToken, user.id);
+    await this.usersService.setRefreshToken(user.id, refreshToken);
 
     return { accessToken, refreshToken };
   }
@@ -47,5 +65,10 @@ export class AuthService {
         expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME'),
       },
     );
+  }
+
+  async saveTokensToCookies(res: Response, tokens: any) {
+    res.cookie('accessToken', tokens.accessToken, { httpOnly: true });
+    res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true });
   }
 }
