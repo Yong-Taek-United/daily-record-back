@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { JwtRefreshAuthGuard } from './jwtRefresh-auth.guard';
 import { LocalAuthGuard } from './local-auth.guard';
 import { ApiBearerAuth, ApiBody, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './auth.dto';
@@ -18,13 +19,7 @@ export class AuthController {
   async login(@Req() req, @Res({ passthrough: true }) res: Response) {
     const tokens = await this.authService.login(req.user);
 
-    res.cookie('accessToken', tokens.accessToken, {
-      httpOnly: true,
-    });
-
-    res.cookie('refreshToken', tokens.refreshToken, {
-      httpOnly: true,
-    });
+    await this.authService.saveTokensToCookies(res, tokens);
 
     return {
       statusCode: 200,
@@ -45,5 +40,29 @@ export class AuthController {
   })
   userAuth(@Req() req) {
     return req.user;
+  }
+
+  @Get('refresh')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Refresh token 재발급', description: 'refreshToken을 이용해 token을 재발급합니다.' })
+  @UseGuards(JwtRefreshAuthGuard)
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Login "refreshToken" (자물쇠를 refreshToken으로 먼저 잠그고 실행해야합니다.)',
+    schema: {
+      type: 'string',
+    },
+  })
+  async refreshTokens(@Req() req, @Res({ passthrough: true }) res: Response) {
+    const userId = req.user['sub'];
+    const refreshToken = req.user['refreshToken'];
+    const tokens = await this.authService.refreshTokens(userId, refreshToken);
+
+    await this.authService.saveTokensToCookies(res, tokens);
+
+    return {
+      statusCode: 200,
+      data: tokens,
+    };
   }
 }
