@@ -29,30 +29,25 @@ export class AuthController {
 
   @Get()
   @ApiBearerAuth()
-  @ApiOperation({ summary: '로그인 인증', description: 'accessToken을 이용해 로그인 상태를 인증합니다.' })
-  @UseGuards(JwtAuthGuard)
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Login "accessToken" (자물쇠를 accessToken으로 먼저 잠그고 실행해야합니다.)',
-    schema: {
-      type: 'string',
-    },
+  @ApiOperation({
+    summary: 'Access Token 인증',
+    description: 'accessToken을 이용해 로그인 회원을 인증합니다. <br> (accessToken으로 자물쇠를 잠그십시오.)',
   })
+  @UseGuards(JwtAuthGuard)
   userAuth(@Req() req) {
-    return req.user;
+    return {
+      statusCode: 200,
+      data: req.user,
+    };
   }
 
   @Get('refresh')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Refresh token 재발급', description: 'refreshToken을 이용해 token을 재발급합니다.' })
-  @UseGuards(JwtRefreshAuthGuard)
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Login "refreshToken" (자물쇠를 refreshToken으로 먼저 잠그고 실행해야합니다.)',
-    schema: {
-      type: 'string',
-    },
+  @ApiOperation({
+    summary: 'Refresh Token 재발급',
+    description: 'refreshToken을 이용해 token을 재발급합니다. <br> (refreshToken으로 자물쇠를 잠그십시오.)',
   })
+  @UseGuards(JwtRefreshAuthGuard)
   async refreshTokens(@Req() req, @Res({ passthrough: true }) res: Response) {
     const userId = req.user['sub'];
     const refreshToken = req.user['refreshToken'];
