@@ -20,7 +20,7 @@ import { Tasks } from './entities/tasks.entity';
 import { Goals } from './entities/goals.entity';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ApiResponseInterceptor } from './interceptor/api-response.interceptor';
-import { JwtAuthGuard } from './auth/jwt/jwt-auth.guard';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 
 @Module({
   imports: [
