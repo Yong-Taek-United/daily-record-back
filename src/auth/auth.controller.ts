@@ -62,4 +62,14 @@ export class AuthController {
       data: tokens,
     };
   }
+
+  @Post('logout')
+  @ApiOperation({ summary: '로그아웃', description: 'cookie에 저장된 token을 제거해 로그아웃합니다.' })
+  async logout(@Res() res: Response) {
+    await this.authService.removeTokensFromCookies(res);
+
+    return {
+      statusCode: 200,
+    };
+  }
 }

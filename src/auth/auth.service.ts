@@ -71,4 +71,9 @@ export class AuthService {
     res.cookie('accessToken', tokens.accessToken, { httpOnly: true });
     res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true });
   }
+
+  async removeTokensFromCookies(res: Response) {
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+  }
 }
