@@ -1,12 +1,13 @@
 import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './jwt/jwt-auth.guard';
-import { JwtRefreshAuthGuard } from './jwt/jwt-refresh-auth.guard';
-import { LocalAuthGuard } from './local-auth.guard';
-import { ApiBearerAuth, ApiBody, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { LoginDto } from './auth.dto';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
+import { AuthService } from './auth.service';
+import { Public } from 'src/decorator/skip-auth.decorator';
+import { LoginDto } from './auth.dto';
+import { LocalAuthGuard } from './guards/local-auth.guard';
+import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 
+@Public()
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
@@ -27,20 +28,6 @@ export class AuthController {
     };
   }
 
-  @Get()
-  @ApiBearerAuth()
-  @ApiOperation({
-    summary: 'Access Token 인증',
-    description: 'accessToken을 이용해 로그인 회원을 인증합니다. <br> (accessToken으로 자물쇠를 잠그십시오.)',
-  })
-  @UseGuards(JwtAuthGuard)
-  userAuth(@Req() req) {
-    return {
-      statusCode: 200,
-      data: req.user,
-    };
-  }
-
   @Get('refresh')
   @ApiBearerAuth()
   @ApiOperation({
@@ -58,6 +45,16 @@ export class AuthController {
     return {
       statusCode: 200,
       data: tokens,
+    };
+  }
+
+  @Post('logout')
+  @ApiOperation({ summary: '로그아웃', description: 'cookie에 저장된 token을 제거해 로그아웃합니다.' })
+  async logout(@Res() res: Response) {
+    await this.authService.removeTokensFromCookies(res);
+
+    return {
+      statusCode: 200,
     };
   }
 }

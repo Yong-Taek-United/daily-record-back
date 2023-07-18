@@ -1,16 +1,16 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
 import { Response } from 'express';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UsersService,
-    private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
+    private readonly usersService: UsersService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
@@ -45,8 +45,10 @@ export class AuthService {
   async generateTokens(user: any) {
     const payload = { sub: user.id, email: user.email, username: user.username, nickname: user.nickname };
 
-    const accessToken = await this.generateAccessToken(payload);
-    const refreshToken = await this.generateRefreshToken(payload);
+    const [accessToken, refreshToken] = await Promise.all([
+      this.generateAccessToken(payload),
+      this.generateRefreshToken(payload),
+    ]);
 
     await this.usersService.setRefreshToken(user.id, refreshToken);
 
@@ -58,17 +60,27 @@ export class AuthService {
   }
 
   async generateRefreshToken(payload: any) {
-    return await this.jwtService.signAsync(
-      { id: payload.sub },
-      {
-        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-        expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME'),
-      },
-    );
+    const secret = this.configService.get<string>('JWT_REFRESH_SECRET');
+    const expiresIn = this.configService.get<number>('JWT_REFRESH_EXPIRATION_TIME');
+
+    const refreshToken = await this.jwtService.signAsync({ id: payload.sub }, { secret, expiresIn });
+
+    return refreshToken;
   }
 
   async saveTokensToCookies(res: Response, tokens: any) {
-    res.cookie('accessToken', tokens.accessToken, { httpOnly: true });
-    res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true });
+    const option = { httpOnly: true };
+
+    Object.entries(tokens).forEach(([key, value]) => {
+      res.cookie(key, value, option);
+    });
+  }
+
+  async removeTokensFromCookies(res: Response) {
+    const cookieNames = ['accessToken', 'refreshToken'];
+
+    cookieNames.forEach((cookieName) => {
+      res.clearCookie(cookieName);
+    });
   }
 }
