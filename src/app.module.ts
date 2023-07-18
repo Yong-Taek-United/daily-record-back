@@ -18,8 +18,9 @@ import { Categories } from './entities/categories.entity';
 import { Projects } from './entities/projects.entity';
 import { Tasks } from './entities/tasks.entity';
 import { Goals } from './entities/goals.entity';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ApiResponseInterceptor } from './interceptor/api-response.interceptor';
+import { JwtAuthGuard } from './auth/jwt/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -54,6 +55,11 @@ import { ApiResponseInterceptor } from './interceptor/api-response.interceptor';
       provide: APP_INTERCEPTOR,
       useClass: ApiResponseInterceptor,
     },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+
     AppService,
   ],
 })
