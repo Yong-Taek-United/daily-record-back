@@ -3,10 +3,12 @@ import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt/jwt-auth.guard';
 import { JwtRefreshAuthGuard } from './jwt/jwt-refresh-auth.guard';
 import { LocalAuthGuard } from './local-auth.guard';
-import { ApiBearerAuth, ApiBody, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './auth.dto';
 import { Response } from 'express';
+import { Public } from 'src/decorator/skip-auth.decorator';
 
+@Public()
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
@@ -27,19 +29,19 @@ export class AuthController {
     };
   }
 
-  @Get()
-  @ApiBearerAuth()
-  @ApiOperation({
-    summary: 'Access Token 인증',
-    description: 'accessToken을 이용해 로그인 회원을 인증합니다. <br> (accessToken으로 자물쇠를 잠그십시오.)',
-  })
-  @UseGuards(JwtAuthGuard)
-  userAuth(@Req() req) {
-    return {
-      statusCode: 200,
-      data: req.user,
-    };
-  }
+  // @Get()
+  // @ApiBearerAuth()
+  // @ApiOperation({
+  //   summary: 'Access Token 인증',
+  //   description: 'accessToken을 이용해 로그인 회원을 인증합니다. <br> (accessToken으로 자물쇠를 잠그십시오.)',
+  // })
+  // @UseGuards(JwtAuthGuard)
+  // userAuth(@Req() req) {
+  //   return {
+  //     statusCode: 200,
+  //     data: req.user,
+  //   };
+  // }
 
   @Get('refresh')
   @ApiBearerAuth()
