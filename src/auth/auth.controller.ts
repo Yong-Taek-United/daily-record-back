@@ -18,13 +18,14 @@ export class AuthController {
   @ApiBody({ type: LoginDto })
   @UseGuards(LocalAuthGuard)
   async login(@Req() req, @Res({ passthrough: true }) res: Response) {
+    const user = req.user;
     const tokens = await this.authService.login(req.user);
 
     await this.authService.saveTokensToCookies(res, tokens);
 
     return {
       statusCode: 200,
-      data: tokens,
+      data: user,
     };
   }
 
@@ -44,7 +45,7 @@ export class AuthController {
 
     return {
       statusCode: 200,
-      data: tokens,
+      data: user,
     };
   }
 
