@@ -21,6 +21,7 @@ import { Goals } from './entities/goals.entity';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ApiResponseInterceptor } from './interceptor/api-response.interceptor';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { RefreshTokens } from './entities/refreshToken.entity';
 
 @Module({
   imports: [
@@ -34,7 +35,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [Users, UserFiles, Dailies, Events, Categories, Projects, Tasks, Goals],
+      entities: [Users, UserFiles, Dailies, Events, Categories, Projects, Tasks, Goals, RefreshTokens],
       synchronize: true,
       // timezone: 'z',
       charset: 'utf8mb4',

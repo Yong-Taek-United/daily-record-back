@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { Public } from 'src/decorator/skip-auth.decorator';
@@ -18,13 +18,14 @@ export class AuthController {
   @ApiBody({ type: LoginDto })
   @UseGuards(LocalAuthGuard)
   async login(@Req() req, @Res({ passthrough: true }) res: Response) {
+    const user = req.user;
     const tokens = await this.authService.login(req.user);
 
     await this.authService.saveTokensToCookies(res, tokens);
 
     return {
       statusCode: 200,
-      data: tokens,
+      data: user,
     };
   }
 
@@ -36,21 +37,23 @@ export class AuthController {
   })
   @UseGuards(JwtRefreshAuthGuard)
   async refreshTokens(@Req() req, @Res({ passthrough: true }) res: Response) {
-    const userId = req.user['sub'];
-    const refreshToken = req.user['refreshToken'];
-    const tokens = await this.authService.refreshTokens(userId, refreshToken);
+    const user = req.user.user;
+    const refreshToken = req.user.refreshToken;
+    const tokens = await this.authService.refreshTokens(user, refreshToken);
 
     await this.authService.saveTokensToCookies(res, tokens);
 
     return {
       statusCode: 200,
-      data: tokens,
+      data: user,
     };
   }
 
-  @Post('logout')
+  @Post('logout:id')
   @ApiOperation({ summary: '로그아웃', description: 'cookie에 저장된 token을 제거해 로그아웃합니다.' })
-  async logout(@Res() res: Response) {
+  @ApiParam({ name: 'id', type: 'number', example: 1 })
+  async logout(@Res() res: Response, @Param('id') userId: number) {
+    await this.authService.removeTokensFromUserDB(userId);
     await this.authService.removeTokensFromCookies(res);
 
     return {
