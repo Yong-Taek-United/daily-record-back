@@ -35,14 +35,13 @@ export class AuthService {
     return tokens;
   }
 
-  async refreshTokens(userId: number, refreshToken: string) {
-    const tokenData = await this.refreshTokensRepository.findOne({ where: { user: { id: userId } } });
+  async refreshTokens(user: any, refreshToken: string) {
+    const tokenData = await this.refreshTokensRepository.findOne({ where: { user: { id: user.id } } });
     if (!tokenData || !tokenData.refreshToken) throw new ForbiddenException('접근 권한이 없습니다.');
 
     const isMatch = await bcrypt.compare(refreshToken, tokenData.refreshToken);
     if (!isMatch) throw new ForbiddenException('접근 권한이 없습니다.');
 
-    const user = await this.usersService.findUserById(userId);
     const tokens = await this.generateTokens(user);
 
     return tokens;
@@ -56,7 +55,7 @@ export class AuthService {
       this.generateRefreshToken(payload),
     ]);
 
-    await this.setRefreshTokenToUserDB(user.id, refreshToken);
+    await this.setRefreshTokenToUserDB(user, refreshToken);
 
     return { accessToken, refreshToken };
   }
@@ -75,11 +74,10 @@ export class AuthService {
   }
 
   // 리프레시 토큰 저장
-  async setRefreshTokenToUserDB(userId: number, refreshToken: string) {
+  async setRefreshTokenToUserDB(user: any, refreshToken: string) {
     const hashedRefreshToken = await this.getHashedRefreshToken(refreshToken);
     const refreshTokenExp = await this.getRefreshTokenExp(refreshToken);
 
-    const user = await this.usersService.findUserById(userId);
     const tokenInfo = {
       user: user,
       refreshToken: hashedRefreshToken,
@@ -87,11 +85,11 @@ export class AuthService {
       isRevoked: false,
     };
 
-    const tokenData = await this.refreshTokensRepository.findOne({ where: { user: { id: userId } } });
+    const tokenData = await this.refreshTokensRepository.findOne({ where: { user: { id: user.id } } });
     if (!tokenData) {
       await this.refreshTokensRepository.save(tokenInfo);
     } else {
-      await this.refreshTokensRepository.update(userId, tokenInfo);
+      await this.refreshTokensRepository.update(user.id, tokenInfo);
     }
   }
 
