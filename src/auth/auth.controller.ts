@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { Public } from 'src/decorator/skip-auth.decorator';
@@ -48,9 +48,11 @@ export class AuthController {
     };
   }
 
-  @Post('logout')
+  @Post('logout:id')
   @ApiOperation({ summary: '로그아웃', description: 'cookie에 저장된 token을 제거해 로그아웃합니다.' })
-  async logout(@Res() res: Response) {
+  @ApiParam({ name: 'id', type: 'number', example: 1 })
+  async logout(@Res() res: Response, @Param('id') userId: number) {
+    await this.authService.removeTokensFromUserDB(userId);
     await this.authService.removeTokensFromCookies(res);
 
     return {

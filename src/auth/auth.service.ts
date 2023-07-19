@@ -1,4 +1,7 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { RefreshTokens } from 'src/entities/refreshToken.entity';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -8,6 +11,8 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectRepository(RefreshTokens)
+    private readonly refreshTokensRepository: Repository<RefreshTokens>,
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
@@ -31,12 +36,13 @@ export class AuthService {
   }
 
   async refreshTokens(userId: number, refreshToken: string) {
-    const user = await this.usersService.findById(userId);
-    if (!user || !user.refreshToken) throw new ForbiddenException('접근 권한이 없습니다.');
+    const tokenData = await this.refreshTokensRepository.findOne({ where: { user: { id: userId } } });
+    if (!tokenData || !tokenData.refreshToken) throw new ForbiddenException('접근 권한이 없습니다.');
 
-    const isMatch = await bcrypt.compare(refreshToken, user.refreshToken);
+    const isMatch = await bcrypt.compare(refreshToken, tokenData.refreshToken);
     if (!isMatch) throw new ForbiddenException('접근 권한이 없습니다.');
 
+    const user = await this.usersService.findUserById(userId);
     const tokens = await this.generateTokens(user);
 
     return tokens;
@@ -50,7 +56,7 @@ export class AuthService {
       this.generateRefreshToken(payload),
     ]);
 
-    await this.usersService.setRefreshToken(user.id, refreshToken);
+    await this.setRefreshTokenToUserDB(user.id, refreshToken);
 
     return { accessToken, refreshToken };
   }
@@ -63,9 +69,60 @@ export class AuthService {
     const secret = this.configService.get<string>('JWT_REFRESH_SECRET');
     const expiresIn = this.configService.get<number>('JWT_REFRESH_EXPIRATION_TIME');
 
-    const refreshToken = await this.jwtService.signAsync({ id: payload.sub }, { secret, expiresIn });
+    const refreshToken = await this.jwtService.signAsync(payload, { secret, expiresIn });
 
     return refreshToken;
+  }
+
+  // 리프레시 토큰 저장
+  async setRefreshTokenToUserDB(userId: number, refreshToken: string) {
+    const hashedRefreshToken = await this.getHashedRefreshToken(refreshToken);
+    const refreshTokenExp = await this.getRefreshTokenExp(refreshToken);
+
+    const user = await this.usersService.findUserById(userId);
+    const tokenInfo = {
+      user: user,
+      refreshToken: hashedRefreshToken,
+      expiresAt: refreshTokenExp,
+      isRevoked: false,
+    };
+
+    const tokenData = await this.refreshTokensRepository.findOne({ where: { user: { id: userId } } });
+    if (!tokenData) {
+      await this.refreshTokensRepository.save(tokenInfo);
+    } else {
+      await this.refreshTokensRepository.update(userId, tokenInfo);
+    }
+  }
+
+  // 리프레시 토큰 해시
+  async getHashedRefreshToken(refreshToken: string) {
+    const hashedRefreshToken: string = await bcrypt.hash(refreshToken, 10);
+    return hashedRefreshToken;
+  }
+
+  // 리프레시 토큰 만료일 생성
+  async getRefreshTokenExp(refreshToken: string): Promise<Date> {
+    const decodedToken = this.jwtService.verify(refreshToken, {
+      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+    });
+    const expiration = decodedToken.exp;
+
+    const refreshTokenExp = new Date(expiration * 1000);
+
+    return refreshTokenExp;
+  }
+
+  async removeTokensFromUserDB(userId: number) {
+    const user = await this.usersService.findUserById(userId);
+
+    const tokenInfo = {
+      user: user,
+      refreshToken: null,
+      expiresAt: null,
+      isRevoked: true,
+    };
+    await this.refreshTokensRepository.update(userId, tokenInfo);
   }
 
   async saveTokensToCookies(res: Response, tokens: any) {

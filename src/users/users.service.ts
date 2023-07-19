@@ -80,35 +80,7 @@ export class UsersService {
   }
 
   // 회원 조회(by id)
-  async findById(userId: number) {
+  async findUserById(userId: number) {
     return await this.usersRepository.findOne({ where: { id: userId } });
-  }
-
-  // 리프레시 토큰 저장
-  async setRefreshToken(userId: number, refreshToken: string) {
-    const hashedRefreshToken = await this.getHashedRefreshToken(refreshToken);
-    const refreshTokenExp = await this.getRefreshTokenExp(refreshToken);
-    await this.usersRepository.update(userId, {
-      refreshToken: hashedRefreshToken,
-      refreshTokenExp: refreshTokenExp,
-    });
-  }
-
-  // 리프레시 토큰 해시
-  async getHashedRefreshToken(refreshToken: string) {
-    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-    return hashedRefreshToken;
-  }
-
-  // 리프레시 토큰 만료일 생성
-  async getRefreshTokenExp(refreshToken: string): Promise<Date> {
-    const decodedToken = this.jwtService.verify(refreshToken, {
-      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-    });
-    const expiration = decodedToken.exp;
-
-    const refreshTokenExp = new Date(expiration * 1000);
-
-    return refreshTokenExp;
   }
 }

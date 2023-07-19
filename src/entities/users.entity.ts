@@ -1,9 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { UserFiles } from './userFiles.entity';
 import { Dailies } from './dailies.entity';
 import { Events } from './events.entity';
 import { Projects } from './projects.entity';
 import { Tasks } from './tasks.entity';
+import { RefreshTokens } from './refreshToken.entity';
 
 enum UserType {
   BASIC = 'basic',
@@ -57,12 +66,6 @@ export class Users {
   @Column({ type: 'datetime', default: null })
   deletedAt: Date;
 
-  @Column({ type: 'varchar', length: 100, default: null })
-  refreshToken: string;
-
-  @Column({ type: 'datetime', default: null })
-  refreshTokenExp: Date;
-
   @OneToMany(() => UserFiles, (userFiles) => userFiles.user)
   userFiles: UserFiles[];
 
@@ -77,4 +80,7 @@ export class Users {
 
   @OneToMany(() => Events, (events) => events.user)
   events: Events[];
+
+  @OneToMany(() => RefreshTokens, (refreshTokens) => refreshTokens.user)
+  refreshTokens: RefreshTokens;
 }
