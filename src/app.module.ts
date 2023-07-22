@@ -13,29 +13,22 @@ import { TasksModule } from './tasks/tasks.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ApiResponseInterceptor } from './interceptor/api-response.interceptor';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { TypeOrmConfigService } from './config/typeorm.config.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development',
     }),
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true,
-      // timezone: 'z',
-      charset: 'utf8mb4',
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useClass: TypeOrmConfigService,
     }),
     UsersModule,
     AuthModule,
     DailiesModule,
     EventsModule,
-    ProjectsModule,
+    // ProjectsModule,
     TasksModule,
     CategoriesModule,
     ProjectsModule,
