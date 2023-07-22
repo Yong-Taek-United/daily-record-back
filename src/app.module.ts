@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -10,18 +10,9 @@ import { EventsModule } from './events/events.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ProjectsModule } from './projects/projects.module';
 import { TasksModule } from './tasks/tasks.module';
-import { Users } from './entities/users.entity';
-import { UserFiles } from './entities/userFiles.entity';
-import { Dailies } from './entities/dailies.entity';
-import { Events } from './entities/events.entity';
-import { Categories } from './entities/categories.entity';
-import { Projects } from './entities/projects.entity';
-import { Tasks } from './entities/tasks.entity';
-import { Goals } from './entities/goals.entity';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ApiResponseInterceptor } from './interceptor/api-response.interceptor';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
-import { RefreshTokens } from './entities/refreshToken.entity';
 
 @Module({
   imports: [
@@ -35,7 +26,7 @@ import { RefreshTokens } from './entities/refreshToken.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [Users, UserFiles, Dailies, Events, Categories, Projects, Tasks, Goals, RefreshTokens],
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       // timezone: 'z',
       charset: 'utf8mb4',
