@@ -15,10 +15,13 @@ import { ApiResponseInterceptor } from './interceptor/api-response.interceptor';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { TypeOrmConfigService } from './config/typeorm.config.service';
 
+const nodeEnv = process.env.NODE_ENV || 'development';
+const envFilePath = `.env.${nodeEnv}`;
+
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development',
+      envFilePath,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -28,7 +31,7 @@ import { TypeOrmConfigService } from './config/typeorm.config.service';
     AuthModule,
     DailiesModule,
     EventsModule,
-    // ProjectsModule,
+    ProjectsModule,
     TasksModule,
     CategoriesModule,
     ProjectsModule,
