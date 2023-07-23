@@ -13,7 +13,7 @@ import { TasksModule } from './tasks/tasks.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ApiResponseInterceptor } from './interceptor/api-response.interceptor';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
-import { TypeOrmConfigService } from './config/typeorm.config.service';
+import { TypeOrmConfig } from './config/typeorm.config.ts';
 
 const nodeEnv = process.env.NODE_ENV || 'development';
 const envFilePath = `.env.${nodeEnv}`;
@@ -25,7 +25,7 @@ const envFilePath = `.env.${nodeEnv}`;
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useClass: TypeOrmConfigService,
+      useClass: TypeOrmConfig,
     }),
     UsersModule,
     AuthModule,
@@ -47,7 +47,6 @@ const envFilePath = `.env.${nodeEnv}`;
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
-
     AppService,
   ],
 })
