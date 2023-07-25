@@ -33,10 +33,10 @@ export class Dailies {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Users, (users) => users.dailies, {
-    nullable: true,
-    onDelete: 'SET NULL',
-  })
+  @Column({ type: 'datetime', default: null })
+  deletedAt: Date;
+
+  @ManyToOne(() => Users, (user) => user.dailies)
   user: Users;
 
   @OneToMany(() => Events, (events) => events.daily)

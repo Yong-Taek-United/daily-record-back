@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Tasks } from './tasks.entity';
 import { Events } from './events.entity';
 
@@ -7,14 +7,20 @@ export class Categories {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 30 })
   name: string;
 
-  @Column({ type: 'varchar', length: 100 })
-  color: string;
+  @Column({ type: 'varchar', length: 10 })
+  colorCode: string;
 
   @Column({ type: 'tinyint', default: true })
   isActive: Boolean;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @OneToMany(() => Tasks, (tasks) => tasks.category)
   tasks: Tasks[];

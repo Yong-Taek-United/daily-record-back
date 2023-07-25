@@ -1,23 +1,16 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  OneToOne,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 import { Tasks } from './tasks.entity';
+import { CountType, Cycle } from 'src/types/enums/tasks.enum';
 
-@Entity({ schema: 'dailyrecord', name: 'Goals' })
-export class Goals {
+@Entity({ schema: 'dailyrecord', name: 'TaskGoals' })
+export class TaskGoals {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
-  @Column({ type: 'enum', enum: ['DAY', 'WEEK', 'MONTH', 'YEAR'] })
+  @Column({ type: 'enum', enum: Cycle })
   cycle: string;
 
-  @Column({ type: 'enum', enum: ['COUNT', 'DURATION'] })
+  @Column({ type: 'enum', enum: CountType })
   countType: string;
 
   @Column({ type: 'int', default: 0 })
@@ -25,12 +18,6 @@ export class Goals {
 
   @Column({ type: 'int', default: 0 })
   accumulation: number;
-
-  @Column({ type: 'date' })
-  startedAt: Date;
-
-  @Column({ type: 'date' })
-  finishedAt: Date;
 
   @Column({ type: 'tinyint', default: false })
   isWeekendsExcl: Boolean;
@@ -47,6 +34,6 @@ export class Goals {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToOne(() => Tasks, (tasks) => tasks.goals)
+  @ManyToOne(() => Tasks, (task) => task.taskGoals)
   task: Tasks;
 }

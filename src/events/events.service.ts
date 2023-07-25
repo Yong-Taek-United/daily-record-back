@@ -49,27 +49,27 @@ export class EventsService {
     return { Success: true, statusCode: 200, message: '이벤트 삭제가 완료되었습니다.' };
   }
 
-  // 이벤트 체크
-  async check(id: number) {
-    const event = await this.eventsRepository.findOne({ where: { id } });
-    let checkValue = true;
-    if (event.isChecked) {
-      checkValue = false;
-    }
-    event.isChecked = checkValue;
-    await this.eventsRepository.save(event);
-    return { Success: true, statusCode: 201, message: '이벤트 체크가 완료되었습니다.', value: checkValue };
-  }
+  // // 이벤트 체크
+  // async check(id: number) {
+  //   const event = await this.eventsRepository.findOne({ where: { id } });
+  //   let checkValue = true;
+  //   if (event.isChecked) {
+  //     checkValue = false;
+  //   }
+  //   event.isChecked = checkValue;
+  //   await this.eventsRepository.save(event);
+  //   return { Success: true, statusCode: 201, message: '이벤트 체크가 완료되었습니다.', value: checkValue };
+  // }
 
-  // 이벤트 전체 조회
-  async showCheckList(userId: number, dailyId: number, eventData) {
-    const events = await this.eventsRepository.find({
-      where: {
-        user: { id: userId },
-        daily: { id: dailyId },
-        isChecked: eventData.checkValue,
-      },
-    });
-    return { Success: true, statusCode: 201, message: '이벤트 체크 분류 조회가 완료되었습니다.', events: events };
-  }
+  // // 이벤트 전체 조회
+  // async showCheckList(userId: number, dailyId: number, eventData) {
+  //   const events = await this.eventsRepository.find({
+  //     where: {
+  //       user: { id: userId },
+  //       daily: { id: dailyId },
+  //       isChecked: eventData.checkValue,
+  //     },
+  //   });
+  //   return { Success: true, statusCode: 201, message: '이벤트 체크 분류 조회가 완료되었습니다.', events: events };
+  // }
 }

@@ -16,11 +16,11 @@ export class Projects {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 100, default: '' })
   title: string;
 
-  @Column({ type: 'varchar', length: 300, default: null })
-  description: string | null;
+  @Column({ type: 'varchar', length: 300, default: '' })
+  description: string;
 
   @Column({ type: 'date' })
   startedAt: Date;
@@ -43,13 +43,13 @@ export class Projects {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Users, (users) => users.projects, {
-    nullable: false,
-    onDelete: 'CASCADE',
-  })
+  @Column({ type: 'datetime', default: null })
+  deletedAt: Date;
+
+  @ManyToOne(() => Users, (users) => users.projects)
   user: Users;
 
-  @OneToMany(() => Tasks, (tasks) => tasks.projects)
+  @OneToMany(() => Tasks, (tasks) => tasks.project)
   tasks: Tasks[];
 
   @OneToMany(() => Events, (events) => events.project)

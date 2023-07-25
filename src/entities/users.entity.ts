@@ -1,29 +1,11 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-  OneToOne,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { UserFiles } from './userFiles.entity';
 import { Dailies } from './dailies.entity';
 import { Events } from './events.entity';
 import { Projects } from './projects.entity';
 import { Tasks } from './tasks.entity';
 import { RefreshTokens } from './refreshToken.entity';
-
-enum UserType {
-  BASIC = 'basic',
-  ADMIN = 'admin',
-}
-
-enum AuthType {
-  BASIC = 'basic',
-  GOOGLE = 'google',
-  KAKAO = 'kakao',
-}
+import { AuthType, UserType } from 'src/types/enums/users.enum';
 
 @Entity({ schema: 'dailyrecord', name: 'Users' })
 export class Users {
@@ -39,10 +21,10 @@ export class Users {
   @Column({ type: 'varchar', length: 30, unique: true })
   email: string;
 
-  @Column({ type: 'varchar', length: 15, unique: true })
+  @Column({ type: 'varchar', length: 30, unique: true })
   username: string;
 
-  @Column({ type: 'varchar', length: 15 })
+  @Column({ type: 'varchar', length: 30 })
   nickname: string;
 
   @Column({ type: 'varchar', length: 100 })

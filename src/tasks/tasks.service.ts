@@ -31,7 +31,7 @@ export class TasksService {
     const tasks = await this.tasksRepository.find({
       where: {
         user: { id: userId },
-        projects: { id: projectId },
+        project: { id: projectId },
       },
     });
     return { Success: true, statusCode: 201, message: '할일 전체 조회가 완료되었습니다.', taskData: tasks };
