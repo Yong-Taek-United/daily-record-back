@@ -1,23 +1,29 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { Dailies } from './dailies.entity';
 import { Users } from './users.entity';
 import { Categories } from './categories.entity';
 import { Projects } from './projects.entity';
 import { Tasks } from './tasks.entity';
+import { EventFiles } from './eventFiles.entity';
 
 @Entity({ schema: 'dailyrecord', name: 'Events' })
 export class Events {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 100, default: '' })
   title: string;
 
-  @Column({ type: 'varchar', length: 300, default: null })
-  description: string | null;
-
-  @Column({ type: 'tinyint', default: false })
-  isChecked: Boolean;
+  @Column({ type: 'varchar', length: 300, default: '' })
+  description: string;
 
   @Column({ type: 'tinyint', default: false })
   isDeleted: Boolean;
@@ -28,33 +34,28 @@ export class Events {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Users, (users) => users.events, {
-    nullable: true,
-    onDelete: 'SET NULL',
-  })
+  @Column({ type: 'datetime', default: null })
+  deletedAt: Date;
+
+  @ManyToOne(() => Users, (user) => user.events)
   user: Users;
 
-  @ManyToOne(() => Categories, (categories) => categories.events, {
-    nullable: true,
-    onDelete: 'SET NULL',
-  })
+  @ManyToOne(() => Categories, (category) => category.events)
   category: Categories;
 
-  @ManyToOne(() => Dailies, (dailies) => dailies.events, {
-    nullable: true,
-    onDelete: 'SET NULL',
-  })
+  @ManyToOne(() => Dailies, (daily) => daily.events)
   daily: Dailies;
 
-  @ManyToOne(() => Projects, (projects) => projects.events, {
+  @ManyToOne(() => Projects, (project) => project.events, {
     nullable: true,
-    onDelete: 'SET NULL',
   })
   project: Projects;
 
-  @ManyToOne(() => Tasks, (tasks) => tasks.events, {
+  @ManyToOne(() => Tasks, (task) => task.events, {
     nullable: true,
-    onDelete: 'SET NULL',
   })
   task: Tasks;
+
+  @OneToMany(() => EventFiles, (eventFiles) => eventFiles.event)
+  eventFiles: EventFiles[];
 }
