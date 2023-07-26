@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
-import { textLength } from './constant';
+import { textLength } from '../config/settings/dto.config';
 
 export class CreateUserDto {
   @IsEmail()
