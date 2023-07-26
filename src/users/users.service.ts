@@ -2,8 +2,6 @@ import { BadRequestException, ConflictException, Injectable, UnauthorizedExcepti
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from '../entities/users.entity';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto, UpdateUserDto, DeleteUserDto } from './users.dto';
 import * as bcrypt from 'bcrypt';
 
@@ -12,28 +10,36 @@ export class UsersService {
   constructor(
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
-    private readonly configService: ConfigService,
-    private readonly jwtService: JwtService,
   ) {}
 
   // 회원가입
-  async create(userData: CreateUserDto) {
-    const { email, password, password2 } = userData;
+  async signUp(userData: CreateUserDto) {
+    const { email, username, password, password2 } = userData;
 
-    const isExist = await this.usersRepository.findOne({ where: { email } });
+    const isExistEmail = await this.usersRepository.findOne({ where: { email } });
+    if (isExistEmail) throw new ConflictException(['이미 존재하는 이메일입니다.']);
 
-    if (isExist) throw new ConflictException(['이미 존재하는 이메일입니다.']);
+    const isExistUsername = await this.usersRepository.findOne({ where: { username } });
+    if (isExistUsername) throw new ConflictException(['이미 존재하는 계정입니다.']);
 
-    if (password !== password2) throw new BadRequestException(['비밀번호를 다시 확인해주십시오.']);
+    if (password != password2) throw new BadRequestException(['비밀번호를 다시 확인해주십시오.']);
+    delete userData.password2;
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    userData.password = hashedPassword;
+    userData.password = await this.hashPassword(password);
 
     const data = await this.usersRepository.save(userData);
     delete data.password;
-    delete data.password2;
 
     return { statusCode: 201, data };
+  }
+
+  // 비밀번호 해시화
+  async hashPassword(password: string) {
+    const saltRounds = 10;
+    const salt = await bcrypt.genSalt(saltRounds);
+
+    const hashedPassword = await bcrypt.hash(password, salt);
+    return hashedPassword;
   }
 
   // 회원 조회

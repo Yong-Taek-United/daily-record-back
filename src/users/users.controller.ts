@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/commo
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto, DeleteUserDto } from './users.dto';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/decorator/skip-auth.decorator';
 
 @ApiTags('Users')
 @Controller('users')
@@ -9,9 +10,10 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @Public()
   @ApiOperation({ summary: '회원가입', description: '' })
-  create(@Body() userData: CreateUserDto) {
-    return this.usersService.create(userData);
+  signUp(@Body() userData: CreateUserDto) {
+    return this.usersService.signUp(userData);
   }
 
   @Get('/:id')
