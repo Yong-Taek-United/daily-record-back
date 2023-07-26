@@ -60,8 +60,15 @@ export class UpdateUserDto {
   @Length(textLength.username.min, textLength.username.max, {
     message: `계정을 다시 확인해주십시오.(${textLength.username.min}~${textLength.username.max}자)`,
   })
-  @ApiProperty({ example: 'test0002' })
+  @ApiProperty({ example: 'test0001' })
   username?: string;
+
+  @IsString()
+  @Length(textLength.username.min, textLength.username.max, {
+    message: `닉네임을 다시 확인해주십시오.(${textLength.nickname.min}~${textLength.nickname.max}자)`,
+  })
+  @ApiProperty({ example: '테스트' })
+  nickname?: string;
 
   @IsOptional()
   @IsBoolean()

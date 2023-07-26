@@ -34,34 +34,33 @@ export class UsersService {
   }
 
   // 회원 조회
-  async get(userId: number) {
-    const user = await this.usersRepository.findOne({ where: { id: userId } });
+  async getUser(userId: number) {
+    const user = await this.findUserByField('id', userId);
     if (!user) throw new BadRequestException('회원 정보가 존재하지 않습니다.');
     const { password, ...data } = user;
     return { statusCode: 200, data };
   }
 
   // 회원정보 수정
-  async update(userId: number, userData: UpdateUserDto) {
+  async updateUser(userId: number, userData: UpdateUserDto) {
     if (userData.password) {
       if (userData.password !== userData.password2) throw new BadRequestException(['비밀번호를 다시 확인해주십시오.']);
       delete userData.password2;
 
-      const hashedPassword = await bcrypt.hash(userData.password, 10);
-      userData.password = hashedPassword;
+      userData.password = await this.hashPassword(userData.password);
     }
 
     await this.usersRepository.update(userId, userData);
 
-    const data = await this.usersRepository.findOne({ where: { id: userId } });
+    const data = await this.findUserByField('id', userId);
     delete data.password;
 
     return { statusCode: 200, data };
   }
 
   // 회원 탈퇴
-  async delete(userId: number, userData: DeleteUserDto) {
-    const password = (await this.usersRepository.findOne({ where: { id: userId } })).password;
+  async withdrawal(userId: number, userData: DeleteUserDto) {
+    const password = (await this.findUserByField('id', userId)).password;
 
     const isMatch = await bcrypt.compare(userData.password, password);
     if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
