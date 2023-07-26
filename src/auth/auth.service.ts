@@ -19,7 +19,7 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.usersService.getUser(email);
+    const user = await this.usersService.findUserByField('email', email);
     if (user !== null) {
       const isMatch = await bcrypt.compare(password, user.password);
       if (user && isMatch) {
@@ -112,7 +112,7 @@ export class AuthService {
   }
 
   async removeTokensFromUserDB(userId: number) {
-    const user = await this.usersService.findUserById(userId);
+    const user = await this.usersService.findUserByField('id', userId);
 
     const tokenInfo = {
       user: user,
