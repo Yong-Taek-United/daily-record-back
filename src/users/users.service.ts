@@ -16,11 +16,11 @@ export class UsersService {
   async signUp(userData: CreateUserDto) {
     const { email, username, password, password2 } = userData;
 
-    const isExistEmail = await this.usersRepository.findOne({ where: { email } });
-    if (isExistEmail) throw new ConflictException(['이미 존재하는 이메일입니다.']);
+    let isExist = await this.findUserByField('email', email);
+    if (isExist) throw new ConflictException(['이미 존재하는 이메일입니다.']);
 
-    const isExistUsername = await this.usersRepository.findOne({ where: { username } });
-    if (isExistUsername) throw new ConflictException(['이미 존재하는 계정입니다.']);
+    isExist = await this.findUserByField('username', username);
+    if (isExist) throw new ConflictException(['이미 존재하는 계정입니다.']);
 
     if (password != password2) throw new BadRequestException(['비밀번호를 다시 확인해주십시오.']);
     delete userData.password2;
@@ -31,15 +31,6 @@ export class UsersService {
     delete data.password;
 
     return { statusCode: 201, data };
-  }
-
-  // 비밀번호 해시화
-  async hashPassword(password: string) {
-    const saltRounds = 10;
-    const salt = await bcrypt.genSalt(saltRounds);
-
-    const hashedPassword = await bcrypt.hash(password, salt);
-    return hashedPassword;
   }
 
   // 회원 조회
@@ -80,13 +71,17 @@ export class UsersService {
     return { statusCode: 200 };
   }
 
-  // 회원 조회(로그인 인증용)
-  async getUser(email: string) {
-    return await this.usersRepository.findOne({ where: { email } });
+  // 회원 조회(by 특정 필드)
+  async findUserByField(field: string, value: any) {
+    return await this.usersRepository.findOne({ where: { [field]: value } });
   }
 
-  // 회원 조회(by id)
-  async findUserById(userId: number) {
-    return await this.usersRepository.findOne({ where: { id: userId } });
+  // 비밀번호 해시
+  async hashPassword(password: string) {
+    const saltRounds = 10;
+    const salt = await bcrypt.genSalt(saltRounds);
+
+    const hashedPassword = await bcrypt.hash(password, salt);
+    return hashedPassword;
   }
 }
