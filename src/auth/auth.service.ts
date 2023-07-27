@@ -1,4 +1,4 @@
-import { Injectable, ForbiddenException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RefreshTokens } from 'src/entities/refreshToken.entity';
@@ -18,6 +18,7 @@ export class AuthService {
     private readonly usersService: UsersService,
   ) {}
 
+  // 회원 인증
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.usersService.findUserByField('email', email);
     if (user !== null) {
@@ -30,11 +31,13 @@ export class AuthService {
     return null;
   }
 
+  // 로그인 제어
   async login(user: any) {
     const tokens = await this.generateTokens(user);
     return tokens;
   }
 
+  // 리프레시 토큰 재발급 제어
   async refreshTokens(user: any, refreshToken: string) {
     const tokenData = await this.refreshTokensRepository.findOne({ where: { user: { id: user.id } } });
     if (!tokenData || !tokenData.refreshToken) throw new ForbiddenException('접근 권한이 없습니다.');
@@ -47,6 +50,7 @@ export class AuthService {
     return tokens;
   }
 
+  // 토큰 발급
   async generateTokens(user: any) {
     const payload = { sub: user.id, email: user.email, username: user.username, nickname: user.nickname };
 
@@ -60,10 +64,12 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
+  // 토큰 발급: 액세스 토큰
   async generateAccessToken(payload: any) {
     return await this.jwtService.signAsync(payload);
   }
 
+  // 토큰 발급: 리프레시 토큰
   async generateRefreshToken(payload: any) {
     const secret = this.configService.get<string>('JWT_REFRESH_SECRET');
     const expiresIn = this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME');
@@ -73,7 +79,18 @@ export class AuthService {
     return refreshToken;
   }
 
-  // 리프레시 토큰 저장
+  // 토큰 해독: 페이로드 추출
+  async getPayloadFromToken(req: any) {
+    try {
+      const token: string = req.headers.authorization.replace('Bearer ', '');
+      const payload = this.jwtService.verify(token, { ignoreExpiration: true });
+      return payload;
+    } catch {
+      return false;
+    }
+  }
+
+  // 리프레시 토큰 DB 저장
   async setRefreshTokenToUserDB(user: any, refreshToken: string) {
     const hashedRefreshToken = await this.getHashedRefreshToken(refreshToken);
     const refreshTokenExp = await this.getRefreshTokenExp(refreshToken);
@@ -93,24 +110,7 @@ export class AuthService {
     }
   }
 
-  // 리프레시 토큰 해시
-  async getHashedRefreshToken(refreshToken: string) {
-    const hashedRefreshToken: string = await bcrypt.hash(refreshToken, 10);
-    return hashedRefreshToken;
-  }
-
-  // 리프레시 토큰 만료일 생성
-  async getRefreshTokenExp(refreshToken: string): Promise<Date> {
-    const decodedToken = this.jwtService.verify(refreshToken, {
-      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-    });
-    const expiration = decodedToken.exp;
-
-    const refreshTokenExp = new Date(expiration * 1000);
-
-    return refreshTokenExp;
-  }
-
+  // 리프레시 토큰 DB 삭제
   async removeTokensFromUserDB(userId: number) {
     const user = await this.usersService.findUserByField('id', userId);
 
@@ -123,6 +123,25 @@ export class AuthService {
     await this.refreshTokensRepository.update(userId, tokenInfo);
   }
 
+  // 리프레시 토큰 해시(DB 데이터)
+  async getHashedRefreshToken(refreshToken: string) {
+    const hashedRefreshToken: string = await bcrypt.hash(refreshToken, 10);
+    return hashedRefreshToken;
+  }
+
+  // 리프레시 토큰 만료일 생성(DB 데이터)
+  async getRefreshTokenExp(refreshToken: string): Promise<Date> {
+    const decodedToken = this.jwtService.verify(refreshToken, {
+      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+    });
+    const expiration = decodedToken.exp;
+
+    const refreshTokenExp = new Date(expiration * 1000);
+
+    return refreshTokenExp;
+  }
+
+  // 토큰 Cookie 저장
   async saveTokensToCookies(res: Response, tokens: any) {
     const option = { httpOnly: false };
 
@@ -131,21 +150,12 @@ export class AuthService {
     });
   }
 
+  // 토큰 Cookie 삭제
   async removeTokensFromCookies(res: Response) {
     const cookieNames = ['accessToken', 'refreshToken'];
 
     cookieNames.forEach((cookieName) => {
       res.clearCookie(cookieName);
     });
-  }
-
-  async getPayloadFromToken(req: any) {
-    try {
-      const token: string = req.headers.authorization.replace('Bearer ', '');
-      const payload = this.jwtService.verify(token, { ignoreExpiration: true });
-      return payload;
-    } catch {
-      return false;
-    }
   }
 }
