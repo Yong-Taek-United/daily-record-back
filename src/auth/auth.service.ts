@@ -124,7 +124,7 @@ export class AuthService {
   }
 
   async saveTokensToCookies(res: Response, tokens: any) {
-    const option = { httpOnly: true };
+    const option = { httpOnly: false };
 
     Object.entries(tokens).forEach(([key, value]) => {
       res.cookie(key, value, option);
