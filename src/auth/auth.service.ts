@@ -1,4 +1,4 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import { Injectable, ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RefreshTokens } from 'src/entities/refreshToken.entity';
@@ -137,5 +137,15 @@ export class AuthService {
     cookieNames.forEach((cookieName) => {
       res.clearCookie(cookieName);
     });
+  }
+
+  async getPayloadFromToken(req: any) {
+    try {
+      const token: string = req.headers.authorization.replace('Bearer ', '');
+      const payload = this.jwtService.verify(token, { ignoreExpiration: true });
+      return payload;
+    } catch {
+      return false;
+    }
   }
 }

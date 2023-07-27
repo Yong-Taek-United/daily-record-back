@@ -50,10 +50,12 @@ export class AuthController {
   }
 
   @Post('logout:id')
+  @ApiBearerAuth()
   @ApiOperation({ summary: '로그아웃', description: 'cookie에 저장된 token을 제거해 로그아웃합니다.' })
-  @ApiParam({ name: 'id', type: 'number', example: 1 })
-  async logout(@Res() res: Response, @Param('id') userId: number) {
-    await this.authService.removeTokensFromUserDB(userId);
+  async logout(@Req() req, @Res() res: Response) {
+    const payload = await this.authService.getPayloadFromToken(req);
+    if (payload) await this.authService.removeTokensFromUserDB(payload.sub);
+
     await this.authService.removeTokensFromCookies(res);
 
     return {
