@@ -5,7 +5,7 @@ import { RefreshTokens } from 'src/entities/refreshToken.entity';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { Response } from 'express';
+import { CookieOptions, Response } from 'express';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -143,7 +143,11 @@ export class AuthService {
 
   // 토큰 Cookie 저장
   async saveTokensToCookies(res: Response, tokens: any) {
-    const option = { httpOnly: false };
+    const option: CookieOptions = {
+      httpOnly: false,
+      sameSite: 'strict',
+      secure: false,
+    };
 
     Object.entries(tokens).forEach(([key, value]) => {
       res.cookie(key, value, option);
