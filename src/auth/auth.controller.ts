@@ -49,7 +49,7 @@ export class AuthController {
     };
   }
 
-  @Post('logout:id')
+  @Post('logout')
   @ApiBearerAuth()
   @ApiOperation({ summary: '로그아웃', description: 'cookie에 저장된 token을 제거해 로그아웃합니다.' })
   async logout(@Req() req, @Res() res: Response) {
