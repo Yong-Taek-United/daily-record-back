@@ -31,6 +31,16 @@ export class AuthService {
     return null;
   }
 
+  // 구글 회원 인증
+  async validateGoogleUser(email: string): Promise<any> {
+    const user = await this.usersService.findUserByField('email', email);
+    if (user !== null && user.authType === 'GOOGLE') {
+      const { password, ...result } = user;
+      return result;
+    }
+    return null;
+  }
+
   // 로그인 제어
   async login(user: any) {
     const tokens = await this.generateTokens(user);
@@ -74,9 +84,15 @@ export class AuthService {
     const secret = this.configService.get<string>('JWT_REFRESH_SECRET');
     const expiresIn = this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME');
 
-    const refreshToken = await this.jwtService.signAsync(payload, { secret, expiresIn });
+    return await this.jwtService.signAsync(payload, { secret, expiresIn });
+  }
 
-    return refreshToken;
+  // 토큰 발급: 구글 회원 정보 토큰
+  async generateGoogleUserToken(payload: any) {
+    const secret = this.configService.get<string>('JWT_GOOGLE_USER_SECRET');
+    const expiresIn = this.configService.get<string>('JWT_GOOGLE_USER_EXPIRATION_TIME');
+
+    return { signUpUserToken: await this.jwtService.signAsync(payload, { secret, expiresIn }) };
   }
 
   // 토큰 해독: 페이로드 추출
@@ -155,9 +171,7 @@ export class AuthService {
   }
 
   // 토큰 Cookie 삭제
-  async removeTokensFromCookies(res: Response) {
-    const cookieNames = ['accessToken', 'refreshToken'];
-
+  async removeTokensFromCookies(res: Response, cookieNames: string[]) {
     cookieNames.forEach((cookieName) => {
       res.clearCookie(cookieName);
     });
