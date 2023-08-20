@@ -1,10 +1,11 @@
-import { Controller, Get, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { Public } from 'src/decorator/skip-auth.decorator';
 import { LoginDto } from './auth.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
+import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 
 @Public()
@@ -49,17 +50,36 @@ export class AuthController {
     };
   }
 
-  @Post('logout:id')
+  @Post('logout')
   @ApiBearerAuth()
   @ApiOperation({ summary: '로그아웃', description: 'cookie에 저장된 token을 제거해 로그아웃합니다.' })
   async logout(@Req() req, @Res() res: Response) {
     const payload = await this.authService.getPayloadFromToken(req);
     if (payload) await this.authService.removeTokensFromUserDB(payload.sub);
 
-    await this.authService.removeTokensFromCookies(res);
+    const cookieNames = ['accessToken', 'refreshToken'];
+    await this.authService.removeTokensFromCookies(res, cookieNames);
 
     return {
       statusCode: 200,
+    };
+  }
+
+  @Get('google')
+  @UseGuards(GoogleAuthGuard)
+  async googleAuth() {}
+
+  @Get('google/callback')
+  @UseGuards(GoogleAuthGuard)
+  @UseInterceptors()
+  async googleAuthCallback(@Req() req, @Res({ passthrough: true }) res: Response) {
+    const tokens = req.user.tokens;
+    const redirectEndPoint = req.user.redirectEndPoint;
+
+    await this.authService.saveTokensToCookies(res, tokens);
+
+    return {
+      redirect: redirectEndPoint,
     };
   }
 }

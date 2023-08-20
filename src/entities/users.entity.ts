@@ -29,6 +29,9 @@ export class Users {
 
   @Column({ type: 'varchar', length: 100 })
   password: string;
+  
+  @Column({ type: 'varchar', length: 100, default: '' })
+  introduce: string;
 
   @Column({ type: 'tinyint', default: true })
   isActive: Boolean;
