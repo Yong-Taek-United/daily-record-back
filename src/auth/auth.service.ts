@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { CookieOptions, Response } from 'express';
 import * as bcrypt from 'bcrypt';
+import { AuthType } from 'src/types/enums/users.enum';
 
 @Injectable()
 export class AuthService {
@@ -19,24 +20,14 @@ export class AuthService {
   ) {}
 
   // 회원 인증
-  async validateUser(email: string, password: string): Promise<any> {
+  async validateUser(email: string, password: string, authType: AuthType = AuthType.BASIC): Promise<any> {
     const user = await this.usersService.findUserByField('email', email);
-    if (user !== null) {
+    if (user !== null && user.authType === authType) {
       const isMatch = await bcrypt.compare(password, user.password);
       if (user && isMatch) {
         const { password, ...result } = user;
         return result;
       }
-    }
-    return null;
-  }
-
-  // 구글 회원 인증
-  async validateGoogleUser(email: string): Promise<any> {
-    const user = await this.usersService.findUserByField('email', email);
-    if (user !== null && user.authType === 'GOOGLE') {
-      const { password, ...result } = user;
-      return result;
     }
     return null;
   }
@@ -92,7 +83,7 @@ export class AuthService {
     const secret = this.configService.get<string>('JWT_GOOGLE_USER_SECRET');
     const expiresIn = this.configService.get<string>('JWT_GOOGLE_USER_EXPIRATION_TIME');
 
-    return { signUpUserToken: await this.jwtService.signAsync(payload, { secret, expiresIn }) };
+    return await this.jwtService.signAsync(payload, { secret, expiresIn });
   }
 
   // 토큰 해독: 페이로드 추출

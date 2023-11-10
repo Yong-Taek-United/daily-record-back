@@ -1,35 +1,36 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-google-oauth20';
-import { config } from 'dotenv';
 import { Injectable } from '@nestjs/common';
 import { AuthService } from '../auth.service';
-
-config();
+import { ConfigService } from '@nestjs/config';
+import { AuthType } from 'src/types/enums/users.enum';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor(private readonly authService: AuthService) {
+  constructor(private readonly configService: ConfigService, private readonly authService: AuthService) {
     super({
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_REDIRECT,
+      clientID: configService.get<string>('GOOGLE_CLIENT_ID'),
+      clientSecret: configService.get<string>('GOOGLE_CLIENT_SECRET'),
+      callbackURL: configService.get<string>('GOOGLE_REDIRECT'),
       scope: ['email', 'profile'],
     });
   }
 
   async validate(accessToken: string, refreshToken: string, profile: Profile): Promise<any> {
-    const { provider, emails, displayName, photos } = profile;
+    const { id, emails, displayName } = profile;
     const userData = {
-      auth_type: provider.toUpperCase(),
+      authType: AuthType.GOOGLE,
       email: emails[0].value,
       nickname: displayName,
-      image: photos[0].value,
+      password: id,
     };
 
-    let user = await this.authService.validateGoogleUser(userData.email);
+    let user = await this.authService.validateUser(userData.email, userData.password, userData.authType);
 
-    const tokens = user ? await this.authService.login(user) : await this.authService.generateGoogleUserToken(userData);
-    const redirectEndPoint = user ? '/' : '/sign-up';
+    const tokens = user
+      ? await this.authService.login(user)
+      : { signUpUserToken: await this.authService.generateGoogleUserToken(userData) };
+    const redirectEndPoint = user ? '/' : '/sign-up/social/google';
 
     return { tokens, redirectEndPoint };
   }
