@@ -3,6 +3,7 @@ import { Profile, Strategy } from 'passport-google-oauth20';
 import { Injectable } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 import { ConfigService } from '@nestjs/config';
+import { AuthType } from 'src/types/enums/users.enum';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
@@ -16,18 +17,20 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   }
 
   async validate(accessToken: string, refreshToken: string, profile: Profile): Promise<any> {
-    const { provider, emails, displayName, photos } = profile;
+    const { id, emails, displayName } = profile;
     const userData = {
-      auth_type: provider.toUpperCase(),
+      authType: AuthType.GOOGLE,
       email: emails[0].value,
       nickname: displayName,
-      image: photos[0].value,
+      password: id,
     };
 
-    let user = await this.authService.validateGoogleUser(userData.email);
+    let user = await this.authService.validateUser(userData.email, userData.password, userData.authType);
 
-    const tokens = user ? await this.authService.login(user) : await this.authService.generateGoogleUserToken(userData);
-    const redirectEndPoint = user ? '/' : '/sign-up';
+    const tokens = user
+      ? await this.authService.login(user)
+      : { signUpUserToken: await this.authService.generateGoogleUserToken(userData) };
+    const redirectEndPoint = user ? '/' : '/sign-up/social/google';
 
     return { tokens, redirectEndPoint };
   }
