@@ -14,20 +14,21 @@ export class UsersService {
 
   // 회원가입
   async signUp(userData: CreateUserDto) {
-    const { email, username, password, password2 } = userData;
+    const { email, nickname, password, authType } = userData;
+    const userInfo = {
+      email,
+      nickname,
+      password,
+      authType,
+      username: await this.createUsername(),
+    };
 
     let isExist = await this.findUserByField('email', email);
-    if (isExist) throw new ConflictException(['이미 존재하는 이메일입니다.']);
+    if (isExist) throw new ConflictException('이미 존재하는 이메일입니다.');
 
-    isExist = await this.findUserByField('username', username);
-    if (isExist) throw new ConflictException(['이미 존재하는 계정입니다.']);
+    userInfo.password = await this.hashPassword(password);
 
-    if (password != password2) throw new BadRequestException(['비밀번호를 다시 확인해주십시오.']);
-    delete userData.password2;
-
-    userData.password = await this.hashPassword(password);
-
-    const data = await this.usersRepository.save(userData);
+    const data = await this.usersRepository.save(userInfo);
     delete data.password;
 
     return { statusCode: 201, data };
@@ -68,6 +69,21 @@ export class UsersService {
     await this.usersRepository.update(userId, { isDeleted: true, deletedAt: new Date() });
 
     return { statusCode: 200 };
+  }
+
+  // username 생성
+  async createUsername(): Promise<string> {
+    let username = 'user-';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const length = 10;
+    for (let i = 0; i < length; i++) {
+      username += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+
+    const user = await this.findUserByField('username', username);
+    if (user) return this.createUsername();
+
+    return username;
   }
 
   // 회원 조회(by 특정 필드)

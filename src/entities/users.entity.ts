@@ -29,8 +29,8 @@ export class Users {
 
   @Column({ type: 'varchar', length: 100 })
   password: string;
-  
-  @Column({ type: 'varchar', length: 100, default: '' })
+
+  @Column({ type: 'varchar', length: 100, default: null })
   introduce: string;
 
   @Column({ type: 'tinyint', default: true })

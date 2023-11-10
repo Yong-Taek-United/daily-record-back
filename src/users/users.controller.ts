@@ -12,7 +12,7 @@ export class UsersController {
 
   @Post()
   @Public()
-  @ApiOperation({ summary: '회원가입', description: 'email과 username은 중복 불가입니다.' })
+  @ApiOperation({ summary: '회원가입', description: 'email은 중복 불가입니다.' })
   async signUp(@Body() userData: CreateUserDto) {
     return await this.usersService.signUp(userData);
   }
