@@ -71,7 +71,6 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
-  @UseInterceptors()
   async googleAuthCallback(@Req() req, @Res({ passthrough: true }) res: Response) {
     const tokens = req.user.tokens;
     const redirectEndPoint = req.user.redirectEndPoint;
