@@ -1,4 +1,4 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import { Injectable, ForbiddenException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RefreshTokens } from 'src/entities/refreshToken.entity';
@@ -111,9 +111,11 @@ export class AuthService {
 
     const tokenData = await this.refreshTokensRepository.findOne({ where: { user: { id: user.id } } });
     if (!tokenData) {
-      await this.refreshTokensRepository.save(tokenInfo);
+      const result = await this.refreshTokensRepository.insert(tokenInfo);
+      if (result.identifiers.length === 0) throw new InternalServerErrorException();
     } else {
-      await this.refreshTokensRepository.update(user.id, tokenInfo);
+      const result = await this.refreshTokensRepository.update({ user: user.id }, tokenInfo);
+      if (result.affected === 0) throw new InternalServerErrorException();
     }
   }
 
