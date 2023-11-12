@@ -30,7 +30,7 @@ export class AuthController {
     };
   }
 
-  @Get('refresh')
+  @Post('refresh')
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Refresh Token 재발급',
