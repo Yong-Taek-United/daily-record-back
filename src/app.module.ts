@@ -13,7 +13,7 @@ import { TasksModule } from './tasks/tasks.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ApiResponseInterceptor } from './interceptor/api-response.interceptor';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
-import { TypeOrmConfig } from './config/typeorm.config.ts';
+import { TypeOrmConfig } from './config/typeorm.config';
 
 const nodeEnv = process.env.NODE_ENV || 'development';
 const envFilePath = `.env.${nodeEnv}`;
