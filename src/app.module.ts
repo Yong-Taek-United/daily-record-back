@@ -10,6 +10,7 @@ import { EventsModule } from './events/events.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ProjectsModule } from './projects/projects.module';
 import { TasksModule } from './tasks/tasks.module';
+import { EmailModule } from './email/email.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ApiResponseInterceptor } from './interceptor/api-response.interceptor';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
@@ -36,6 +37,7 @@ const envFilePath = `.env.${nodeEnv}`;
     CategoriesModule,
     ProjectsModule,
     TasksModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [
