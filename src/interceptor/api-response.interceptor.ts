@@ -16,7 +16,7 @@ export class ApiResponseInterceptor implements NestInterceptor {
           return httpResponse.status(500).send({
             success: false,
             statusCode: 500,
-            message: '서버에서 응답을 받지 못했습니다.',
+            message: '예상치 못한 오류가 발생하여 요청을 처리할 수 없습니다.',
           });
         }
 
