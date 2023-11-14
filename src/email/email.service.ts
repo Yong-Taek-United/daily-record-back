@@ -1,4 +1,4 @@
-import { GoneException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
 import { UsersService } from 'src/users/users.service';
@@ -46,7 +46,6 @@ export class EmailService {
   async checkEmail(id: number, emailToken: string) {
     const emailLog = await this.emailLogsRepository.findOne({ where: { id, emailToken } });
     if (!emailLog) throw new NotFoundException('요청하신 데이터를 찾을 수 없습니다.');
-    if (emailLog.isChecked) throw new GoneException('이미 처리가 완료된 작업입니다.');
 
     await this.emailLogsRepository.update(emailLog.id, { isChecked: true });
     const redirectEndPoint = `/reset-password?emailLogId=${emailLog.id}&emailToken=${emailToken},`;
