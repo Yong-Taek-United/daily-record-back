@@ -24,7 +24,7 @@ export class EmailConfig implements MailerOptionsFactory {
         )}>`,
       },
       template: {
-        dir: `${__dirname}/../templates`,
+        dir: `${__dirname}/../templates/email`,
         adapter: new HandlebarsAdapter(),
         options: {
           strict: true,

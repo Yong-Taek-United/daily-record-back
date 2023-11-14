@@ -6,6 +6,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { EmailLogs } from 'src/shared/entities/emailLog.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EmailType } from 'src/shared/types/enums/emailLog.enum';
+import { PASSWORD_RESET_SUBJECT, PASSWORD_RESET_TEMPLATE } from 'src/shared/constants/emailMessages';
 
 @Injectable()
 export class EmailService {
@@ -24,17 +25,21 @@ export class EmailService {
 
     const token = await this.authService.generateEmailToken({ userId: user.id, email });
     const emailLog = await this.emailLogsRepository.save({ email, emailToken: token, emailType: EmailType.PASSWORD });
+
     const emailData = {
       to: email,
-      subject: '비밀번호 재설정 안내',
-      text: '아래 버튼을 클릭해 비밀번호를 재설정해 주세요.',
-      html: `<p>아래 버튼을 클릭해 비밀번호를 재설정해 주세요.</p>
-              <a href="http://localhost:5000/emails/check?id=${emailLog.id}&token=${token}">비밀번호 재설정</a>`,
+      subject: PASSWORD_RESET_SUBJECT,
+      template: PASSWORD_RESET_TEMPLATE,
+      context: {
+        nickname: user.nickname,
+        emailLogId: emailLog.id,
+        token: token,
+      },
     };
 
     await this.sendEmail(emailData);
 
-    return { statusCode: 200, data: { email } };
+    return { statusCode: 200 };
   }
 
   // 이메일 확인 처리
