@@ -1,13 +1,13 @@
 import { Injectable, ForbiddenException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { RefreshTokens } from 'src/entities/refreshToken.entity';
+import { RefreshTokens } from 'src/shared/entities/refreshToken.entity';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { CookieOptions, Response } from 'express';
 import * as bcrypt from 'bcrypt';
-import { AuthType } from 'src/types/enums/users.enum';
+import { AuthType } from 'src/shared/types/enums/users.enum';
 
 @Injectable()
 export class AuthService {
@@ -82,6 +82,14 @@ export class AuthService {
   async generateGoogleUserToken(payload: any) {
     const secret = this.configService.get<string>('JWT_GOOGLE_USER_SECRET');
     const expiresIn = this.configService.get<string>('JWT_GOOGLE_USER_EXPIRATION_TIME');
+
+    return await this.jwtService.signAsync(payload, { secret, expiresIn });
+  }
+
+  // 토큰 발급: 이메일 인증 토큰
+  async generateEmailToken(payload: any) {
+    const secret = this.configService.get<string>('JWT_EMAIL_SECRET');
+    const expiresIn = this.configService.get<string>('JWT_EMAIL_EXPIRATION_TIME');
 
     return await this.jwtService.signAsync(payload, { secret, expiresIn });
   }

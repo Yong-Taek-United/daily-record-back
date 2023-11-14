@@ -2,11 +2,11 @@ import { Controller, Get, Param, Post, Req, Res, UseGuards, UseInterceptors } fr
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
-import { Public } from 'src/decorator/skip-auth.decorator';
-import { LoginDto } from './auth.dto';
-import { LocalAuthGuard } from './guards/local-auth.guard';
-import { GoogleAuthGuard } from './guards/google-auth.guard';
-import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
+import { Public } from 'src/shared/decorators/skip-auth.decorator';
+import { LoginDto } from '../shared/dto/auth.dto';
+import { LocalAuthGuard } from '../shared/guards/local-auth.guard';
+import { GoogleAuthGuard } from '../shared/guards/google-auth.guard';
+import { JwtRefreshAuthGuard } from '../shared/guards/jwt-refresh-auth.guard';
 
 @Public()
 @ApiTags('Auth')

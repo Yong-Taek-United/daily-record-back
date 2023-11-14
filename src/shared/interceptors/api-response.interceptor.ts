@@ -11,6 +11,15 @@ export class ApiResponseInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((response) => {
         const httpResponse = context.switchToHttp().getResponse();
+
+        if (!response) {
+          return httpResponse.status(500).send({
+            success: false,
+            statusCode: 500,
+            message: '예상치 못한 오류가 발생하여 요청을 처리할 수 없습니다.',
+          });
+        }
+
         const { statusCode, message, data, redirect } = response;
 
         const frontendBaseUrl = this.configService.get<string>('CORS_ORIGIN');

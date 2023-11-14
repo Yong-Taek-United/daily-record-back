@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 import { Events } from './events.entity';
-import { MimeType } from 'src/types/enums/files.enum';
+import { MimeType } from 'src/shared/types/enums/files.enum';
 
 @Entity({ schema: 'dailyrecord', name: 'EventFiles' })
 export class EventFiles {

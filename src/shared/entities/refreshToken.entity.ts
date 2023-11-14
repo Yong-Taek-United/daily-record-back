@@ -9,7 +9,7 @@ export class RefreshTokens {
   @Column({ type: 'tinyint', default: false })
   isRevoked: Boolean;
 
-  @Column({ type: 'varchar', length: 100, default: null })
+  @Column({ type: 'varchar', length: 300, default: null })
   refreshToken: string;
 
   @Column({ type: 'datetime', default: null })

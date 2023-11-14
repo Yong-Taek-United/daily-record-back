@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
-import { textLength } from '../config/settings/dto.config';
-import { AuthType } from 'src/types/enums/users.enum';
+import { IsBoolean, IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString, Length } from 'class-validator';
+import { textLength } from '../configs/settings/dto.config';
+import { AuthType } from 'src/shared/types/enums/users.enum';
 
 export class CreateUserDto {
   @IsEmail()
@@ -68,6 +68,23 @@ export class UpdateUserDto {
 }
 
 export class DeleteUserDto {
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty({ example: 'qwer1234' })
+  password: string;
+}
+
+export class ResetPasswordDto {
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty({ example: '' })
+  emailToken: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @ApiProperty({ example: 1 })
+  emailLogId: number;
+
   @IsNotEmpty()
   @IsString()
   @ApiProperty({ example: 'qwer1234' })
