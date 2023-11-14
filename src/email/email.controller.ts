@@ -15,8 +15,8 @@ export class EmailController {
     summary: '이메일 확인',
     description: '이메일에 제공된 버튼을 클릭해 사용자를 인증합니다.',
   })
-  async checkEmail(@Query('userId') userId: number, @Query('token') token: string) {
-    return { statusCode: 200, data: { userId: userId, token: token } };
+  async checkEmail(@Query('id') id: number, @Query('token') emailToken: string) {
+    return this.emailService.checkEmail(id, emailToken);
   }
 
   @Post('/reset-password')
