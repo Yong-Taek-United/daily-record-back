@@ -1,8 +1,17 @@
-import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
 import { Users } from '../entities/users.entity';
-import { CreateUserDto, UpdateUserDto, DeleteUserDto } from './users.dto';
+import { EmailLogs } from 'src/entities/emailLog.entity';
+import { ConfigService } from '@nestjs/config';
+import { CreateUserDto, UpdateUserDto, DeleteUserDto, ResetPasswordDto } from './users.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -10,6 +19,10 @@ export class UsersService {
   constructor(
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
+    @InjectRepository(EmailLogs)
+    private readonly emailLogsRepository: Repository<EmailLogs>,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   // 회원가입
@@ -71,6 +84,17 @@ export class UsersService {
     return { statusCode: 200 };
   }
 
+  // 비밀번호 재설정 처리
+  async ResetPasswordByEmail(userData: ResetPasswordDto) {
+    const { emailToken, emailLogId, password } = userData;
+    const emailLog = await this.emailLogsRepository.findOne({ where: { id: emailLogId } });
+    if (!emailLog.isChecked) throw new UnprocessableEntityException('요청 처리가 가능한 상태가 아닙니다.');
+
+    const secretKey = this.configService.get<string>('JWT_EMAIL_SECRET');
+    const payload = this.jwtService.verify(emailToken, { secret: secretKey, ignoreExpiration: true });
+    return await this.ResetPassword(payload.userId, password);
+  }
+
   // username 생성
   async createUsername(): Promise<string> {
     let username = 'user-';
@@ -98,5 +122,13 @@ export class UsersService {
 
     const hashedPassword = await bcrypt.hash(password, salt);
     return hashedPassword;
+  }
+
+  // 비밀번호 재설정
+  async ResetPassword(userId: number, password: string) {
+    password = await this.hashPassword(password);
+    const result = await this.usersRepository.update(userId, { password: password });
+    if (result.affected === 0) throw new BadRequestException('비밀번호 수정에 실패했습니다.');
+    return { statusCode: 200 };
   }
 }

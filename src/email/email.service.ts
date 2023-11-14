@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  GoneException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { GoneException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
 import { UsersService } from 'src/users/users.service';
@@ -50,7 +44,7 @@ export class EmailService {
     if (emailLog.isChecked) throw new GoneException('이미 처리가 완료된 작업입니다.');
 
     await this.emailLogsRepository.update(emailLog.id, { isChecked: true });
-    const redirectEndPoint = `/reset-password?emailLogId=${emailLog.id}&token=${emailToken},`;
+    const redirectEndPoint = `/reset-password?emailLogId=${emailLog.id}&emailToken=${emailToken},`;
 
     return { redirect: redirectEndPoint };
   }

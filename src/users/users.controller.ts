@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, UpdateUserDto, DeleteUserDto } from './users.dto';
+import { CreateUserDto, UpdateUserDto, DeleteUserDto, ResetPasswordDto } from './users.dto';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorator/skip-auth.decorator';
 
@@ -37,5 +37,12 @@ export class UsersController {
   withdrawal(@Req() req, @Body() userDate: DeleteUserDto) {
     const userId: number = req.user.sub;
     return this.usersService.withdrawal(userId, userDate);
+  }
+
+  @Patch('/password/reset')
+  @Public()
+  @ApiOperation({ summary: '비밀번호 재설정', description: '이메일 인증을 통한 비밀번호 재설정입니다.' })
+  ResetPasswordByEmail(@Body() userDate: ResetPasswordDto) {
+    return this.usersService.ResetPasswordByEmail(userDate);
   }
 }
