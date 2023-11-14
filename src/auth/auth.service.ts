@@ -86,6 +86,14 @@ export class AuthService {
     return await this.jwtService.signAsync(payload, { secret, expiresIn });
   }
 
+  // 토큰 발급: 이메일 인증 토큰
+  async generateEmailToken(payload: any) {
+    const secret = this.configService.get<string>('JWT_EMAIL_SECRET');
+    const expiresIn = this.configService.get<string>('JWT_EMAIL_EXPIRATION_TIME');
+
+    return await this.jwtService.signAsync(payload, { secret, expiresIn });
+  }
+
   // 토큰 해독: 페이로드 추출
   async getPayloadFromToken(req: any) {
     try {
