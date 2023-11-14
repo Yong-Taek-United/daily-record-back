@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
 import { UsersService } from 'src/users/users.service';
@@ -21,12 +21,8 @@ export class EmailService {
     let user = await this.usersService.findUserByField('email', email);
     if (!user) throw new BadRequestException('일치하는 회원 정보가 존재하지 않습니다.');
 
-    // 토큰 생성
     const token = await this.authService.generateEmailToken({ id: user.id, email });
-
-    // DB 이메일 로그 생성
     const emailLog = await this.emailLogsRepository.save({ email, emailToken: token });
-
     const emailData = {
       to: email,
       subject: '비밀번호 재설정 안내',
@@ -38,7 +34,7 @@ export class EmailService {
     // 이메일 전송
     await this.sendEmail(emailData);
 
-    return { statusCode: 200, data: { email: email } };
+    return { statusCode: 200, data: { email } };
   }
 
   // 이메일 발송
@@ -47,7 +43,8 @@ export class EmailService {
       .sendMail(emailData)
       .then(() => {})
       .catch((error) => {
-        throw new BadRequestException();
+        console.error(error);
+        throw new InternalServerErrorException('이메일 발송에 실패했습니다.');
       });
   }
 }
