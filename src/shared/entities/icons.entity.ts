@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Tasks } from './tasks.entity';
-import { IconType, MimeType } from 'src/types/enums/files.enum';
+import { IconType, MimeType } from 'src/shared/types/enums/files.enum';
 import { Medals } from './medals.entity';
 
 @Entity({ schema: 'dailyrecord', name: 'Icons' })

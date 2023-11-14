@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
-import { EmailType } from 'src/types/enums/emailLog.enum';
+import { EmailType } from 'src/shared/types/enums/emailLog.enum';
 
 @Entity({ schema: 'dailyrecord', name: 'EmailLogs' })
 export class EmailLogs {

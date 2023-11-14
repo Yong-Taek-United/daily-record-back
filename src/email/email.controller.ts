@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Public } from 'src/decorator/skip-auth.decorator';
+import { Public } from 'src/shared/decorators/skip-auth.decorator';
 import { EmailService } from './email.service';
-import { EmailDto } from '../email/email.dto';
+import { EmailDto } from '../shared/dto/email.dto';
 
 @Controller('emails')
 @ApiTags('Emails')

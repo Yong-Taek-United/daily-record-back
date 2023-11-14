@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtConfig } from '../config/jwt.config';
+import { JwtConfig } from '../shared/configs/jwt.config';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from 'src/users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { LocalStrategy } from './strategies/local.strategy';
-import { JwtStrategy } from './strategies/jwt.strategy';
-import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
+import { LocalStrategy } from '../shared/strategies/local.strategy';
+import { JwtStrategy } from '../shared/strategies/jwt.strategy';
+import { JwtRefreshStrategy } from '../shared/strategies/jwt-refresh.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RefreshTokens } from 'src/entities/refreshToken.entity';
-import { GoogleStrategy } from './strategies/google.strategy';
+import { RefreshTokens } from 'src/shared/entities/refreshToken.entity';
+import { GoogleStrategy } from '../shared/strategies/google.strategy';
 
 @Module({
   imports: [

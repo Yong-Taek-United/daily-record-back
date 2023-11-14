@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 import { Users } from './users.entity';
-import { MimeType, UserFileType } from 'src/types/enums/files.enum';
+import { MimeType, UserFileType } from 'src/shared/types/enums/files.enum';
 
 @Entity({ schema: 'dailyrecord', name: 'UserFiles' })
 export class UserFiles {

@@ -1,13 +1,13 @@
 import { Injectable, ForbiddenException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { RefreshTokens } from 'src/entities/refreshToken.entity';
+import { RefreshTokens } from 'src/shared/entities/refreshToken.entity';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { CookieOptions, Response } from 'express';
 import * as bcrypt from 'bcrypt';
-import { AuthType } from 'src/types/enums/users.enum';
+import { AuthType } from 'src/shared/types/enums/users.enum';
 
 @Injectable()
 export class AuthService {

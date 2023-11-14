@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 import { Tasks } from './tasks.entity';
-import { CountType, Cycle } from 'src/types/enums/tasks.enum';
+import { CountType, Cycle } from 'src/shared/types/enums/tasks.enum';
 
 @Entity({ schema: 'dailyrecord', name: 'TaskGoals' })
 export class TaskGoals {

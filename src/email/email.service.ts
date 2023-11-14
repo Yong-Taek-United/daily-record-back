@@ -3,9 +3,9 @@ import { Repository } from 'typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from 'src/auth/auth.service';
-import { EmailLogs } from 'src/entities/emailLog.entity';
+import { EmailLogs } from 'src/shared/entities/emailLog.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EmailType } from 'src/types/enums/emailLog.enum';
+import { EmailType } from 'src/shared/types/enums/emailLog.enum';
 
 @Injectable()
 export class EmailService {

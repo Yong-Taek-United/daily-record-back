@@ -8,10 +8,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { Users } from '../entities/users.entity';
-import { EmailLogs } from 'src/entities/emailLog.entity';
+import { Users } from '../shared/entities/users.entity';
+import { EmailLogs } from 'src/shared/entities/emailLog.entity';
 import { ConfigService } from '@nestjs/config';
-import { CreateUserDto, UpdateUserDto, DeleteUserDto, ResetPasswordDto } from './users.dto';
+import { CreateUserDto, UpdateUserDto, DeleteUserDto, ResetPasswordDto } from '../shared/dto/users.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()

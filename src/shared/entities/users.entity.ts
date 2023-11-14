@@ -5,7 +5,7 @@ import { Events } from './events.entity';
 import { Projects } from './projects.entity';
 import { Tasks } from './tasks.entity';
 import { RefreshTokens } from './refreshToken.entity';
-import { AuthType, UserType } from 'src/types/enums/users.enum';
+import { AuthType, UserType } from 'src/shared/types/enums/users.enum';
 
 @Entity({ schema: 'dailyrecord', name: 'Users' })
 export class Users {

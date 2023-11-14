@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, UpdateUserDto, DeleteUserDto, ResetPasswordDto } from './users.dto';
+import { CreateUserDto, UpdateUserDto, DeleteUserDto, ResetPasswordDto } from '../shared/dto/users.dto';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { Public } from 'src/decorator/skip-auth.decorator';
+import { Public } from 'src/shared/decorators/skip-auth.decorator';
 
 @Controller('users')
 @ApiTags('Users')
