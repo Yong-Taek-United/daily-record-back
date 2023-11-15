@@ -1,34 +1,34 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { UsersService } from 'src/users/users.service';
-import { AuthService } from 'src/auth/auth.service';
-import { EmailLogs } from 'src/shared/entities/emailLog.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { EmailLogs } from 'src/shared/entities/emailLog.entity';
 import { EmailType } from 'src/shared/types/enums/emailLog.enum';
 import { EmailHelperService } from 'src/shared/services/email-helper.service';
+import { UsersHelperService } from 'src/shared/services/users-helper.service';
+import { TokenHelperService } from 'src/shared/services/token-helper.service';
 
 @Injectable()
 export class EmailService {
   constructor(
     @InjectRepository(EmailLogs)
     private emailLogsRepository: Repository<EmailLogs>,
-    private readonly usersService: UsersService,
-    private readonly authService: AuthService,
     private readonly emailHelperService: EmailHelperService,
+    private readonly tokenHelperService: TokenHelperService,
+    private readonly usersHelperService: UsersHelperService,
   ) {}
 
   // 비밀번호 재설정 이메일 발송 처리
   async emailResetPassword(email: string) {
-    const user = await this.usersService.findUserByField('email', email);
+    const user = await this.usersHelperService.findUserByField('email', email);
     if (!user) throw new NotFoundException('일치하는 회원 정보가 존재하지 않습니다.');
 
-    const token = await this.authService.generateEmailToken({ userId: user.id, email });
+    const token = await this.tokenHelperService.generateEmailToken({ userId: user.id, email });
     const emailLog = await this.emailLogsRepository.save({ email, emailToken: token, emailType: EmailType.PASSWORD });
 
     const context = {
       nickname: user.nickname,
       emailLogId: emailLog.id,
-      token: token,
+      token: emailLog.emailToken,
     };
     const emailTemplate = await this.emailHelperService.createEmailTemplate('PASSWORD_RESET', email, context);
 

@@ -1,13 +1,13 @@
 import { Module, forwardRef } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from 'src/users/users.module';
-import { EmailService } from './email.service';
-import { EmailController } from './email.controller';
-import { EmailConfig } from 'src/shared/configs/email.config';
-import { EmailLogs } from 'src/shared/entities/emailLog.entity';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
+import { EmailLogs } from 'src/shared/entities/emailLog.entity';
+import { EmailConfig } from 'src/shared/configs/email.config';
+import { EmailController } from './email.controller';
+import { EmailService } from './email.service';
 import { EmailHelperService } from 'src/shared/services/email-helper.service';
 
 @Module({
@@ -22,5 +22,6 @@ import { EmailHelperService } from 'src/shared/services/email-helper.service';
   ],
   providers: [EmailService, EmailHelperService],
   controllers: [EmailController],
+  exports: [EmailHelperService],
 })
 export class EmailModule {}

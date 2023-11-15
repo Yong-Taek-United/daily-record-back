@@ -3,11 +3,16 @@ import { Profile, Strategy } from 'passport-google-oauth20';
 import { Injectable } from '@nestjs/common';
 import { AuthService } from '../../auth/auth.service';
 import { ConfigService } from '@nestjs/config';
+import { TokenHelperService } from '../services/token-helper.service';
 import { AuthType } from 'src/shared/types/enums/users.enum';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor(private readonly configService: ConfigService, private readonly authService: AuthService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly authService: AuthService,
+    private readonly tokenHelperService: TokenHelperService,
+  ) {
     super({
       clientID: configService.get<string>('GOOGLE_CLIENT_ID'),
       clientSecret: configService.get<string>('GOOGLE_CLIENT_SECRET'),
@@ -29,7 +34,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 
     const tokens = user
       ? await this.authService.login(user)
-      : { signUpUserToken: await this.authService.generateGoogleUserToken(userData) };
+      : { signUpUserToken: await this.tokenHelperService.generateGoogleUserToken(userData) };
     const redirectEndPoint = user ? '/' : '/sign-up/social/google';
 
     return { tokens, redirectEndPoint };
