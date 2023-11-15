@@ -8,6 +8,7 @@ import { EmailConfig } from 'src/shared/configs/email.config';
 import { EmailLogs } from 'src/shared/entities/emailLog.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
+import { EmailHelperService } from 'src/shared/services/email-helper.service';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { AuthModule } from 'src/auth/auth.module';
     AuthModule,
     UsersModule,
   ],
-  providers: [EmailService],
+  providers: [EmailService, EmailHelperService],
   controllers: [EmailController],
 })
 export class EmailModule {}
