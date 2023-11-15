@@ -43,6 +43,6 @@ export class UsersController {
   @Public()
   @ApiOperation({ summary: '비밀번호 재설정', description: '이메일 인증을 통한 비밀번호 재설정입니다.' })
   ResetPasswordByEmail(@Body() userDate: ResetPasswordDto) {
-    return this.usersService.ResetPasswordByEmail(userDate);
+    return this.usersService.resetPasswordByEmail(userDate);
   }
 }

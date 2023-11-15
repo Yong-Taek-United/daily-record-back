@@ -1,4 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
+import { UserProfiles } from './userProfiles.entity';
 import { UserFiles } from './userFiles.entity';
 import { Dailies } from './dailies.entity';
 import { Events } from './events.entity';
@@ -30,8 +40,11 @@ export class Users {
   @Column({ type: 'varchar', length: 100 })
   password: string;
 
-  @Column({ type: 'varchar', length: 100, default: null })
-  introduce: string;
+  @Column({ type: 'tinyint', default: false })
+  isEmailVerified: Boolean;
+
+  @Column({ type: 'tinyint', default: false })
+  isPhoneVerified: Boolean;
 
   @Column({ type: 'tinyint', default: true })
   isActive: Boolean;
@@ -50,6 +63,10 @@ export class Users {
 
   @Column({ type: 'datetime', default: null })
   deletedAt: Date;
+
+  @OneToOne(() => UserProfiles, (userProfile) => userProfile.user, { cascade: true })
+  @JoinColumn()
+  userProfile: UserProfiles;
 
   @OneToMany(() => UserFiles, (userFiles) => userFiles.user)
   userFiles: UserFiles[];

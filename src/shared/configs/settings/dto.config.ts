@@ -13,6 +13,6 @@ export const textLength = {
   },
   password: {
     min: 8,
-    max: 20,
+    max: 30,
   },
 };

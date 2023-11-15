@@ -1,43 +1,36 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { MailerService } from '@nestjs-modules/mailer';
-import { UsersService } from 'src/users/users.service';
-import { AuthService } from 'src/auth/auth.service';
-import { EmailLogs } from 'src/shared/entities/emailLog.entity';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { EmailLogs } from 'src/shared/entities/emailLog.entity';
+import { Users } from 'src/shared/entities/users.entity';
 import { EmailType } from 'src/shared/types/enums/emailLog.enum';
-import { PASSWORD_RESET_SUBJECT, PASSWORD_RESET_TEMPLATE } from 'src/shared/constants/emailMessages';
+import { EmailHelperService } from 'src/shared/services/email-helper.service';
+import { UsersHelperService } from 'src/shared/services/users-helper.service';
+import { TokenHelperService } from 'src/shared/services/token-helper.service';
 
 @Injectable()
 export class EmailService {
   constructor(
     @InjectRepository(EmailLogs)
     private emailLogsRepository: Repository<EmailLogs>,
-    private readonly usersService: UsersService,
-    private readonly mailerService: MailerService,
-    private readonly authService: AuthService,
+    private readonly emailHelperService: EmailHelperService,
+    private readonly usersHelperService: UsersHelperService,
   ) {}
 
   // 비밀번호 재설정 이메일 발송 처리
   async emailResetPassword(email: string) {
-    let user = await this.usersService.findUserByField('email', email);
+    const user = await this.usersHelperService.findUserByField('email', email);
     if (!user) throw new NotFoundException('일치하는 회원 정보가 존재하지 않습니다.');
 
-    const token = await this.authService.generateEmailToken({ userId: user.id, email });
-    const emailLog = await this.emailLogsRepository.save({ email, emailToken: token, emailType: EmailType.PASSWORD });
-
-    const emailData = {
-      to: email,
-      subject: PASSWORD_RESET_SUBJECT,
-      template: PASSWORD_RESET_TEMPLATE,
-      context: {
-        nickname: user.nickname,
-        emailLogId: emailLog.id,
-        token: token,
-      },
+    const emailLog = await this.emailHelperService.createEmailLog(user, EmailType.PASSWORD);
+    const context = {
+      nickname: user.nickname,
+      emailLogId: emailLog.id,
+      token: emailLog.emailToken,
     };
+    const emailTemplate = await this.emailHelperService.createEmailTemplate('PASSWORD_RESET', email, context);
 
-    await this.sendEmail(emailData);
+    await this.emailHelperService.sendEmail(emailTemplate);
 
     return { statusCode: 200 };
   }
@@ -48,19 +41,9 @@ export class EmailService {
     if (!emailLog) throw new NotFoundException('요청하신 데이터를 찾을 수 없습니다.');
 
     await this.emailLogsRepository.update(emailLog.id, { isChecked: true });
-    const redirectEndPoint = `/reset-password?emailLogId=${emailLog.id}&emailToken=${emailToken},`;
 
-    return { redirect: redirectEndPoint };
-  }
+    const redirectURL = await this.emailHelperService.createRedirectionURL(emailLog, emailToken);
 
-  // 이메일 발송
-  async sendEmail(emailData: any) {
-    await this.mailerService
-      .sendMail(emailData)
-      .then(() => {})
-      .catch((error) => {
-        console.error(error);
-        throw new InternalServerErrorException('이메일 발송에 실패했습니다.');
-      });
+    return { redirect: redirectURL };
   }
 }

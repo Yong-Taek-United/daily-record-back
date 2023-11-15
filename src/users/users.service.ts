@@ -10,9 +10,14 @@ import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Users } from '../shared/entities/users.entity';
 import { EmailLogs } from 'src/shared/entities/emailLog.entity';
+import { UserProfiles } from 'src/shared/entities/userProfiles.entity';
 import { ConfigService } from '@nestjs/config';
 import { CreateUserDto, UpdateUserDto, DeleteUserDto, ResetPasswordDto } from '../shared/dto/users.dto';
+import { UsersHelperService } from 'src/shared/services/users-helper.service';
+import { EmailHelperService } from 'src/shared/services/email-helper.service';
 import * as bcrypt from 'bcrypt';
+import { AuthType } from 'src/shared/types/enums/users.enum';
+import { EmailType } from 'src/shared/types/enums/emailLog.enum';
 
 @Injectable()
 export class UsersService {
@@ -23,6 +28,8 @@ export class UsersService {
     private readonly emailLogsRepository: Repository<EmailLogs>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly usersHelperService: UsersHelperService,
+    private readonly emailHelperService: EmailHelperService,
   ) {}
 
   // 회원가입
@@ -33,23 +40,40 @@ export class UsersService {
       nickname,
       password,
       authType,
-      username: await this.createUsername(),
+      username: await this.usersHelperService.createUsername(),
+      isEmailVerified: authType === AuthType.BASIC ? false : true,
+      userProfile: new UserProfiles(),
     };
 
-    let isExist = await this.findUserByField('email', email);
+    let isExist = await this.usersHelperService.findUserByField('email', email);
     if (isExist) throw new ConflictException('이미 존재하는 이메일입니다.');
 
-    userInfo.password = await this.hashPassword(password);
+    userInfo.password = await this.usersHelperService.hashPassword(password);
 
     const data = await this.usersRepository.save(userInfo);
     delete data.password;
 
+    if (authType === AuthType.BASIC) await this.emailSignup(data);
+
     return { statusCode: 201, data };
+  }
+
+  // 회원가입 이메일 인증 발송 처리
+  async emailSignup(user: any) {
+    const emailLog = await this.emailHelperService.createEmailLog(user, EmailType.SIGN);
+    const context = {
+      nickname: user.nickname,
+      emailLogId: emailLog.id,
+      token: emailLog.emailToken,
+    };
+
+    const emailTemplate = await this.emailHelperService.createEmailTemplate('SIGN_UP', user.email, context);
+    await this.emailHelperService.sendEmail(emailTemplate);
   }
 
   // 회원 조회
   async getUser(userId: number) {
-    const user = await this.findUserByField('id', userId);
+    const user = await this.usersHelperService.findUserByField('id', userId);
     if (!user) throw new BadRequestException('회원 정보가 존재하지 않습니다.');
     const { password, ...data } = user;
     return { statusCode: 200, data };
@@ -61,12 +85,12 @@ export class UsersService {
       if (userData.password !== userData.password2) throw new BadRequestException(['비밀번호를 다시 확인해주십시오.']);
       delete userData.password2;
 
-      userData.password = await this.hashPassword(userData.password);
+      userData.password = await this.usersHelperService.hashPassword(userData.password);
     }
 
     await this.usersRepository.update(userId, userData);
 
-    const data = await this.findUserByField('id', userId);
+    const data = await this.usersHelperService.findUserByField('id', userId);
     delete data.password;
 
     return { statusCode: 200, data };
@@ -74,7 +98,7 @@ export class UsersService {
 
   // 회원 탈퇴
   async withdrawal(userId: number, userData: DeleteUserDto) {
-    const password = (await this.findUserByField('id', userId)).password;
+    const password = (await this.usersHelperService.findUserByField('id', userId)).password;
 
     const isMatch = await bcrypt.compare(userData.password, password);
     if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
@@ -85,48 +109,19 @@ export class UsersService {
   }
 
   // 비밀번호 재설정 처리
-  async ResetPasswordByEmail(userData: ResetPasswordDto) {
+  async resetPasswordByEmail(userData: ResetPasswordDto) {
     const { emailToken, emailLogId, password } = userData;
     const emailLog = await this.emailLogsRepository.findOne({ where: { id: emailLogId } });
     if (!emailLog.isChecked) throw new UnprocessableEntityException('요청 처리가 가능한 상태가 아닙니다.');
 
     const secretKey = this.configService.get<string>('JWT_EMAIL_SECRET');
     const payload = this.jwtService.verify(emailToken, { secret: secretKey, ignoreExpiration: true });
-    return await this.ResetPassword(payload.userId, password);
-  }
-
-  // username 생성
-  async createUsername(): Promise<string> {
-    let username = 'user-';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const length = 10;
-    for (let i = 0; i < length; i++) {
-      username += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-
-    const user = await this.findUserByField('username', username);
-    if (user) return this.createUsername();
-
-    return username;
-  }
-
-  // 회원 조회(by 특정 필드)
-  async findUserByField(field: string, value: any) {
-    return await this.usersRepository.findOne({ where: { [field]: value } });
-  }
-
-  // 비밀번호 해시
-  async hashPassword(password: string) {
-    const saltRounds = 10;
-    const salt = await bcrypt.genSalt(saltRounds);
-
-    const hashedPassword = await bcrypt.hash(password, salt);
-    return hashedPassword;
+    return await this.resetPassword(payload.userId, password);
   }
 
   // 비밀번호 재설정
-  async ResetPassword(userId: number, password: string) {
-    password = await this.hashPassword(password);
+  async resetPassword(userId: number, password: string) {
+    password = await this.usersHelperService.hashPassword(password);
     const result = await this.usersRepository.update(userId, { password: password });
     if (result.affected === 0) throw new BadRequestException('비밀번호 수정에 실패했습니다.');
     return { statusCode: 200 };

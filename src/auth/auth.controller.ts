@@ -1,7 +1,9 @@
-import { Controller, Get, Param, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
+import { TokenHelperService } from 'src/shared/services/token-helper.service';
+import { CookieHelperService } from 'src/shared/services/cookie-helper.service';
 import { Public } from 'src/shared/decorators/skip-auth.decorator';
 import { LoginDto } from '../shared/dto/auth.dto';
 import { LocalAuthGuard } from '../shared/guards/local-auth.guard';
@@ -12,7 +14,11 @@ import { JwtRefreshAuthGuard } from '../shared/guards/jwt-refresh-auth.guard';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private readonly tokenHelperService: TokenHelperService,
+    private readonly cookieHelperService: CookieHelperService,
+  ) {}
 
   @Post('login')
   @ApiOperation({ summary: '로그인', description: '회원을 인증하여 token을 발급해 클라이언트 cookie에 저장합니다.' })
@@ -22,7 +28,7 @@ export class AuthController {
     const user = req.user;
     const tokens = await this.authService.login(req.user);
 
-    await this.authService.saveTokensToCookies(res, tokens);
+    await this.cookieHelperService.saveTokensToCookies(res, tokens);
 
     return {
       statusCode: 200,
@@ -42,7 +48,7 @@ export class AuthController {
     const refreshToken = req.user.refreshToken;
     const tokens = await this.authService.refreshTokens(user, refreshToken);
 
-    await this.authService.saveTokensToCookies(res, tokens);
+    await this.cookieHelperService.saveTokensToCookies(res, tokens);
 
     return {
       statusCode: 200,
@@ -54,11 +60,11 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: '로그아웃', description: 'cookie에 저장된 token을 제거해 로그아웃합니다.' })
   async logout(@Req() req, @Res() res: Response) {
-    const payload = await this.authService.getPayloadFromToken(req);
-    if (payload) await this.authService.removeTokensFromUserDB(payload.sub);
+    const payload = await this.tokenHelperService.getPayloadFromToken(req);
+    if (payload) await this.tokenHelperService.removeTokensFromUserDB(payload.sub);
 
     const cookieNames = ['accessToken', 'refreshToken'];
-    await this.authService.removeTokensFromCookies(res, cookieNames);
+    await this.cookieHelperService.removeTokensFromCookies(res, cookieNames);
 
     return {
       statusCode: 200,
@@ -75,7 +81,7 @@ export class AuthController {
     const tokens = req.user.tokens;
     const redirectEndPoint = req.user.redirectEndPoint;
 
-    await this.authService.saveTokensToCookies(res, tokens);
+    await this.cookieHelperService.saveTokensToCookies(res, tokens);
 
     return {
       redirect: redirectEndPoint,
