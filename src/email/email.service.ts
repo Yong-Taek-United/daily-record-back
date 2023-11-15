@@ -22,9 +22,7 @@ export class EmailService {
     const user = await this.usersHelperService.findUserByField('email', email);
     if (!user) throw new NotFoundException('일치하는 회원 정보가 존재하지 않습니다.');
 
-    const token = await this.tokenHelperService.generateEmailToken({ userId: user.id, email });
-    const emailLog = await this.emailLogsRepository.save({ email, emailToken: token, emailType: EmailType.PASSWORD });
-
+    const emailLog = await this.emailHelperService.createEmailLog(user);
     const context = {
       nickname: user.nickname,
       emailLogId: emailLog.id,

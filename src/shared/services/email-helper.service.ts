@@ -35,6 +35,7 @@ export class EmailHelperService {
       emailToken: token,
       emailType: EmailType.PASSWORD,
     });
+    return emailLog;
   }
 
   // 이메일 템플릿 생성
