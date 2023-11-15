@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtConfig } from '../shared/configs/jwt.config';
@@ -16,13 +16,13 @@ import { GoogleStrategy } from '../shared/strategies/google.strategy';
 @Module({
   imports: [
     ConfigModule,
-    UsersModule,
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useClass: JwtConfig,
     }),
     TypeOrmModule.forFeature([RefreshTokens]),
+    forwardRef(() => UsersModule),
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy, JwtRefreshStrategy, GoogleStrategy],

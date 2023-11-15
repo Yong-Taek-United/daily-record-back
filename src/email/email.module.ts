@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from 'src/users/users.module';
@@ -17,8 +17,8 @@ import { EmailHelperService } from 'src/shared/services/email-helper.service';
       imports: [ConfigModule],
       useClass: EmailConfig,
     }),
-    AuthModule,
-    UsersModule,
+    forwardRef(() => AuthModule),
+    forwardRef(() => UsersModule),
   ],
   providers: [EmailService, EmailHelperService],
   controllers: [EmailController],
