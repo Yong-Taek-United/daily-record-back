@@ -41,6 +41,7 @@ export class UsersService {
       password,
       authType,
       username: await this.usersHelperService.createUsername(),
+      isEmailVerified: authType === AuthType.BASIC ? false : true,
       userProfile: new UserProfiles(),
     };
 

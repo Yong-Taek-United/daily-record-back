@@ -31,7 +31,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     };
 
     let user = await this.authService.validateUser(userData.email, userData.password, userData.authType);
-
+    console.log(profile);
     const tokens = user
       ? await this.authService.login(user)
       : { signUpUserToken: await this.tokenHelperService.generateGoogleUserToken(userData) };
