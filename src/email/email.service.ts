@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EmailLogs } from 'src/shared/entities/emailLog.entity';
+import { Users } from 'src/shared/entities/users.entity';
 import { EmailType } from 'src/shared/types/enums/emailLog.enum';
 import { EmailHelperService } from 'src/shared/services/email-helper.service';
 import { UsersHelperService } from 'src/shared/services/users-helper.service';
@@ -13,7 +14,6 @@ export class EmailService {
     @InjectRepository(EmailLogs)
     private emailLogsRepository: Repository<EmailLogs>,
     private readonly emailHelperService: EmailHelperService,
-    private readonly tokenHelperService: TokenHelperService,
     private readonly usersHelperService: UsersHelperService,
   ) {}
 
@@ -22,7 +22,7 @@ export class EmailService {
     const user = await this.usersHelperService.findUserByField('email', email);
     if (!user) throw new NotFoundException('일치하는 회원 정보가 존재하지 않습니다.');
 
-    const emailLog = await this.emailHelperService.createEmailLog(user);
+    const emailLog = await this.emailHelperService.createEmailLog(user, EmailType.PASSWORD);
     const context = {
       nickname: user.nickname,
       emailLogId: emailLog.id,
@@ -41,8 +41,9 @@ export class EmailService {
     if (!emailLog) throw new NotFoundException('요청하신 데이터를 찾을 수 없습니다.');
 
     await this.emailLogsRepository.update(emailLog.id, { isChecked: true });
-    const redirectEndPoint = `/reset-password?emailLogId=${emailLog.id}&emailToken=${emailToken},`;
 
-    return { redirect: redirectEndPoint };
+    const redirectURL = await this.emailHelperService.createRedirectionURL(emailLog, emailToken);
+
+    return { redirect: redirectURL };
   }
 }

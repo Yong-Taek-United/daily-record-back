@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from 'src/users/users.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { EmailLogs } from 'src/shared/entities/emailLog.entity';
+import { Users } from 'src/shared/entities/users.entity';
 import { EmailConfig } from 'src/shared/configs/email.config';
 import { EmailController } from './email.controller';
 import { EmailService } from './email.service';
@@ -12,7 +13,7 @@ import { EmailHelperService } from 'src/shared/services/email-helper.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([EmailLogs]),
+    TypeOrmModule.forFeature([EmailLogs, Users]),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       useClass: EmailConfig,

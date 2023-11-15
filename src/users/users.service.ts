@@ -14,7 +14,10 @@ import { UserProfiles } from 'src/shared/entities/userProfiles.entity';
 import { ConfigService } from '@nestjs/config';
 import { CreateUserDto, UpdateUserDto, DeleteUserDto, ResetPasswordDto } from '../shared/dto/users.dto';
 import { UsersHelperService } from 'src/shared/services/users-helper.service';
+import { EmailHelperService } from 'src/shared/services/email-helper.service';
 import * as bcrypt from 'bcrypt';
+import { AuthType } from 'src/shared/types/enums/users.enum';
+import { EmailType } from 'src/shared/types/enums/emailLog.enum';
 
 @Injectable()
 export class UsersService {
@@ -26,6 +29,7 @@ export class UsersService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly usersHelperService: UsersHelperService,
+    private readonly emailHelperService: EmailHelperService,
   ) {}
 
   // 회원가입
@@ -48,7 +52,22 @@ export class UsersService {
     const data = await this.usersRepository.save(userInfo);
     delete data.password;
 
+    if (authType === AuthType.BASIC) await this.emailSignup(data);
+
     return { statusCode: 201, data };
+  }
+
+  // 회원가입 이메일 인증 발송 처리
+  async emailSignup(user: any) {
+    const emailLog = await this.emailHelperService.createEmailLog(user, EmailType.SIGN);
+    const context = {
+      nickname: user.nickname,
+      emailLogId: emailLog.id,
+      token: emailLog.emailToken,
+    };
+
+    const emailTemplate = await this.emailHelperService.createEmailTemplate('SIGN_UP', user.email, context);
+    await this.emailHelperService.sendEmail(emailTemplate);
   }
 
   // 회원 조회
