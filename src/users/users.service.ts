@@ -89,18 +89,18 @@ export class UsersService {
   }
 
   // 비밀번호 재설정 처리
-  async ResetPasswordByEmail(userData: ResetPasswordDto) {
+  async resetPasswordByEmail(userData: ResetPasswordDto) {
     const { emailToken, emailLogId, password } = userData;
     const emailLog = await this.emailLogsRepository.findOne({ where: { id: emailLogId } });
     if (!emailLog.isChecked) throw new UnprocessableEntityException('요청 처리가 가능한 상태가 아닙니다.');
 
     const secretKey = this.configService.get<string>('JWT_EMAIL_SECRET');
     const payload = this.jwtService.verify(emailToken, { secret: secretKey, ignoreExpiration: true });
-    return await this.ResetPassword(payload.userId, password);
+    return await this.resetPassword(payload.userId, password);
   }
 
   // 비밀번호 재설정
-  async ResetPassword(userId: number, password: string) {
+  async resetPassword(userId: number, password: string) {
     password = await this.usersHelperService.hashPassword(password);
     const result = await this.usersRepository.update(userId, { password: password });
     if (result.affected === 0) throw new BadRequestException('비밀번호 수정에 실패했습니다.');
