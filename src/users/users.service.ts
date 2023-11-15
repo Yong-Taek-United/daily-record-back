@@ -10,6 +10,7 @@ import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Users } from '../shared/entities/users.entity';
 import { EmailLogs } from 'src/shared/entities/emailLog.entity';
+import { UserProfiles } from 'src/shared/entities/userProfiles.entity';
 import { ConfigService } from '@nestjs/config';
 import { CreateUserDto, UpdateUserDto, DeleteUserDto, ResetPasswordDto } from '../shared/dto/users.dto';
 import * as bcrypt from 'bcrypt';
@@ -34,6 +35,7 @@ export class UsersService {
       password,
       authType,
       username: await this.createUsername(),
+      userProfile: new UserProfiles(),
     };
 
     let isExist = await this.findUserByField('email', email);

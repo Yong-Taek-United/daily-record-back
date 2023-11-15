@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  JoinColumn,
+  OneToOne,
+} from 'typeorm';
 import { Users } from './users.entity';
 
 @Entity({ schema: 'dailyrecord', name: 'UserProfiles' })
@@ -24,6 +32,6 @@ export class UserProfiles {
   @Column({ type: 'datetime', default: null })
   deletedAt: Date;
 
-  @ManyToOne(() => Users, (user) => user.userProfiles)
+  @OneToOne(() => Users, (user) => user.userProfile)
   user: Users;
 }
