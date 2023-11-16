@@ -38,7 +38,7 @@ export class EmailHelperService {
 
   // 이메일 로그 생성
   async createEmailLog(user: any, emailType: EmailType) {
-    const token = await this.tokenHelperService.generateEmailToken({ userId: user.id, email: user.email });
+    const token = await this.tokenHelperService.generateToken({ userId: user.id, email: user.email }, 'EMAIL_VERIFICATION');
     const emailLog = await this.emailLogsRepository.save({
       email: user.email,
       emailToken: token,

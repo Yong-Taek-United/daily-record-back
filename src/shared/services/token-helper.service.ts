@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshTokens } from '../entities/refreshToken.entity';
-import { UsersHelperService } from './users-helper.service';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -14,34 +13,31 @@ export class TokenHelperService {
     private readonly refreshTokensRepository: Repository<RefreshTokens>,
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
-    private readonly usersHelperService: UsersHelperService,
   ) {}
 
-  // 토큰 발급: 액세스 토큰
-  async generateAccessToken(payload: any) {
-    return await this.jwtService.signAsync(payload);
-  }
+  // 토큰 발급
+  async generateToken(payload: any, tokenType: string) {
+    let secret = '';
+    let expiresIn = '';
 
-  // 토큰 발급: 리프레시 토큰
-  async generateRefreshToken(payload: any) {
-    const secret = this.configService.get<string>('JWT_REFRESH_SECRET');
-    const expiresIn = this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME');
-
-    return await this.jwtService.signAsync(payload, { secret, expiresIn });
-  }
-
-  // 토큰 발급: 구글 회원 정보 토큰
-  async generateGoogleUserToken(payload: any) {
-    const secret = this.configService.get<string>('JWT_GOOGLE_USER_SECRET');
-    const expiresIn = this.configService.get<string>('JWT_GOOGLE_USER_EXPIRATION_TIME');
-
-    return await this.jwtService.signAsync(payload, { secret, expiresIn });
-  }
-
-  // 토큰 발급: 이메일 인증 토큰
-  async generateEmailToken(payload: any) {
-    const secret = this.configService.get<string>('JWT_EMAIL_SECRET');
-    const expiresIn = this.configService.get<string>('JWT_EMAIL_EXPIRATION_TIME');
+    switch (tokenType) {
+      case 'ACCESS':
+        secret = this.configService.get<string>('JWT_ACCESS_SECRET');
+        expiresIn = this.configService.get<string>('JWT_ACCESS_EXPIRATION_TIME');
+        break;
+      case 'REFRESH':
+        secret = this.configService.get<string>('JWT_REFRESH_SECRET');
+        expiresIn = this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME');
+        break;
+      case 'GOOGLE_USER':
+        secret = this.configService.get<string>('JWT_GOOGLE_USER_SECRET');
+        expiresIn = this.configService.get<string>('JWT_GOOGLE_USER_EXPIRATION_TIME');
+        break;
+      case 'EMAIL_VERIFICATION':
+        secret = this.configService.get<string>('JWT_EMAIL_VERIFICATION_SECRET');
+        expiresIn = this.configService.get<string>('JWT_EMAIL_VERIFICATION_EXPIRATION_TIME');
+        break;
+    }
 
     return await this.jwtService.signAsync(payload, { secret, expiresIn });
   }
@@ -56,6 +52,12 @@ export class TokenHelperService {
       return false;
     }
   }
+
+  // 회원 리프레시 토큰 DB 조회
+  async findRefreshTokenByUserId(userId: number) {
+    return await this.refreshTokensRepository.findOne({ where: { user: { id: userId } } });
+  }
+
   // 리프레시 토큰 DB 저장
   async setRefreshTokenToUserDB(user: any, refreshToken: string) {
     const hashedRefreshToken = await this.getHashedRefreshToken(refreshToken);
@@ -80,15 +82,12 @@ export class TokenHelperService {
 
   // 리프레시 토큰 DB 삭제
   async removeTokensFromUserDB(userId: number) {
-    const user = await this.usersHelperService.findUserByField('id', userId);
-
     const tokenInfo = {
-      user: user,
       refreshToken: null,
       expiresAt: null,
       isRevoked: true,
     };
-    await this.refreshTokensRepository.update(userId, tokenInfo);
+    await this.refreshTokensRepository.update({ user: { id: userId } }, tokenInfo);
   }
 
   // 리프레시 토큰 해시(DB 데이터)

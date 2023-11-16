@@ -1,19 +1,18 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { RefreshTokens } from 'src/shared/entities/refreshToken.entity';
+import { Injectable } from '@nestjs/common';
+import { Response } from 'express';
 import { UsersHelperService } from 'src/shared/services/users-helper.service';
 import { TokenHelperService } from 'src/shared/services/token-helper.service';
+import { CookieHelperService } from 'src/shared/services/cookie-helper.service';
 import * as bcrypt from 'bcrypt';
 import { AuthType } from 'src/shared/types/enums/users.enum';
+import { SIGN_UP_GOOGLE_URL } from 'src/shared/constants/clientURL';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(RefreshTokens)
-    private readonly refreshTokensRepository: Repository<RefreshTokens>,
     private readonly usersHelperService: UsersHelperService,
     private readonly tokenHelperService: TokenHelperService,
+    private readonly cookieHelperService: CookieHelperService,
   ) {}
 
   // 회원 인증
@@ -30,39 +29,54 @@ export class AuthService {
   }
 
   // 로그인 제어
-  async login(user: any) {
-    const tokens = await this.generateTokens(user);
-    return tokens;
+  async login(user: any, res: Response) {
+    const tokens = await this.generateLoginTokens(user);
+
+    await this.cookieHelperService.saveTokensToCookies(res, tokens);
+
+    return { statusCode: 200, data: user };
   }
 
   // 구글 로그인 제어
-  async googleLogin(user: any) {
+  async googleLogin(user: any, res: Response) {
     const tokens = user.id
-      ? await this.generateTokens(user)
-      : { signUpUserToken: await this.tokenHelperService.generateGoogleUserToken(user) };
-    return tokens;
+      ? await this.generateLoginTokens(user)
+      : { signUpUserToken: await this.tokenHelperService.generateToken(user, 'GOOGLE_USER') };
+    const redirectURL = user.id ? '/' : SIGN_UP_GOOGLE_URL;
+
+    await this.cookieHelperService.saveTokensToCookies(res, tokens);
+
+    return { redirect: redirectURL };
   }
 
   // 리프레시 토큰 재발급 제어
-  async refreshTokens(user: any, refreshToken: string) {
-    const tokenData = await this.refreshTokensRepository.findOne({ where: { user: { id: user.id } } });
-    if (!tokenData || !tokenData.refreshToken) throw new ForbiddenException('접근 권한이 없습니다.');
+  async refreshTokens(user: any, res: Response) {
+    const tokens = await this.generateLoginTokens(user);
 
-    const isMatch = await bcrypt.compare(refreshToken, tokenData.refreshToken);
-    if (!isMatch) throw new ForbiddenException('접근 권한이 없습니다.');
+    await this.cookieHelperService.saveTokensToCookies(res, tokens);
 
-    const tokens = await this.generateTokens(user);
+    return { statusCode: 200, data: user };
+  }
 
-    return tokens;
+  // 로그아웃 제어
+  async logout(req: any, res: Response) {
+    const payload = await this.tokenHelperService.getPayloadFromToken(req);
+    if (payload) await this.tokenHelperService.removeTokensFromUserDB(payload.sub);
+
+    const cookieNames = ['accessToken', 'refreshToken'];
+
+    await this.cookieHelperService.removeTokensFromCookies(res, cookieNames);
+
+    return { statusCode: 200 };
   }
 
   // 로그인 토큰 발급 제어
-  async generateTokens(user: any) {
+  async generateLoginTokens(user: any) {
     const payload = { sub: user.id, email: user.email, username: user.username, nickname: user.nickname };
 
     const [accessToken, refreshToken] = await Promise.all([
-      this.tokenHelperService.generateAccessToken(payload),
-      this.tokenHelperService.generateRefreshToken(payload),
+      this.tokenHelperService.generateToken(payload, 'ACCESS'),
+      this.tokenHelperService.generateToken(payload, 'REFRESH'),
     ]);
 
     await this.tokenHelperService.setRefreshTokenToUserDB(user, refreshToken);
