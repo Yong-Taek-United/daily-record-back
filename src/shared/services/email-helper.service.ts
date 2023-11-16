@@ -12,6 +12,7 @@ import {
   PASSWORD_RESET_TEMPLATE,
 } from 'src/shared/constants/emailMessages';
 import { Users } from '../entities/users.entity';
+import { PASSWORD_RESET_URL, WELCOME_URL } from '../constants/clientURL';
 
 @Injectable()
 export class EmailHelperService {
@@ -37,7 +38,7 @@ export class EmailHelperService {
 
   // 이메일 로그 생성
   async createEmailLog(user: any, emailType: EmailType) {
-    const token = await this.tokenHelperService.generateEmailToken({ userId: user.id, email: user.email });
+    const token = await this.tokenHelperService.generateToken({ userId: user.id, email: user.email }, 'EMAIL_VERIFICATION');
     const emailLog = await this.emailLogsRepository.save({
       email: user.email,
       emailToken: token,
@@ -76,10 +77,10 @@ export class EmailHelperService {
     switch (emailLog.emailType) {
       case 'SIGN':
         await this.usersRepository.update({ email: emailLog.email }, { isEmailVerified: true });
-        redirectURL = `/welcome`;
+        redirectURL = WELCOME_URL;
         break;
       case 'PASSWORD':
-        redirectURL = `/reset-password?emailLogId=${emailLog.id}&emailToken=${emailToken}`;
+        redirectURL = `${PASSWORD_RESET_URL}?emailLogId=${emailLog.id}&emailToken=${emailToken}`;
         break;
     }
 

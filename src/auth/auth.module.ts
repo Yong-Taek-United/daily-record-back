@@ -36,6 +36,6 @@ import { GoogleStrategy } from '../shared/strategies/google.strategy';
     JwtRefreshStrategy,
     GoogleStrategy,
   ],
-  exports: [TokenHelperService],
+  exports: [AuthService, TokenHelperService],
 })
 export class AuthModule {}
