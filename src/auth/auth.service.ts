@@ -35,6 +35,14 @@ export class AuthService {
     return tokens;
   }
 
+  // 구글 로그인 제어
+  async googleLogin(user: any) {
+    const tokens = user.id
+      ? await this.generateTokens(user)
+      : { signUpUserToken: await this.tokenHelperService.generateGoogleUserToken(user) };
+    return tokens;
+  }
+
   // 리프레시 토큰 재발급 제어
   async refreshTokens(user: any, refreshToken: string) {
     const tokenData = await this.refreshTokensRepository.findOne({ where: { user: { id: user.id } } });

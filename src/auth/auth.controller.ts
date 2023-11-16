@@ -9,6 +9,7 @@ import { LoginDto } from '../shared/dto/auth.dto';
 import { LocalAuthGuard } from '../shared/guards/local-auth.guard';
 import { GoogleAuthGuard } from '../shared/guards/google-auth.guard';
 import { JwtRefreshAuthGuard } from '../shared/guards/jwt-refresh-auth.guard';
+import { SIGN_UP_GOOGLE_URL } from 'src/shared/constants/clientURL';
 
 @Public()
 @ApiTags('Auth')
@@ -25,14 +26,13 @@ export class AuthController {
   @ApiBody({ type: LoginDto })
   @UseGuards(LocalAuthGuard)
   async login(@Req() req, @Res({ passthrough: true }) res: Response) {
-    const user = req.user;
     const tokens = await this.authService.login(req.user);
 
     await this.cookieHelperService.saveTokensToCookies(res, tokens);
 
     return {
       statusCode: 200,
-      data: user,
+      data: req.user,
     };
   }
 
@@ -78,13 +78,13 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
   async googleAuthCallback(@Req() req, @Res({ passthrough: true }) res: Response) {
-    const tokens = req.user.tokens;
-    const redirectEndPoint = req.user.redirectEndPoint;
+    const tokens = await this.authService.googleLogin(req.user);
+    const redirectURL = req.user.id ? '/' : SIGN_UP_GOOGLE_URL;
 
     await this.cookieHelperService.saveTokensToCookies(res, tokens);
 
     return {
-      redirect: redirectEndPoint,
+      redirect: redirectURL,
     };
   }
 }

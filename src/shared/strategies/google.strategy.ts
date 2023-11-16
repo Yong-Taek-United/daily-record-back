@@ -23,20 +23,14 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 
   async validate(accessToken: string, refreshToken: string, profile: Profile): Promise<any> {
     const { id, emails, displayName } = profile;
-    const userData = {
+    const googleUser = {
       authType: AuthType.GOOGLE,
       email: emails[0].value,
       nickname: displayName,
       password: id,
     };
 
-    let user = await this.authService.validateUser(userData.email, userData.password, userData.authType);
-    console.log(profile);
-    const tokens = user
-      ? await this.authService.login(user)
-      : { signUpUserToken: await this.tokenHelperService.generateGoogleUserToken(userData) };
-    const redirectEndPoint = user ? '/' : '/sign-up/social/google';
-
-    return { tokens, redirectEndPoint };
+    let user = await this.authService.validateUser(googleUser.email, googleUser.password, googleUser.authType);
+    return user ? user : googleUser;
   }
 }
