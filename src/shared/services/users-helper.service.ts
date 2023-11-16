@@ -12,8 +12,10 @@ export class UsersHelperService {
   ) {}
 
   // 회원 조회(by 특정 필드)
-  async findUserByField(field: string, value: any) {
-    return await this.usersRepository.findOne({ where: { [field]: value } });
+  async findUserByField(field: string, value: any, optionColumns: {} = {}) {
+    const defaultColumns = { [field]: value, isDeleted: false, isActive: true, isAdmin: false };
+    const columns = { ...defaultColumns, ...optionColumns };
+    return await this.usersRepository.findOne({ where: columns });
   }
 
   // username 생성
