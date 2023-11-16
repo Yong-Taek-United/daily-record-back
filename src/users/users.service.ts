@@ -7,12 +7,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { Users } from '../shared/entities/users.entity';
 import { EmailLogs } from 'src/shared/entities/emailLog.entity';
 import { UserProfiles } from 'src/shared/entities/userProfiles.entity';
 import { ConfigService } from '@nestjs/config';
 import { CreateUserDto, UpdateUserDto, DeleteUserDto, ResetPasswordDto } from '../shared/dto/users.dto';
+import { AuthService } from 'src/auth/auth.service';
 import { UsersHelperService } from 'src/shared/services/users-helper.service';
 import { EmailHelperService } from 'src/shared/services/email-helper.service';
 import * as bcrypt from 'bcrypt';
@@ -28,6 +30,7 @@ export class UsersService {
     private readonly emailLogsRepository: Repository<EmailLogs>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly authService: AuthService,
     private readonly usersHelperService: UsersHelperService,
     private readonly emailHelperService: EmailHelperService,
   ) {}
@@ -59,7 +62,7 @@ export class UsersService {
   }
 
   // 소셜 회원가입
-  async signUpSocail(userData: CreateUserDto) {
+  async signUpSocail(userData: CreateUserDto, res: Response) {
     const { email, nickname, password, authType } = userData;
     const userInfo = {
       email,
@@ -79,6 +82,12 @@ export class UsersService {
 
     const data = await this.usersRepository.save(userInfo);
     delete data.password;
+
+    switch (authType) {
+      case AuthType.GOOGLE:
+        await this.authService.googleLogin(data, res);
+        break;
+    }
 
     return { statusCode: 201, data };
   }

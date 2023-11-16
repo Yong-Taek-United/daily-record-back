@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, Res } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto, DeleteUserDto, ResetPasswordDto } from '../shared/dto/users.dto';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/shared/decorators/skip-auth.decorator';
 
 @Controller('users')
@@ -23,8 +24,8 @@ export class UsersController {
     summary: '소셜 회원가입',
     description: 'email 중복 시, 에러메세지 안내 후 로그인페이지로 이동합니다.',
   })
-  async signUpSocail(@Body() userData: CreateUserDto) {
-    return await this.usersService.signUpSocail(userData);
+  async signUpSocail(@Body() userData: CreateUserDto, @Res({ passthrough: true }) res: Response) {
+    return await this.usersService.signUpSocail(userData, res);
   }
 
   @Get('/:id')
