@@ -41,7 +41,7 @@ export class UsersService {
       password,
       authType,
       username: await this.usersHelperService.createUsername(),
-      isEmailVerified: authType === AuthType.BASIC ? false : true,
+      isEmailVerified: false,
       userProfile: new UserProfiles(),
     };
 
@@ -53,7 +53,32 @@ export class UsersService {
     const data = await this.usersRepository.save(userInfo);
     delete data.password;
 
-    if (authType === AuthType.BASIC) await this.emailSignup(data);
+    await this.emailSignup(data);
+
+    return { statusCode: 201, data };
+  }
+
+  // 소셜 회원가입
+  async signUpSocail(userData: CreateUserDto) {
+    const { email, nickname, password, authType } = userData;
+    const userInfo = {
+      email,
+      nickname,
+      password,
+      authType,
+      username: await this.usersHelperService.createUsername(),
+      isEmailVerified: true,
+      userProfile: new UserProfiles(),
+    };
+
+    let isExist = await this.usersHelperService.findUserByField('email', email);
+    if (isExist)
+      throw new ConflictException(`이미 ${isExist.authType} 회원가입으로 등록된 이메일입니다. 로그인을 진행할까요?`);
+
+    userInfo.password = await this.usersHelperService.hashPassword(password);
+
+    const data = await this.usersRepository.save(userInfo);
+    delete data.password;
 
     return { statusCode: 201, data };
   }
