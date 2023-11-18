@@ -22,18 +22,7 @@ export class EmailService {
     const user = await this.usersHelperService.findUserByField('email', email);
     if (user) throw new ConflictException('이미 존재하는 이메일입니다.');
 
-    const emailLog = await this.emailHelperService.createEmailLog({
-      email,
-      emailType,
-    });
-
-    const context = {
-      emailLogId: emailLog.id,
-      token: emailLog.emailToken,
-    };
-    const emailTemplate = await this.emailHelperService.createEmailTemplate(emailType, email, context);
-
-    await this.emailHelperService.sendEmail(emailTemplate);
+    await this.emailHelperService.HandleSendEmail({ email, emailType });
 
     return { statusCode: 200 };
   }
@@ -44,20 +33,7 @@ export class EmailService {
     const user = await this.usersHelperService.findUserByField('email', email);
     if (!user) throw new NotFoundException('일치하는 회원 정보가 존재하지 않습니다.');
 
-    const emailLog = await this.emailHelperService.createEmailLog({
-      email,
-      emailType,
-      userId: user.id,
-    });
-
-    const context = {
-      nickname: user.nickname,
-      emailLogId: emailLog.id,
-      token: emailLog.emailToken,
-    };
-    const emailTemplate = await this.emailHelperService.createEmailTemplate(emailType, email, context);
-
-    await this.emailHelperService.sendEmail(emailTemplate);
+    await this.emailHelperService.HandleSendEmail({ email, emailType, user });
 
     return { statusCode: 200 };
   }

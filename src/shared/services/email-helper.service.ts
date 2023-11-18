@@ -31,9 +31,25 @@ export class EmailHelperService {
   ) {}
 
   // 이메일 발송
-  async sendEmail(emailData: any) {
+  async HandleSendEmail(emailData: any) {
+    const { email, emailType, user } = emailData;
+
+    const emailLog = await this.createEmailLog({
+      email,
+      emailType,
+      ...(user && { userId: user.id }),
+    });
+
+    const context = await this.createEmailContext({ emailLog, ...(user && { user }) });
+    const emailTemplate = await this.createEmailTemplate(emailType, email, context);
+
+    await this.sendEmail(emailTemplate);
+  }
+
+  // 이메일 발송
+  async sendEmail(emailTemplate: any) {
     await this.mailerService
-      .sendMail(emailData)
+      .sendMail(emailTemplate)
       .then(() => {})
       .catch((error) => {
         console.error(error);
@@ -82,6 +98,35 @@ export class EmailHelperService {
     }
 
     return emailTemplate;
+  }
+
+  // 이메일 템플릿 context 생성
+  async createEmailContext(emailData: any) {
+    const { emailLog, user } = emailData;
+
+    let context: {} = {};
+    switch (emailLog.emailType) {
+      case 'VERIFICATION':
+        context = {
+          emailLogId: emailLog.id,
+          token: emailLog.emailToken,
+        };
+        break;
+      case 'PASSWORD':
+        context = {
+          ...(user && { nickname: user.nickname }),
+          emailLogId: emailLog.id,
+          token: emailLog.emailToken,
+        };
+        break;
+      case 'WELCOME':
+        context = {
+          ...(user && { nickname: user.nickname }),
+        };
+        break;
+    }
+
+    return context;
   }
 
   // 이메일 리디렉션 URL 생성

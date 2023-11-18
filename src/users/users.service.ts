@@ -56,7 +56,7 @@ export class UsersService {
     const data = await this.usersRepository.save(userInfo);
     delete data.password;
 
-    await this.emailWSignupWelcome(data);
+    await this.emailHelperService.HandleSendEmail({ email, emailType: EmailType.WELCOME, user: data });
 
     return { statusCode: 201, data };
   }
@@ -89,21 +89,9 @@ export class UsersService {
         break;
     }
 
-    await this.emailWSignupWelcome(data);
+    await this.emailHelperService.HandleSendEmail({ email, emailType: EmailType.WELCOME, user: data });
 
     return { statusCode: 201, data };
-  }
-
-  // 회원가입 환영 이메일 발송 처리
-  async emailWSignupWelcome(user: any) {
-    const { email, id: userId } = user;
-    const emailLog = await this.emailHelperService.createEmailLog({ email, emailType: EmailType.WELCOME, userId });
-    const context = {
-      nickname: user.nickname,
-    };
-
-    const emailTemplate = await this.emailHelperService.createEmailTemplate(emailLog.emailType, user.email, context);
-    await this.emailHelperService.sendEmail(emailTemplate);
   }
 
   // 회원 조회
