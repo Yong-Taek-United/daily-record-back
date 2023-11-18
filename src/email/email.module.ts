@@ -14,6 +14,7 @@ import { EmailHelperService } from 'src/shared/services/email-helper.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([EmailLogs, Users]),
+    ConfigModule,
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       useClass: EmailConfig,

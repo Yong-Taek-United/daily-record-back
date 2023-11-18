@@ -18,6 +18,7 @@ import {
   EMAIL_VERIFICATION_URL,
   PASSWORD_RESET_URL,
 } from '../constants/clientURL.constant';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class EmailHelperService {
@@ -27,6 +28,7 @@ export class EmailHelperService {
     @InjectRepository(Users)
     private usersRepository: Repository<Users>,
     private readonly mailerService: MailerService,
+    private readonly configService: ConfigService,
     private readonly tokenHelperService: TokenHelperService,
   ) {}
 
@@ -104,16 +106,23 @@ export class EmailHelperService {
   async createEmailContext(emailData: any) {
     const { emailLog, user } = emailData;
 
+    const protocol = this.configService.get<string>('PROTOCOL');
+    const host = this.configService.get<string>('HOST');
+    const port = this.configService.get<number>('PORT');
+    const hostname = `${protocol}://${host}:${port}`;
+
     let context: {} = {};
     switch (emailLog.emailType) {
       case 'VERIFICATION':
         context = {
+          hostname,
           emailLogId: emailLog.id,
           token: emailLog.emailToken,
         };
         break;
       case 'PASSWORD':
         context = {
+          hostname,
           ...(user && { nickname: user.nickname }),
           emailLogId: emailLog.id,
           token: emailLog.emailToken,
@@ -121,6 +130,7 @@ export class EmailHelperService {
         break;
       case 'WELCOME':
         context = {
+          hostname,
           ...(user && { nickname: user.nickname }),
         };
         break;
