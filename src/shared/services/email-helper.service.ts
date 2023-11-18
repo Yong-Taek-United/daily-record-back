@@ -4,15 +4,18 @@ import { Repository } from 'typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
 import { EmailLogs } from '../entities/emailLog.entity';
 import { TokenHelperService } from './token-helper.service';
-import { EmailType } from '../types/enums/emailLog.enum';
+import { Users } from '../entities/users.entity';
 import {
-  SIGN_UP_SUBJECT,
-  SIGN_UP_TEMPLATE,
+  EMAIL_VERIFICATION_SUBJECT,
+  EMAIL_VERIFICATION_TEMPLATE,
   PASSWORD_RESET_SUBJECT,
   PASSWORD_RESET_TEMPLATE,
-} from 'src/shared/constants/emailMessages';
-import { Users } from '../entities/users.entity';
-import { PASSWORD_RESET_URL, WELCOME_URL } from '../constants/clientURL';
+} from 'src/shared/constants/emailMessage.constant.';
+import {
+  EMAIL_VERIFICATION_FAILURE_URL,
+  EMAIL_VERIFICATION_URL,
+  PASSWORD_RESET_URL,
+} from '../constants/clientURL.constant';
 
 @Injectable()
 export class EmailHelperService {
@@ -37,12 +40,17 @@ export class EmailHelperService {
   }
 
   // 이메일 로그 생성
-  async createEmailLog(user: any, emailType: EmailType) {
-    const token = await this.tokenHelperService.generateToken({ userId: user.id, email: user.email }, 'EMAIL_VERIFICATION');
+  async createEmailLog(emailLogData: EmailLogData) {
+    const { email, emailType, userId } = emailLogData;
+
+    await this.emailLogsRepository.update({ email, emailType }, { isVerifiable: false });
+
+    const payload = { email, ...(userId && { userId }) };
+    const emailToken = await this.tokenHelperService.generateToken(payload, 'EMAIL_VERIFICATION');
     const emailLog = await this.emailLogsRepository.save({
-      email: user.email,
-      emailToken: token,
-      emailType: emailType,
+      email,
+      emailToken,
+      emailType,
     });
     return emailLog;
   }
@@ -57,9 +65,9 @@ export class EmailHelperService {
     };
 
     switch (emailType) {
-      case 'SIGN_UP':
-        emailTemplate.subject = SIGN_UP_SUBJECT;
-        emailTemplate.template = SIGN_UP_TEMPLATE;
+      case 'EMAIL_VERIFICATION':
+        emailTemplate.subject = EMAIL_VERIFICATION_SUBJECT;
+        emailTemplate.template = EMAIL_VERIFICATION_TEMPLATE;
         break;
       case 'PASSWORD_RESET':
         emailTemplate.subject = PASSWORD_RESET_SUBJECT;
@@ -71,18 +79,19 @@ export class EmailHelperService {
   }
 
   // 이메일 리디렉션 URL 생성
-  async createRedirectionURL(emailLog: any, emailToken: string) {
+  async createRedirectionURL(isSuccess, emailLog: any, emailToken: string) {
     let redirectURL: string = '';
-
-    switch (emailLog.emailType) {
-      case 'SIGN':
-        await this.usersRepository.update({ email: emailLog.email }, { isEmailVerified: true });
-        redirectURL = WELCOME_URL;
-        break;
-      case 'PASSWORD':
-        redirectURL = `${PASSWORD_RESET_URL}?emailLogId=${emailLog.id}&emailToken=${emailToken}`;
-        break;
-    }
+    if (isSuccess)
+      switch (emailLog.emailType) {
+        case 'VERIFICATION':
+          await this.usersRepository.update({ email: emailLog.email }, { isEmailVerified: true });
+          redirectURL = `${EMAIL_VERIFICATION_URL}`;
+          break;
+        case 'PASSWORD':
+          redirectURL = `${PASSWORD_RESET_URL}?emailLogId=${emailLog.id}&emailToken=${emailToken}`;
+          break;
+      }
+    else redirectURL = `${EMAIL_VERIFICATION_FAILURE_URL}`;
 
     return redirectURL;
   }

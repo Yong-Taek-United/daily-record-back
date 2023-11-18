@@ -1,4 +1,4 @@
 export enum EmailType {
-  SIGN = 'SIGN',
+  VERIFICATION = 'VERIFICATION',
   PASSWORD = 'PASSWORD',
 }

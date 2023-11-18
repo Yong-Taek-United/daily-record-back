@@ -5,7 +5,7 @@ import { TokenHelperService } from 'src/shared/services/token-helper.service';
 import { CookieHelperService } from 'src/shared/services/cookie-helper.service';
 import * as bcrypt from 'bcrypt';
 import { AuthType } from 'src/shared/types/enums/users.enum';
-import { SIGN_UP_GOOGLE_URL } from 'src/shared/constants/clientURL';
+import { SIGN_UP_GOOGLE_URL } from 'src/shared/constants/clientURL.constant';
 
 @Injectable()
 export class AuthService {

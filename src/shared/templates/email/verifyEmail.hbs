@@ -1,0 +1,25 @@
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <title>이메일 인증 안내</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; } .container { width:
+      100%; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #fff; border-radius: 5px; box-shadow: 0 0
+      10px rgba(0,0,0,0.1); } h3 { font-weight: 700; font-size: 1.5rem; line-height: 2rem; padding-top: 16px; margin: 0;
+      } p { font-size: 16px; line-height: 26px; margin: 0; padding: 10px 0; } .username { font-weight: 700; } a { color:
+      #fff; } .btn { display: inline-block; padding: 10px 20px; background-color: #0078ff; font-weight: 700;
+      text-decoration: none; border-radius: 5px; } .btn:hover { background-color: #0056b3; }
+    </style>
+  </head>
+  <body>
+    <div class='container'>
+      <h3>이메일 인증 안내</h3>
+      <p>
+        안녕하세요, 데일리레코드를 이용해 주셔서 감사합니다.<br />
+        이메일 인증을 진행하시려면 아래 버튼을 클릭해주세요.
+      </p>
+      <a href='http://localhost:5000/emails/check?id={{emailLogId}}&token={{token}}' class='btn' target='_blank'>이메일
+        인증</a>
+    </div>
+  </body>
+</html>

@@ -4,3 +4,9 @@ interface EmailTemplate {
   template: string;
   context?: {};
 }
+
+interface EmailLogData {
+  email: string;
+  emailType: string;
+  userId?: number;
+}
