@@ -18,8 +18,8 @@ export class EmailLogs {
   @Column({ type: 'tinyint', default: false })
   isChecked: Boolean;
 
-  @Column({ type: 'tinyint', default: false })
-  isDeleted: Boolean;
+  @Column({ type: 'tinyint', default: true })
+  isVerifiable: Boolean;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -28,5 +28,5 @@ export class EmailLogs {
   updatedAt: Date;
 
   @Column({ type: 'datetime', default: null })
-  deletedAt: Date;
+  checkedAt: Date;
 }

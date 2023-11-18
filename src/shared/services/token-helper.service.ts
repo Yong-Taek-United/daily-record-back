@@ -33,9 +33,9 @@ export class TokenHelperService {
         secret = this.configService.get<string>('JWT_GOOGLE_USER_SECRET');
         expiresIn = this.configService.get<string>('JWT_GOOGLE_USER_EXPIRATION_TIME');
         break;
-      case 'EMAIL_VERIFICATION':
-        secret = this.configService.get<string>('JWT_EMAIL_VERIFICATION_SECRET');
-        expiresIn = this.configService.get<string>('JWT_EMAIL_VERIFICATION_EXPIRATION_TIME');
+      case 'EMAIL':
+        secret = this.configService.get<string>('JWT_EMAIL_SECRET');
+        expiresIn = this.configService.get<string>('JWT_EMAIL_EXPIRATION_TIME');
         break;
     }
 

@@ -1,7 +1,7 @@
 <html lang='en'>
   <head>
     <meta charset='UTF-8' />
-    <title>비밀번호 재설정 안내</title>
+    <title>이메일 인증 안내</title>
     <style>
       body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; } .container { width:
       100%; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #fff; border-radius: 5px; box-shadow: 0 0
@@ -13,18 +13,13 @@
   </head>
   <body>
     <div class='container'>
-      <h3>비밀번호 재설정 안내</h3>
+      <h3>이메일 인증 안내</h3>
       <p>
-        안녕하세요,
-        <span class='username'>{{nickname}}</span>님!<br />
-        본 이메일은 데일리레코드의 비밀번호 재설정을 위해 발송되었습니다.<br />
-        비밀번호를 재설정하려면 아래 버튼을 클릭해주세요.
+        안녕하세요, 데일리레코드를 이용해 주셔서 감사합니다.<br />
+        이메일 인증을 진행하시려면 아래 버튼을 클릭해주세요.
       </p>
-      <a
-        href='http://localhost:5000/emails/verify?id={{emailLogId}}&token={{token}}'
-        class='btn'
-        target='_blank'
-      >비밀번호 재설정</a>
+      <a href='http://localhost:5000/emails/verify?id={{emailLogId}}&token={{token}}' class='btn' target='_blank'>이메일
+        인증</a>
     </div>
   </body>
 </html>

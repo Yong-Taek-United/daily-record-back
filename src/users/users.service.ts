@@ -44,19 +44,19 @@ export class UsersService {
       password,
       authType,
       username: await this.usersHelperService.createUsername(),
-      isEmailVerified: false,
+      isEmailVerified: true,
       userProfile: new UserProfiles(),
     };
 
-    let isExist = await this.usersHelperService.findUserByField('email', email);
-    if (isExist) throw new ConflictException('이미 존재하는 이메일입니다.');
+    const user = await this.usersHelperService.findUserByField('email', email);
+    if (user) throw new ConflictException('이미 존재하는 이메일입니다.');
 
     userInfo.password = await this.usersHelperService.hashPassword(password);
 
     const data = await this.usersRepository.save(userInfo);
     delete data.password;
 
-    await this.emailSignup(data);
+    await this.emailHelperService.HandleSendEmail({ email, emailType: EmailType.WELCOME, user: data });
 
     return { statusCode: 201, data };
   }
@@ -74,9 +74,9 @@ export class UsersService {
       userProfile: new UserProfiles(),
     };
 
-    let isExist = await this.usersHelperService.findUserByField('email', email);
-    if (isExist)
-      throw new ConflictException(`이미 ${isExist.authType} 회원가입으로 등록된 이메일입니다. 로그인을 진행할까요?`);
+    const user = await this.usersHelperService.findUserByField('email', email);
+    if (user)
+      throw new ConflictException(`이미 ${user.authType} 회원가입으로 등록된 이메일입니다. 로그인을 진행할까요?`);
 
     userInfo.password = await this.usersHelperService.hashPassword(password);
 
@@ -89,20 +89,9 @@ export class UsersService {
         break;
     }
 
+    await this.emailHelperService.HandleSendEmail({ email, emailType: EmailType.WELCOME, user: data });
+
     return { statusCode: 201, data };
-  }
-
-  // 회원가입 이메일 인증 발송 처리
-  async emailSignup(user: any) {
-    const emailLog = await this.emailHelperService.createEmailLog(user, EmailType.SIGN);
-    const context = {
-      nickname: user.nickname,
-      emailLogId: emailLog.id,
-      token: emailLog.emailToken,
-    };
-
-    const emailTemplate = await this.emailHelperService.createEmailTemplate('SIGN_UP', user.email, context);
-    await this.emailHelperService.sendEmail(emailTemplate);
   }
 
   // 회원 조회
