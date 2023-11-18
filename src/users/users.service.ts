@@ -16,7 +16,7 @@ import { ConfigService } from '@nestjs/config';
 import { CreateUserDto, UpdateUserDto, DeleteUserDto, ResetPasswordDto } from '../shared/dto/users.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { UsersHelperService } from 'src/shared/services/users-helper.service';
-// import { EmailHelperService } from 'src/shared/services/email-helper.service';
+import { EmailHelperService } from 'src/shared/services/email-helper.service';
 import * as bcrypt from 'bcrypt';
 import { AuthType } from 'src/shared/types/enums/users.enum';
 import { EmailType } from 'src/shared/types/enums/emailLog.enum';
@@ -31,7 +31,8 @@ export class UsersService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly authService: AuthService,
-    private readonly usersHelperService: UsersHelperService, // private readonly emailHelperService: EmailHelperService,
+    private readonly usersHelperService: UsersHelperService,
+    private readonly emailHelperService: EmailHelperService,
   ) {}
 
   // 회원가입
@@ -54,6 +55,8 @@ export class UsersService {
 
     const data = await this.usersRepository.save(userInfo);
     delete data.password;
+
+    await this.emailWSignupWelcome(data);
 
     return { statusCode: 201, data };
   }
@@ -86,21 +89,22 @@ export class UsersService {
         break;
     }
 
+    await this.emailWSignupWelcome(data);
+
     return { statusCode: 201, data };
   }
 
-  // // 회원가입 환영 이메일 발송 처리
-  // async emailSignup(user: any) {
-  //   const emailLog = await this.emailHelperService.createEmailLog(user, EmailType.SIGN);
-  //   const context = {
-  //     nickname: user.nickname,
-  //     emailLogId: emailLog.id,
-  //     token: emailLog.emailToken,
-  //   };
+  // 회원가입 환영 이메일 발송 처리
+  async emailWSignupWelcome(user: any) {
+    const { email, id: userId } = user;
+    const emailLog = await this.emailHelperService.createEmailLog({ email, emailType: EmailType.WELCOME, userId });
+    const context = {
+      nickname: user.nickname,
+    };
 
-  //   const emailTemplate = await this.emailHelperService.createEmailTemplate('SIGN_UP', user.email, context);
-  //   await this.emailHelperService.sendEmail(emailTemplate);
-  // }
+    const emailTemplate = await this.emailHelperService.createEmailTemplate(emailLog.emailType, user.email, context);
+    await this.emailHelperService.sendEmail(emailTemplate);
+  }
 
   // 회원 조회
   async getUser(userId: number) {

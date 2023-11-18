@@ -10,6 +10,8 @@ import {
   EMAIL_VERIFICATION_TEMPLATE,
   PASSWORD_RESET_SUBJECT,
   PASSWORD_RESET_TEMPLATE,
+  WELCOME_SUBJECT,
+  WELCOME_TEMPLATE,
 } from 'src/shared/constants/emailMessage.constant.';
 import {
   EMAIL_VERIFICATION_FAILURE_URL,
@@ -46,7 +48,7 @@ export class EmailHelperService {
     await this.emailLogsRepository.update({ email, emailType }, { isVerifiable: false });
 
     const payload = { email, ...(userId && { userId }) };
-    const emailToken = await this.tokenHelperService.generateToken(payload, 'EMAIL_VERIFICATION');
+    const emailToken = await this.tokenHelperService.generateToken(payload, 'EMAIL');
     const emailLog = await this.emailLogsRepository.save({
       email,
       emailToken,
@@ -65,13 +67,17 @@ export class EmailHelperService {
     };
 
     switch (emailType) {
-      case 'EMAIL_VERIFICATION':
+      case 'VERIFICATION':
         emailTemplate.subject = EMAIL_VERIFICATION_SUBJECT;
         emailTemplate.template = EMAIL_VERIFICATION_TEMPLATE;
         break;
-      case 'PASSWORD_RESET':
+      case 'PASSWORD':
         emailTemplate.subject = PASSWORD_RESET_SUBJECT;
         emailTemplate.template = PASSWORD_RESET_TEMPLATE;
+        break;
+      case 'WELCOME':
+        emailTemplate.subject = WELCOME_SUBJECT;
+        emailTemplate.template = WELCOME_TEMPLATE;
         break;
     }
 

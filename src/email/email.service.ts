@@ -31,7 +31,7 @@ export class EmailService {
       emailLogId: emailLog.id,
       token: emailLog.emailToken,
     };
-    const emailTemplate = await this.emailHelperService.createEmailTemplate('EMAIL_VERIFICATION', email, context);
+    const emailTemplate = await this.emailHelperService.createEmailTemplate(emailType, email, context);
 
     await this.emailHelperService.sendEmail(emailTemplate);
 
@@ -55,7 +55,7 @@ export class EmailService {
       emailLogId: emailLog.id,
       token: emailLog.emailToken,
     };
-    const emailTemplate = await this.emailHelperService.createEmailTemplate('PASSWORD_RESET', email, context);
+    const emailTemplate = await this.emailHelperService.createEmailTemplate(emailType, email, context);
 
     await this.emailHelperService.sendEmail(emailTemplate);
 
