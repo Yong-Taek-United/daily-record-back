@@ -41,10 +41,8 @@ export class AuthService {
   async googleLogin(user: any, res: Response) {
     const tokens = user.id
       ? await this.generateLoginTokens(user)
-      : { signUpUserToken: await this.tokenHelperService.generateToken(user, 'GOOGLE_USER') };
-    const redirectURL = user.id ? '/' : SIGN_UP_GOOGLE_URL;
-
-    await this.cookieHelperService.saveTokensToCookies(res, tokens);
+      : await this.tokenHelperService.generateToken(user, 'GOOGLE_USER');
+    const redirectURL = user.id ? '/' : `${SIGN_UP_GOOGLE_URL}?userToken=${tokens}`;
 
     return { redirect: redirectURL };
   }
