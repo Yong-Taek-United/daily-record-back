@@ -42,7 +42,7 @@ export class EmailService {
   async verifyEmail(id: number, emailToken: string) {
     const date = new Date();
 
-    const emailLog = await this.emailLogsRepository.findOne({ where: { id, emailToken, isVerifiable: true } });
+    const emailLog = await this.emailLogsRepository.findOne({ where: { id, emailToken, isVerifable: true } });
     const isSuccess =
       !!emailLog && new Date(emailLog.createdAt.getTime() + EMAIL_VERIFICATION_EXPIRY * 60 * 1000) > new Date();
 
@@ -57,7 +57,7 @@ export class EmailService {
   async checkEmailVelified(emailData: VerifyEmailDto) {
     const { email, emailType } = emailData;
 
-    const emailLog = await this.emailLogsRepository.findOne({ where: { email, emailType, isVerifiable: true } });
+    const emailLog = await this.emailLogsRepository.findOne({ where: { email, emailType, isVerifable: true } });
     if (!emailLog) throw new NotFoundException('이메일 인증 내역이 없습니다.');
 
     return { statusCode: 200 };

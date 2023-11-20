@@ -6,7 +6,6 @@ import {
   UpdateDateColumn,
   OneToMany,
   OneToOne,
-  JoinColumn,
 } from 'typeorm';
 import { UserProfiles } from './userProfiles.entity';
 import { UserFiles } from './userFiles.entity';
@@ -65,7 +64,6 @@ export class Users {
   deletedAt: Date;
 
   @OneToOne(() => UserProfiles, (userProfile) => userProfile.user, { cascade: true })
-  @JoinColumn()
   userProfile: UserProfiles;
 
   @OneToMany(() => UserFiles, (userFiles) => userFiles.user)

@@ -19,7 +19,7 @@ export class EmailLogs {
   isChecked: Boolean;
 
   @Column({ type: 'tinyint', default: true })
-  isVerifiable: Boolean;
+  isVerifable: Boolean;
 
   @CreateDateColumn()
   createdAt: Date;

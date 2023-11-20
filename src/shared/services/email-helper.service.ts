@@ -63,7 +63,7 @@ export class EmailHelperService {
   async createEmailLog(emailLogData: EmailLogData) {
     const { email, emailType, userId } = emailLogData;
 
-    await this.emailLogsRepository.update({ email, emailType }, { isVerifiable: false });
+    await this.emailLogsRepository.update({ email, emailType }, { isVerifable: false });
 
     const payload = { email, ...(userId && { userId }) };
     const emailToken = await this.tokenHelperService.generateToken(payload, 'EMAIL');
