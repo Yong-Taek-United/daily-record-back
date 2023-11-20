@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Users } from './users.entity';
 
 @Entity({ schema: 'dailyrecord', name: 'UserProfiles' })
@@ -25,5 +33,6 @@ export class UserProfiles {
   deletedAt: Date;
 
   @OneToOne(() => Users, (user) => user.userProfile)
+  @JoinColumn()
   user: Users;
 }
