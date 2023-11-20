@@ -12,6 +12,7 @@ export class CookieHelperService {
       httpOnly: this.configService.get<boolean>('COOKIE_OPTION_HTTP_ONLY'),
       sameSite: this.configService.get<CookieOptions['sameSite']>('COOKIE_OPTION_SAME_SITE'),
       secure: this.configService.get<boolean>('COOKIE_OPTION_SECURE'),
+      domain: this.configService.get<string>('COOKIE_OPTION_DOMAIN'),
     };
 
     Object.entries(tokens).forEach(([key, value]) => {
