@@ -2,7 +2,13 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Req, Res } from '@ne
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { UsersService } from './users.service';
-import { CreateUserDto, UpdateUserDto, DeleteUserDto, ResetPasswordDto } from '../shared/dto/users.dto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  DeleteUserDto,
+  ResetPasswordDto,
+  ChangePasswordDto,
+} from '../shared/dto/users.dto';
 import { Public } from 'src/shared/decorators/skip-auth.decorator';
 
 @Controller('users')
@@ -52,8 +58,18 @@ export class UsersController {
 
   @Patch('/password/reset')
   @Public()
-  @ApiOperation({ summary: '비밀번호 재설정', description: '이메일 인증을 통한 비밀번호 재설정입니다.' })
+  @ApiOperation({ summary: '비밀번호 재설정', description: '이메일 인증을 통해 비밀번호를 재설정합니다.' })
   ResetPasswordByEmail(@Body() userDate: ResetPasswordDto) {
     return this.usersService.resetPasswordByEmail(userDate);
+  }
+
+  @Patch('/password/change')
+  @ApiOperation({
+    summary: '비밀번호 변경',
+    description: '사용자가 직접 비밀번호를 변경합니다. 변경 완료 후 로그아웃해 주세요.',
+  })
+  changePassword(@Req() req, @Body() userDate: ChangePasswordDto) {
+    const userId: number = req.user.sub;
+    return this.usersService.changePassword(userId, userDate);
   }
 }

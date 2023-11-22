@@ -39,6 +39,9 @@ export class Users {
   @Column({ type: 'varchar', length: 100 })
   password: string;
 
+  @Column({ type: 'datetime', default: null })
+  passwordChangedAt: Date;
+
   @Column({ type: 'tinyint', default: false })
   isEmailVerified: Boolean;
 

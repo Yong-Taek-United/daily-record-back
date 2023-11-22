@@ -13,7 +13,13 @@ import { Users } from '../shared/entities/users.entity';
 import { EmailLogs } from 'src/shared/entities/emailLog.entity';
 import { UserProfiles } from 'src/shared/entities/userProfiles.entity';
 import { ConfigService } from '@nestjs/config';
-import { CreateUserDto, UpdateUserDto, DeleteUserDto, ResetPasswordDto } from '../shared/dto/users.dto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  DeleteUserDto,
+  ResetPasswordDto,
+  ChangePasswordDto,
+} from '../shared/dto/users.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { UsersHelperService } from 'src/shared/services/users-helper.service';
 import { EmailHelperService } from 'src/shared/services/email-helper.service';
@@ -133,20 +139,30 @@ export class UsersService {
 
   // 비밀번호 재설정 처리
   async resetPasswordByEmail(userData: ResetPasswordDto) {
-    const { emailToken, emailLogId, password } = userData;
+    const { emailToken, emailLogId, newPassword } = userData;
     const emailLog = await this.emailLogsRepository.findOne({ where: { id: emailLogId } });
     if (!emailLog.isChecked) throw new UnprocessableEntityException('요청 처리가 가능한 상태가 아닙니다.');
 
     const secretKey = this.configService.get<string>('JWT_EMAIL_SECRET');
     const payload = this.jwtService.verify(emailToken, { secret: secretKey, ignoreExpiration: true });
-    return await this.resetPassword(payload.userId, password);
+    return await this.resetPassword(payload.userId, newPassword);
+  }
+
+  // 비밀번호 변경 처리
+  async changePassword(userId: number, userData: ChangePasswordDto) {
+    let { currentPassword, newPassword } = userData;
+    const user = await this.usersHelperService.findUserByField('id', userId);
+    if (!user || !(await bcrypt.compare(currentPassword, user.password)))
+      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+
+    return await this.resetPassword(userId, newPassword);
   }
 
   // 비밀번호 재설정
   async resetPassword(userId: number, password: string) {
     password = await this.usersHelperService.hashPassword(password);
-    const result = await this.usersRepository.update(userId, { password: password });
-    if (result.affected === 0) throw new BadRequestException('비밀번호 수정에 실패했습니다.');
+    const result = await this.usersRepository.update(userId, { password: password, passwordChangedAt: new Date() });
+    if (result.affected === 0) throw new BadRequestException('비밀번호 변경에 실패했습니다.');
     return { statusCode: 200 };
   }
 }
