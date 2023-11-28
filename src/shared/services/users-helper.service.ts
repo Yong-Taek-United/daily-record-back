@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from '../entities/users.entity';
 import * as bcrypt from 'bcrypt';
+import { GenerateUtility } from '../utilities/generate.utility';
 
 @Injectable()
 export class UsersHelperService {
@@ -19,18 +20,11 @@ export class UsersHelperService {
   }
 
   // username 생성
-  async createUsername(): Promise<string> {
-    let username = 'user-';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const length = 10;
-    for (let i = 0; i < length; i++) {
-      username += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-
+  async createUsername(attempts = 10): Promise<string> {
+    if (attempts === 0) throw InternalServerErrorException;
+    const username = GenerateUtility.generateRandomString('user-', 10);
     const user = await this.findUserByField('username', username);
-    if (user) return this.createUsername();
-
-    return username;
+    return !!user ? await this.createUsername(attempts - 1) : username;
   }
 
   // 비밀번호 해시
