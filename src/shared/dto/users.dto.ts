@@ -87,6 +87,23 @@ export class ResetPasswordDto {
 
   @IsNotEmpty()
   @IsString()
+  @Length(textLength.password.min, textLength.password.max, {
+    message: `비밀번호를 다시 확인해주십시오.(${textLength.password.min}~${textLength.password.max}자)`,
+  })
   @ApiProperty({ example: 'qwer1234' })
-  password: string;
+  newPassword: string;
+}
+
+export class ChangePasswordDto {
+  @IsString()
+  @ApiProperty({ example: 'qwer1234' })
+  currentPassword: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Length(textLength.password.min, textLength.password.max, {
+    message: `비밀번호를 다시 확인해주십시오.(${textLength.password.min}~${textLength.password.max}자)`,
+  })
+  @ApiProperty({ example: 'qwer1234' })
+  newPassword: string;
 }
