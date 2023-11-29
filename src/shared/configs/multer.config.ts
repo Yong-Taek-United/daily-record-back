@@ -30,7 +30,7 @@ export class MulterConfig implements MulterOptionsFactory {
     const contentDirectory = this.getContentDirectoryName(req.url);
     const userId = req.user.sub;
 
-    const fileStoragePath = `${process.cwd()}/${fileRootDirectory}/${contentDirectory}/${userId}`;
+    const fileStoragePath = `${fileRootDirectory}/${contentDirectory}/${userId}`;
     return fileStoragePath;
   }
 
