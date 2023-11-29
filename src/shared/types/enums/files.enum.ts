@@ -3,6 +3,11 @@ export enum UserFileType {
   FEED = 'FEED',
 }
 
+export enum FileStorageType {
+  DISK = 'DISK',
+  S3 = 'S3',
+}
+
 export enum MimeType {
   JPEG = 'image/jpeg',
   PNG = 'image/png',
