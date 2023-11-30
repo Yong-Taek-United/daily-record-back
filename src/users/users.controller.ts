@@ -64,9 +64,9 @@ export class UsersController {
 
   @Delete('/:id')
   @ApiOperation({ summary: '회원 탈퇴', description: '비밀번호를 입력해야 탈퇴가 가능합니다.' })
-  withdrawal(@Req() req, @Body() userDate: DeleteUserDto) {
+  withdrawal(@Req() req, @Body() userData: DeleteUserDto) {
     const userId: number = req.user.sub;
-    return this.usersService.withdrawal(userId, userDate);
+    return this.usersService.withdrawal(userId, userData);
   }
 
   @Patch('/password/change')
@@ -74,16 +74,16 @@ export class UsersController {
     summary: '비밀번호 변경',
     description: '사용자가 직접 비밀번호를 변경합니다. 변경 완료 후 로그아웃해 주세요.',
   })
-  changePassword(@Req() req, @Body() userDate: ChangePasswordDto) {
+  changePassword(@Req() req, @Body() userData: ChangePasswordDto) {
     const userId: number = req.user.sub;
-    return this.usersService.changePassword(userId, userDate);
+    return this.usersService.changePassword(userId, userData);
   }
 
   @Patch('/password/reset')
   @Public()
   @ApiOperation({ summary: '비밀번호 재설정', description: '이메일 인증을 통해 비밀번호를 재설정합니다.' })
-  ResetPasswordByEmail(@Body() userDate: ResetPasswordDto) {
-    return this.usersService.resetPasswordByEmail(userDate);
+  ResetPasswordByEmail(@Body() userData: ResetPasswordDto) {
+    return this.usersService.resetPasswordByEmail(userData);
   }
 
   @Post('/profile-image/upload')
