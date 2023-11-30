@@ -56,10 +56,10 @@ export class UsersController {
   }
 
   @Patch('/:id')
-  @ApiOperation({ summary: '회원정보 수정', description: '비밀번호 변경은 확인용 비밀번호를 함께 주셔야합니다.' })
-  updateUser(@Req() req, @Body() userDate: UpdateUserDto) {
-    const userId: number = req.user.sub;
-    return this.usersService.updateUser(userId, userDate);
+  @ApiOperation({ summary: '회원 기본정보 수정', description: '수정 가능 항목: 이름(nickname), 계정(username)' })
+  updateUser(@Req() req, @Body() userData: UpdateUserDto) {
+    const user = req.user;
+    return this.usersService.updateUser(user, userData);
   }
 
   @Delete('/:id')
