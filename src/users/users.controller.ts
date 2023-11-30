@@ -8,7 +8,6 @@ import {
   Post,
   Req,
   Res,
-  UploadedFile,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -23,10 +22,7 @@ import {
   ChangePasswordDto,
 } from '../shared/dto/users.dto';
 import { Public } from 'src/shared/decorators/skip-auth.decorator';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import * as fs from 'fs/promises';
-import * as path from 'path';
-import * as mime from 'mime-types';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 @ApiTags('Users')
@@ -73,13 +69,6 @@ export class UsersController {
     return this.usersService.withdrawal(userId, userDate);
   }
 
-  @Patch('/password/reset')
-  @Public()
-  @ApiOperation({ summary: '비밀번호 재설정', description: '이메일 인증을 통해 비밀번호를 재설정합니다.' })
-  ResetPasswordByEmail(@Body() userDate: ResetPasswordDto) {
-    return this.usersService.resetPasswordByEmail(userDate);
-  }
-
   @Patch('/password/change')
   @ApiOperation({
     summary: '비밀번호 변경',
@@ -88,6 +77,13 @@ export class UsersController {
   changePassword(@Req() req, @Body() userDate: ChangePasswordDto) {
     const userId: number = req.user.sub;
     return this.usersService.changePassword(userId, userDate);
+  }
+
+  @Patch('/password/reset')
+  @Public()
+  @ApiOperation({ summary: '비밀번호 재설정', description: '이메일 인증을 통해 비밀번호를 재설정합니다.' })
+  ResetPasswordByEmail(@Body() userDate: ResetPasswordDto) {
+    return this.usersService.resetPasswordByEmail(userDate);
   }
 
   @Post('/profile-image/upload')
