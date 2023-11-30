@@ -30,7 +30,7 @@ export class CreateUserDto {
   authType: AuthType = AuthType.BASIC;
 }
 
-export class UpdateUserDto {
+export class UpdateUserBasicDto {
   @IsString()
   @Length(textLength.username.min, textLength.username.max, {
     message: `계정을 다시 확인해주십시오.(${textLength.username.min}~${textLength.username.max}자)`,
@@ -44,6 +44,13 @@ export class UpdateUserDto {
   })
   @ApiProperty({ example: '테스트' })
   nickname: string;
+}
+
+export class UpdateUserProfileDto {
+  @IsString()
+  @Length(textLength.introduce.min, textLength.introduce.max)
+  @ApiProperty({ example: '안녕하세요, 반갑습니다.' })
+  introduce: string;
 }
 
 export class DeleteUserDto {

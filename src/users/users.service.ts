@@ -16,16 +16,16 @@ import { UserProfiles } from 'src/shared/entities/userProfiles.entity';
 import { ConfigService } from '@nestjs/config';
 import {
   CreateUserDto,
-  UpdateUserDto,
   DeleteUserDto,
   ResetPasswordDto,
   ChangePasswordDto,
+  UpdateUserBasicDto,
+  UpdateUserProfileDto,
 } from '../shared/dto/users.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { UsersHelperService } from 'src/shared/services/users-helper.service';
 import { EmailHelperService } from 'src/shared/services/email-helper.service';
 import * as bcrypt from 'bcrypt';
-import * as path from 'path';
 import { AuthType } from 'src/shared/types/enums/users.enum';
 import { EmailType } from 'src/shared/types/enums/emailLog.enum';
 import { FileStorageType, UserFileType } from 'src/shared/types/enums/files.enum';
@@ -36,7 +36,9 @@ export class UsersService {
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
     @InjectRepository(UserFiles)
-    private readonly userProfilesRepository: Repository<UserFiles>,
+    private readonly userFilesRepository: Repository<UserFiles>,
+    @InjectRepository(UserProfiles)
+    private readonly userProfilesRepository: Repository<UserProfiles>,
     @InjectRepository(EmailLogs)
     private readonly emailLogsRepository: Repository<EmailLogs>,
     private readonly jwtService: JwtService,
@@ -112,7 +114,7 @@ export class UsersService {
   }
 
   // 회원 기본정보 수정
-  async updateUser(user: any, userData: UpdateUserDto) {
+  async updateUserBasicInfo(user: any, userData: UpdateUserBasicDto) {
     const { sub: userId, username } = user;
 
     if (username !== userData.username) {
@@ -122,6 +124,14 @@ export class UsersService {
 
     await this.usersRepository.update(userId, userData);
     const { password: remove, ...data } = await this.usersHelperService.findUserByField('id', userId);
+
+    return { statusCode: 200, data };
+  }
+
+  // 회원 프로필정보 수정
+  async updateUserProfileInfo(userId: number, userData: UpdateUserProfileDto) {
+    await this.userProfilesRepository.update({ user: { id: userId } }, userData);
+    const data = await this.userProfilesRepository.findOne({ where: { user: { id: userId } } });
 
     return { statusCode: 200, data };
   }
@@ -184,11 +194,11 @@ export class UsersService {
       user: user,
     }));
 
-    await this.userProfilesRepository.update(
+    await this.userFilesRepository.update(
       { user: { id: userId }, isDeleted: false },
       { isDeleted: true, deletedAt: new Date() },
     );
-    await this.userProfilesRepository.insert(fileInfo);
+    await this.userFilesRepository.insert(fileInfo);
     return { statusCode: 201 };
   }
 }

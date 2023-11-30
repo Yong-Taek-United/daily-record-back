@@ -15,4 +15,8 @@ export const textLength = {
     min: 8,
     max: 30,
   },
+  introduce: {
+    min: 0,
+    max: 30,
+  },
 };

@@ -6,6 +6,7 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { Users } from 'src/shared/entities/users.entity';
 import { UserFiles } from 'src/shared/entities/userFiles.entity';
+import { UserProfiles } from 'src/shared/entities/userProfiles.entity';
 import { EmailLogs } from 'src/shared/entities/emailLog.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { EmailModule } from 'src/email/email.module';
@@ -15,7 +16,7 @@ import { MulterConfig } from 'src/shared/configs/multer.config';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Users, UserFiles, EmailLogs]),
+    TypeOrmModule.forFeature([Users, UserFiles, UserProfiles, EmailLogs]),
     ConfigModule,
     JwtModule,
     MulterModule.registerAsync({

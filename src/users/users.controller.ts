@@ -16,10 +16,11 @@ import { Response } from 'express';
 import { UsersService } from './users.service';
 import {
   CreateUserDto,
-  UpdateUserDto,
   DeleteUserDto,
   ResetPasswordDto,
   ChangePasswordDto,
+  UpdateUserBasicDto,
+  UpdateUserProfileDto,
 } from '../shared/dto/users.dto';
 import { Public } from 'src/shared/decorators/skip-auth.decorator';
 import { FilesInterceptor } from '@nestjs/platform-express';
@@ -57,9 +58,16 @@ export class UsersController {
 
   @Patch('basic')
   @ApiOperation({ summary: '회원 기본정보 수정', description: '수정 가능 항목: 이름(nickname), 계정(username)' })
-  updateUser(@Req() req, @Body() userData: UpdateUserDto) {
+  updateUserBasicInfo(@Req() req, @Body() userData: UpdateUserBasicDto) {
     const user = req.user;
-    return this.usersService.updateUser(user, userData);
+    return this.usersService.updateUserBasicInfo(user, userData);
+  }
+
+  @Patch('profile')
+  @ApiOperation({ summary: '회원 프로필정보 수정', description: '수정 가능 항목: 한 줄 소개(introduce)' })
+  updateUserProfileInfo(@Req() req, @Body() userData: UpdateUserProfileDto) {
+    const userId: number = req.user.sub;
+    return this.usersService.updateUserProfileInfo(userId, userData);
   }
 
   @Delete('/:id')
