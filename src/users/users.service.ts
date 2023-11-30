@@ -10,6 +10,7 @@ import { Repository } from 'typeorm';
 import { Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { Users } from '../shared/entities/users.entity';
+import { UserFiles } from 'src/shared/entities/userFiles.entity';
 import { EmailLogs } from 'src/shared/entities/emailLog.entity';
 import { UserProfiles } from 'src/shared/entities/userProfiles.entity';
 import { ConfigService } from '@nestjs/config';
@@ -24,14 +25,18 @@ import { AuthService } from 'src/auth/auth.service';
 import { UsersHelperService } from 'src/shared/services/users-helper.service';
 import { EmailHelperService } from 'src/shared/services/email-helper.service';
 import * as bcrypt from 'bcrypt';
+import * as path from 'path';
 import { AuthType } from 'src/shared/types/enums/users.enum';
 import { EmailType } from 'src/shared/types/enums/emailLog.enum';
+import { FileStorageType, UserFileType } from 'src/shared/types/enums/files.enum';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
+    @InjectRepository(UserFiles)
+    private readonly userProfilesRepository: Repository<UserFiles>,
     @InjectRepository(EmailLogs)
     private readonly emailLogsRepository: Repository<EmailLogs>,
     private readonly jwtService: JwtService,
@@ -158,11 +163,36 @@ export class UsersService {
     return await this.resetPassword(userId, newPassword);
   }
 
-  // 비밀번호 재설정
+  // 비밀번호 재설정 처리
   async resetPassword(userId: number, password: string) {
     password = await this.usersHelperService.hashPassword(password);
     const result = await this.usersRepository.update(userId, { password: password, passwordChangedAt: new Date() });
     if (result.affected === 0) throw new BadRequestException('비밀번호 변경에 실패했습니다.');
     return { statusCode: 200 };
+  }
+
+  // 회원 프로필 이미지 등록 처리
+  async uploadProfileImage(userId: number, files: Express.Multer.File[]) {
+    const fileRootDirectory = this.configService.get<string>('FILE_STORAGE_PATH');
+
+    const user = await this.usersHelperService.findUserByField('id', userId);
+
+    const fileInfo = files.map((file, index) => ({
+      seqNo: index,
+      fileType: UserFileType.PROFILE,
+      fileStorageType: FileStorageType.DISK,
+      filePath: file.destination.replace(fileRootDirectory, ''),
+      fileName: file.filename,
+      mimeType: file.mimetype,
+      fileSize: file.size,
+      user: user,
+    }));
+
+    await this.userProfilesRepository.update(
+      { user: { id: userId }, isDeleted: false },
+      { isDeleted: true, deletedAt: new Date() },
+    );
+    await this.userProfilesRepository.insert(fileInfo);
+    return { statusCode: 201 };
   }
 }

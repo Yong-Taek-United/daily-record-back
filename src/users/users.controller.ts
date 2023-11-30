@@ -91,7 +91,7 @@ export class UsersController {
   }
 
   @Post('/profile-image/upload')
-  @UseInterceptors(FilesInterceptor('files', 1))
+  @UseInterceptors(FilesInterceptor('files', 2))
   @ApiConsumes('multipart/form-data')
   @ApiOperation({
     summary: '회원 프로필 이미지 등록',
@@ -111,9 +111,8 @@ export class UsersController {
       },
     },
   })
-  async uploadImage(@Req() req, @UploadedFiles() files: Express.Multer.File[]) {
-    console.log(files);
-
-    return { statusCode: 201 };
+  async uploadProfileImage(@Req() req, @UploadedFiles() files: Express.Multer.File[]) {
+    const userId: number = req.user.sub;
+    return this.usersService.uploadProfileImage(userId, files);
   }
 }
