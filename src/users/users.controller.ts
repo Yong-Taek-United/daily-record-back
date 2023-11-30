@@ -55,7 +55,7 @@ export class UsersController {
     return await this.usersService.getUser(userId);
   }
 
-  @Patch('/:id')
+  @Patch('basic')
   @ApiOperation({ summary: '회원 기본정보 수정', description: '수정 가능 항목: 이름(nickname), 계정(username)' })
   updateUser(@Req() req, @Body() userData: UpdateUserDto) {
     const user = req.user;
