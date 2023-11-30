@@ -87,7 +87,7 @@ export class UsersController {
   }
 
   @Post('/profile-image/upload')
-  @UseInterceptors(FilesInterceptor('files', 2))
+  @UseInterceptors(FilesInterceptor('files', 1))
   @ApiConsumes('multipart/form-data')
   @ApiOperation({
     summary: '회원 프로필 이미지 등록',
