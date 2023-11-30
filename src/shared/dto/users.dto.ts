@@ -30,41 +30,27 @@ export class CreateUserDto {
   authType: AuthType = AuthType.BASIC;
 }
 
-export class UpdateUserDto {
-  @IsOptional()
-  @IsString()
-  @Length(textLength.password.min, textLength.password.max, {
-    message: `비밀번호를 다시 확인해주십시오.(${textLength.password.min}~${textLength.password.max}자)`,
-  })
-  @ApiProperty({ example: 'qwer1234' })
-  password?: string;
-
-  @IsOptional()
-  @IsString()
-  @Length(textLength.password.min, textLength.password.max, {
-    message: `비밀번호를 다시 확인해주십시오.(${textLength.password.min}~${textLength.password.max}자)`,
-  })
-  @ApiProperty({ example: 'qwer1234' })
-  password2?: string;
-
+export class UpdateUserBasicDto {
   @IsString()
   @Length(textLength.username.min, textLength.username.max, {
     message: `계정을 다시 확인해주십시오.(${textLength.username.min}~${textLength.username.max}자)`,
   })
   @ApiProperty({ example: 'test0001' })
-  username?: string;
+  username: string;
 
   @IsString()
   @Length(textLength.username.min, textLength.username.max, {
-    message: `닉네임을 다시 확인해주십시오.(${textLength.nickname.min}~${textLength.nickname.max}자)`,
+    message: `이름을 다시 확인해주십시오.(${textLength.nickname.min}~${textLength.nickname.max}자)`,
   })
   @ApiProperty({ example: '테스트' })
-  nickname?: string;
+  nickname: string;
+}
 
-  @IsOptional()
-  @IsBoolean()
-  @ApiProperty({ example: false })
-  isActive?: boolean;
+export class UpdateUserProfileDto {
+  @IsString()
+  @Length(textLength.introduce.min, textLength.introduce.max)
+  @ApiProperty({ example: '안녕하세요, 반갑습니다.' })
+  introduce: string;
 }
 
 export class DeleteUserDto {

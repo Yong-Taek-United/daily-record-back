@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 import { Users } from './users.entity';
-import { MimeType, UserFileType } from 'src/shared/types/enums/files.enum';
+import { FileStorageType, MimeType, UserFileType } from 'src/shared/types/enums/files.enum';
 
 @Entity({ schema: 'dailyrecord', name: 'UserFiles' })
 export class UserFiles {
@@ -12,6 +12,9 @@ export class UserFiles {
 
   @Column({ type: 'enum', enum: UserFileType, default: UserFileType.PROFILE })
   fileType: string;
+
+  @Column({ type: 'enum', enum: FileStorageType, default: FileStorageType.DISK })
+  fileStorageType: string;
 
   @Column({ type: 'varchar', length: 100 })
   filePath: string;

@@ -10,15 +10,17 @@ import { Repository } from 'typeorm';
 import { Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { Users } from '../shared/entities/users.entity';
+import { UserFiles } from 'src/shared/entities/userFiles.entity';
 import { EmailLogs } from 'src/shared/entities/emailLog.entity';
 import { UserProfiles } from 'src/shared/entities/userProfiles.entity';
 import { ConfigService } from '@nestjs/config';
 import {
   CreateUserDto,
-  UpdateUserDto,
   DeleteUserDto,
   ResetPasswordDto,
   ChangePasswordDto,
+  UpdateUserBasicDto,
+  UpdateUserProfileDto,
 } from '../shared/dto/users.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { UsersHelperService } from 'src/shared/services/users-helper.service';
@@ -26,12 +28,17 @@ import { EmailHelperService } from 'src/shared/services/email-helper.service';
 import * as bcrypt from 'bcrypt';
 import { AuthType } from 'src/shared/types/enums/users.enum';
 import { EmailType } from 'src/shared/types/enums/emailLog.enum';
+import { FileStorageType, UserFileType } from 'src/shared/types/enums/files.enum';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
+    @InjectRepository(UserFiles)
+    private readonly userFilesRepository: Repository<UserFiles>,
+    @InjectRepository(UserProfiles)
+    private readonly userProfilesRepository: Repository<UserProfiles>,
     @InjectRepository(EmailLogs)
     private readonly emailLogsRepository: Repository<EmailLogs>,
     private readonly jwtService: JwtService,
@@ -59,8 +66,7 @@ export class UsersService {
 
     userInfo.password = await this.usersHelperService.hashPassword(password);
 
-    const data = await this.usersRepository.save(userInfo);
-    delete data.password;
+    const { password: remove, ...data } = await this.usersRepository.save(userInfo);
 
     await this.emailHelperService.HandleSendEmail({ email, emailType: EmailType.WELCOME, user: data });
 
@@ -86,8 +92,7 @@ export class UsersService {
 
     userInfo.password = await this.usersHelperService.hashPassword(password);
 
-    const data = await this.usersRepository.save(userInfo);
-    delete data.password;
+    const { password: remove, ...data } = await this.usersRepository.save(userInfo);
 
     switch (authType) {
       case AuthType.GOOGLE:
@@ -108,19 +113,25 @@ export class UsersService {
     return { statusCode: 200, data };
   }
 
-  // 회원정보 수정
-  async updateUser(userId: number, userData: UpdateUserDto) {
-    if (userData.password) {
-      if (userData.password !== userData.password2) throw new BadRequestException(['비밀번호를 다시 확인해주십시오.']);
-      delete userData.password2;
+  // 회원 기본정보 수정
+  async updateUserBasicInfo(user: any, userData: UpdateUserBasicDto) {
+    const { sub: userId, username } = user;
 
-      userData.password = await this.usersHelperService.hashPassword(userData.password);
+    if (username !== userData.username) {
+      const otherUser = await this.usersHelperService.findUserByField('username', userData.username);
+      if (otherUser) throw new ConflictException(`이미 존재하는 계정입니다.`);
     }
 
     await this.usersRepository.update(userId, userData);
+    const { password: remove, ...data } = await this.usersHelperService.findUserByField('id', userId);
 
-    const data = await this.usersHelperService.findUserByField('id', userId);
-    delete data.password;
+    return { statusCode: 200, data };
+  }
+
+  // 회원 프로필정보 수정
+  async updateUserProfileInfo(userId: number, userData: UpdateUserProfileDto) {
+    await this.userProfilesRepository.update({ user: { id: userId } }, userData);
+    const data = await this.userProfilesRepository.findOne({ where: { user: { id: userId } } });
 
     return { statusCode: 200, data };
   }
@@ -158,11 +169,36 @@ export class UsersService {
     return await this.resetPassword(userId, newPassword);
   }
 
-  // 비밀번호 재설정
+  // 비밀번호 재설정 처리
   async resetPassword(userId: number, password: string) {
     password = await this.usersHelperService.hashPassword(password);
     const result = await this.usersRepository.update(userId, { password: password, passwordChangedAt: new Date() });
     if (result.affected === 0) throw new BadRequestException('비밀번호 변경에 실패했습니다.');
     return { statusCode: 200 };
+  }
+
+  // 회원 프로필 이미지 등록 처리
+  async uploadProfileImage(userId: number, files: Express.Multer.File[]) {
+    const fileRootDirectory = this.configService.get<string>('FILE_STORAGE_PATH');
+
+    const user = await this.usersHelperService.findUserByField('id', userId);
+
+    const fileInfo = files.map((file, index) => ({
+      seqNo: index,
+      fileType: UserFileType.PROFILE,
+      fileStorageType: FileStorageType.DISK,
+      filePath: file.destination.replace(fileRootDirectory, ''),
+      fileName: file.filename,
+      mimeType: file.mimetype,
+      fileSize: file.size,
+      user: user,
+    }));
+
+    await this.userFilesRepository.update(
+      { user: { id: userId }, isDeleted: false },
+      { isDeleted: true, deletedAt: new Date() },
+    );
+    await this.userFilesRepository.insert(fileInfo);
+    return { statusCode: 201 };
   }
 }

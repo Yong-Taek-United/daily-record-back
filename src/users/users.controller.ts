@@ -8,7 +8,6 @@ import {
   Post,
   Req,
   Res,
-  UploadedFile,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -17,16 +16,14 @@ import { Response } from 'express';
 import { UsersService } from './users.service';
 import {
   CreateUserDto,
-  UpdateUserDto,
   DeleteUserDto,
   ResetPasswordDto,
   ChangePasswordDto,
+  UpdateUserBasicDto,
+  UpdateUserProfileDto,
 } from '../shared/dto/users.dto';
 import { Public } from 'src/shared/decorators/skip-auth.decorator';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import * as fs from 'fs/promises';
-import * as path from 'path';
-import * as mime from 'mime-types';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 @ApiTags('Users')
@@ -59,25 +56,25 @@ export class UsersController {
     return await this.usersService.getUser(userId);
   }
 
-  @Patch('/:id')
-  @ApiOperation({ summary: '회원정보 수정', description: '비밀번호 변경은 확인용 비밀번호를 함께 주셔야합니다.' })
-  updateUser(@Req() req, @Body() userDate: UpdateUserDto) {
+  @Patch('basic')
+  @ApiOperation({ summary: '회원 기본정보 수정', description: '수정 가능 항목: 이름(nickname), 계정(username)' })
+  updateUserBasicInfo(@Req() req, @Body() userData: UpdateUserBasicDto) {
+    const user = req.user;
+    return this.usersService.updateUserBasicInfo(user, userData);
+  }
+
+  @Patch('profile')
+  @ApiOperation({ summary: '회원 프로필정보 수정', description: '수정 가능 항목: 한 줄 소개(introduce)' })
+  updateUserProfileInfo(@Req() req, @Body() userData: UpdateUserProfileDto) {
     const userId: number = req.user.sub;
-    return this.usersService.updateUser(userId, userDate);
+    return this.usersService.updateUserProfileInfo(userId, userData);
   }
 
   @Delete('/:id')
   @ApiOperation({ summary: '회원 탈퇴', description: '비밀번호를 입력해야 탈퇴가 가능합니다.' })
-  withdrawal(@Req() req, @Body() userDate: DeleteUserDto) {
+  withdrawal(@Req() req, @Body() userData: DeleteUserDto) {
     const userId: number = req.user.sub;
-    return this.usersService.withdrawal(userId, userDate);
-  }
-
-  @Patch('/password/reset')
-  @Public()
-  @ApiOperation({ summary: '비밀번호 재설정', description: '이메일 인증을 통해 비밀번호를 재설정합니다.' })
-  ResetPasswordByEmail(@Body() userDate: ResetPasswordDto) {
-    return this.usersService.resetPasswordByEmail(userDate);
+    return this.usersService.withdrawal(userId, userData);
   }
 
   @Patch('/password/change')
@@ -85,9 +82,16 @@ export class UsersController {
     summary: '비밀번호 변경',
     description: '사용자가 직접 비밀번호를 변경합니다. 변경 완료 후 로그아웃해 주세요.',
   })
-  changePassword(@Req() req, @Body() userDate: ChangePasswordDto) {
+  changePassword(@Req() req, @Body() userData: ChangePasswordDto) {
     const userId: number = req.user.sub;
-    return this.usersService.changePassword(userId, userDate);
+    return this.usersService.changePassword(userId, userData);
+  }
+
+  @Patch('/password/reset')
+  @Public()
+  @ApiOperation({ summary: '비밀번호 재설정', description: '이메일 인증을 통해 비밀번호를 재설정합니다.' })
+  ResetPasswordByEmail(@Body() userData: ResetPasswordDto) {
+    return this.usersService.resetPasswordByEmail(userData);
   }
 
   @Post('/profile-image/upload')
@@ -111,9 +115,8 @@ export class UsersController {
       },
     },
   })
-  async uploadImage(@Req() req, @UploadedFiles() files: Express.Multer.File[]) {
-    console.log(files);
-
-    return { statusCode: 201 };
+  async uploadProfileImage(@Req() req, @UploadedFiles() files: Express.Multer.File[]) {
+    const userId: number = req.user.sub;
+    return this.usersService.uploadProfileImage(userId, files);
   }
 }
