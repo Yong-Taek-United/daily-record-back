@@ -17,8 +17,10 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: app.get(ConfigService).get<string>('CORS_ORIGIN'),
-    // origin: '*',
+    origin: [
+      app.get(ConfigService).get<string>('CORS_ORIGIN_DEVELOMENT'),
+      app.get(ConfigService).get<string>('CORS_ORIGIN_PRODUCTION'),
+    ],
     credentials: true,
   });
 
