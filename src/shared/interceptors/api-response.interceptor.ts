@@ -22,7 +22,7 @@ export class ApiResponseInterceptor implements NestInterceptor {
 
         const { statusCode, message, data, redirect } = response;
 
-        const frontendBaseUrl = this.configService.get<string>('CORS_ORIGIN');
+        const frontendBaseUrl = this.configService.get<string>('REDIRECT_ORIGIN');
 
         if (redirect) {
           httpResponse.redirect(`${frontendBaseUrl}${redirect}`);
