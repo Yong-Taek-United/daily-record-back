@@ -33,7 +33,7 @@ export class UsersController {
 
   @Post('/sign-up')
   @Public()
-  @ApiOperation({ summary: '일반 회원가입', description: 'email은 중복 불가입니다.' })
+  @ApiOperation({ summary: '회원가입: 일반', description: 'email은 중복 불가입니다.' })
   async signUp(@Body() userData: CreateUserDto) {
     return await this.usersService.signUp(userData);
   }
@@ -41,40 +41,18 @@ export class UsersController {
   @Post('/sign-up/socail')
   @Public()
   @ApiOperation({
-    summary: '소셜 회원가입',
+    summary: '회원가입: 소셜',
     description: 'email 중복 시, 에러메세지 안내 후 로그인페이지로 이동합니다.',
   })
   async signUpSocail(@Body() userData: CreateUserDto, @Res({ passthrough: true }) res: Response) {
     return await this.usersService.signUpSocail(userData, res);
   }
 
-  @Get('/:id')
+  @Patch('/password/reset')
   @Public()
-  @ApiOperation({ summary: '회원 조회', description: 'accessToken이 아닌 userId을 이용한 단순 회원조회입니다.' })
-  @ApiParam({ name: 'id', type: 'number', example: 1 })
-  async getUser(@Param('id') userId: number) {
-    return await this.usersService.getUser(userId);
-  }
-
-  @Patch('basic')
-  @ApiOperation({ summary: '회원 기본정보 수정', description: '수정 가능 항목: 이름(nickname), 계정(username)' })
-  updateUserBasicInfo(@Req() req, @Body() userData: UpdateUserBasicDto) {
-    const user = req.user;
-    return this.usersService.updateUserBasicInfo(user, userData);
-  }
-
-  @Patch('profile')
-  @ApiOperation({ summary: '회원 프로필정보 수정', description: '수정 가능 항목: 한 줄 소개(introduce)' })
-  updateUserProfileInfo(@Req() req, @Body() userData: UpdateUserProfileDto) {
-    const userId: number = req.user.sub;
-    return this.usersService.updateUserProfileInfo(userId, userData);
-  }
-
-  @Delete('/:id')
-  @ApiOperation({ summary: '회원 탈퇴', description: '비밀번호를 입력해야 탈퇴가 가능합니다.' })
-  withdrawal(@Req() req, @Body() userData: DeleteUserDto) {
-    const userId: number = req.user.sub;
-    return this.usersService.withdrawal(userId, userData);
+  @ApiOperation({ summary: '비밀번호 재설정', description: '이메일 인증을 통해 비밀번호를 재설정합니다.' })
+  ResetPasswordByEmail(@Body() userData: ResetPasswordDto) {
+    return this.usersService.resetPasswordByEmail(userData);
   }
 
   @Patch('/password/change')
@@ -85,13 +63,6 @@ export class UsersController {
   changePassword(@Req() req, @Body() userData: ChangePasswordDto) {
     const userId: number = req.user.sub;
     return this.usersService.changePassword(userId, userData);
-  }
-
-  @Patch('/password/reset')
-  @Public()
-  @ApiOperation({ summary: '비밀번호 재설정', description: '이메일 인증을 통해 비밀번호를 재설정합니다.' })
-  ResetPasswordByEmail(@Body() userData: ResetPasswordDto) {
-    return this.usersService.resetPasswordByEmail(userData);
   }
 
   @Post('/profile-image/upload')
@@ -118,5 +89,34 @@ export class UsersController {
   async uploadProfileImage(@Req() req, @UploadedFiles() files: Express.Multer.File[]) {
     const userId: number = req.user.sub;
     return this.usersService.uploadProfileImage(userId, files);
+  }
+
+  @Patch('basic')
+  @ApiOperation({ summary: '회원 기본 정보 수정', description: '수정 가능 항목: 이름(nickname), 계정(username)' })
+  updateUserBasicInfo(@Req() req, @Body() userData: UpdateUserBasicDto) {
+    const user = req.user;
+    return this.usersService.updateUserBasicInfo(user, userData);
+  }
+
+  @Patch('profile')
+  @ApiOperation({ summary: '회원 프로필 정보 수정', description: '수정 가능 항목: 한 줄 소개(introduce)' })
+  updateUserProfileInfo(@Req() req, @Body() userData: UpdateUserProfileDto) {
+    const userId: number = req.user.sub;
+    return this.usersService.updateUserProfileInfo(userId, userData);
+  }
+
+  @Get('/:id')
+  @Public()
+  @ApiOperation({ summary: '회원 조회', description: 'accessToken이 아닌 userId을 이용한 단순 회원조회입니다.' })
+  @ApiParam({ name: 'id', type: 'number', example: 1 })
+  async getUser(@Param('id') userId: number) {
+    return await this.usersService.getUser(userId);
+  }
+
+  @Delete('/:id')
+  @ApiOperation({ summary: '회원 탈퇴', description: '비밀번호를 입력해야 탈퇴가 가능합니다.' })
+  withdrawal(@Req() req, @Body() userData: DeleteUserDto) {
+    const userId: number = req.user.sub;
+    return this.usersService.withdrawal(userId, userData);
   }
 }
