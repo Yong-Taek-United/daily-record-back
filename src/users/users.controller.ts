@@ -55,7 +55,7 @@ export class UsersController {
     return this.usersService.resetPasswordByEmail(userData);
   }
 
-  @Get('')
+  @Get('info')
   @ApiOperation({ summary: '회원 정보 조회', description: 'accessToken의 회원 기본/프로필 정보를 조회합니다.' })
   async getUser(@Req() req) {
     const userId: number = req.user.sub;
