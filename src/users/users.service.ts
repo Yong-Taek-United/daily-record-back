@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -116,22 +117,24 @@ export class UsersService {
     return await this.resetPassword(payload.userId, newPassword);
   }
 
-  // 비밀번호 변경 처리
-  async changePassword(userId: number, userData: ChangePasswordDto) {
-    let { currentPassword, newPassword } = userData;
-    const user = await this.usersHelperService.findUserByField('id', userId);
-    if (!user || !(await bcrypt.compare(currentPassword, user.password)))
-      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
-
-    return await this.resetPassword(userId, newPassword);
-  }
-
   // 비밀번호 재설정/변경
   async resetPassword(userId: number, password: string) {
     password = await this.usersHelperService.hashPassword(password);
     const result = await this.usersRepository.update(userId, { password: password, passwordChangedAt: new Date() });
     if (result.affected === 0) throw new BadRequestException('비밀번호 변경에 실패했습니다.');
     return { statusCode: 200 };
+  }
+
+  // 회원 정보 조회
+  async getUser(userId: number) {
+    const user = await this.usersRepository.findOne({
+      where: { id: userId, isDeleted: false },
+      relations: ['userProfile'],
+    });
+    if (!user) throw new NotFoundException('회원 정보가 존재하지 않습니다.');
+
+    const { password, ...data } = user;
+    return { statusCode: 200, data };
   }
 
   // 회원 프로필 이미지 등록 처리
@@ -159,6 +162,16 @@ export class UsersService {
     return { statusCode: 201 };
   }
 
+  // 비밀번호 변경 처리
+  async changePassword(userId: number, userData: ChangePasswordDto) {
+    let { currentPassword, newPassword } = userData;
+    const user = await this.usersHelperService.findUserByField('id', userId);
+    if (!user || !(await bcrypt.compare(currentPassword, user.password)))
+      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+
+    return await this.resetPassword(userId, newPassword);
+  }
+
   // 회원 기본 정보 수정
   async updateUserBasicInfo(user: any, userData: UpdateUserBasicDto) {
     const { sub: userId, username } = user;
@@ -179,14 +192,6 @@ export class UsersService {
     await this.userProfilesRepository.update({ user: { id: userId } }, userData);
     const data = await this.userProfilesRepository.findOne({ where: { user: { id: userId } } });
 
-    return { statusCode: 200, data };
-  }
-
-  // 회원 조회
-  async getUser(userId: number) {
-    const user = await this.usersHelperService.findUserByField('id', userId);
-    if (!user) throw new BadRequestException('회원 정보가 존재하지 않습니다.');
-    const { password, ...data } = user;
     return { statusCode: 200, data };
   }
 

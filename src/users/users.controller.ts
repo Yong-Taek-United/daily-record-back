@@ -11,7 +11,7 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { UsersService } from './users.service';
 import {
@@ -55,14 +55,11 @@ export class UsersController {
     return this.usersService.resetPasswordByEmail(userData);
   }
 
-  @Patch('/password/change')
-  @ApiOperation({
-    summary: '비밀번호 변경',
-    description: '사용자가 직접 비밀번호를 변경합니다. 변경 완료 후 로그아웃해 주세요.',
-  })
-  changePassword(@Req() req, @Body() userData: ChangePasswordDto) {
+  @Get('')
+  @ApiOperation({ summary: '회원 정보 조회', description: 'accessToken의 회원 기본/프로필 정보를 조회합니다.' })
+  async getUser(@Req() req) {
     const userId: number = req.user.sub;
-    return this.usersService.changePassword(userId, userData);
+    return await this.usersService.getUser(userId);
   }
 
   @Post('/profile-image/upload')
@@ -91,6 +88,16 @@ export class UsersController {
     return this.usersService.uploadProfileImage(userId, files);
   }
 
+  @Patch('/password/change')
+  @ApiOperation({
+    summary: '비밀번호 변경',
+    description: '사용자가 직접 비밀번호를 변경합니다. 변경 완료 후 로그아웃해 주세요.',
+  })
+  changePassword(@Req() req, @Body() userData: ChangePasswordDto) {
+    const userId: number = req.user.sub;
+    return this.usersService.changePassword(userId, userData);
+  }
+
   @Patch('basic')
   @ApiOperation({ summary: '회원 기본 정보 수정', description: '수정 가능 항목: 이름(nickname), 계정(username)' })
   updateUserBasicInfo(@Req() req, @Body() userData: UpdateUserBasicDto) {
@@ -103,14 +110,6 @@ export class UsersController {
   updateUserProfileInfo(@Req() req, @Body() userData: UpdateUserProfileDto) {
     const userId: number = req.user.sub;
     return this.usersService.updateUserProfileInfo(userId, userData);
-  }
-
-  @Get('/:id')
-  @Public()
-  @ApiOperation({ summary: '회원 조회', description: 'accessToken이 아닌 userId을 이용한 단순 회원조회입니다.' })
-  @ApiParam({ name: 'id', type: 'number', example: 1 })
-  async getUser(@Param('id') userId: number) {
-    return await this.usersService.getUser(userId);
   }
 
   @Delete('/:id')
