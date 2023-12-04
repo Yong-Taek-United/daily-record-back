@@ -125,15 +125,9 @@ export class UsersService {
     return { statusCode: 200 };
   }
 
-  // 회원 정보 조회
-  async getUser(userId: number) {
-    const user = await this.usersRepository.findOne({
-      where: { id: userId, isDeleted: false },
-      relations: ['userProfile'],
-    });
-    if (!user) throw new NotFoundException('회원 정보가 존재하지 않습니다.');
-
-    const { password, ...data } = user;
+  // 회원 정보 조회 처리
+  async getUserInfo(userId: number) {
+    const { password, ...data } = await this.usersHelperService.getUserWithRelations('id', userId);
     return { statusCode: 200, data };
   }
 

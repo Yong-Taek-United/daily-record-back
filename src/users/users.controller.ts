@@ -57,9 +57,9 @@ export class UsersController {
 
   @Get('info')
   @ApiOperation({ summary: '회원 정보 조회', description: 'accessToken의 회원 기본/프로필 정보를 조회합니다.' })
-  async getUser(@Req() req) {
+  async getUserInfo(@Req() req) {
     const userId: number = req.user.sub;
-    return await this.usersService.getUser(userId);
+    return await this.usersService.getUserInfo(userId);
   }
 
   @Post('/profile-image/upload')

@@ -16,14 +16,12 @@ export class AuthService {
   ) {}
 
   // 회원 인증
-  async validateUser(email: string, password: string, authType: AuthType = AuthType.BASIC): Promise<any> {
-    const user = await this.usersHelperService.findUserByField('email', email);
-    if (user !== null && user.authType === authType) {
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (user && isMatch) {
-        const { password, ...result } = user;
-        return result;
-      }
+  async validateUser(email: string, password: string, authType: AuthType = AuthType.BASIC) {
+    const { password: passwordFormDB, ...user } = await this.usersHelperService.getUserWithRelations('email', email);
+
+    if (!!user && user.authType === authType) {
+      const isMatch = await bcrypt.compare(password, passwordFormDB);
+      if (isMatch) return user;
     }
     return null;
   }
