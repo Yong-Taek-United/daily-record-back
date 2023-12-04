@@ -112,8 +112,15 @@ export class UsersController {
     return await this.usersService.updateUserProfileInfo(userId, userData);
   }
 
-  @Delete('/:id')
-  @ApiOperation({ summary: '회원 탈퇴', description: '비밀번호를 입력해야 탈퇴가 가능합니다.' })
+  @Patch('deactivate')
+  @ApiOperation({ summary: '회원 계정 비활성화', description: '비밀번호를 입력해야 비활성화가 가능합니다.' })
+  async deactivateUser(@Req() req, @Body() userData: DeleteUserDto) {
+    const userId: number = req.user.sub;
+    return await this.usersService.deactivateUser(userId, userData);
+  }
+
+  @Delete('withdrawal')
+  @ApiOperation({ summary: '회원 계정 탈퇴', description: '비밀번호를 입력해야 탈퇴가 가능합니다.' })
   async withdrawal(@Req() req, @Body() userData: DeleteUserDto) {
     const userId: number = req.user.sub;
     return await this.usersService.withdrawal(userId, userData);

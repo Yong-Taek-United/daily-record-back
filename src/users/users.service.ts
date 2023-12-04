@@ -189,9 +189,21 @@ export class UsersService {
     return { statusCode: 200, data };
   }
 
-  // 회원 탈퇴
+  // 회원 계정 비활성화
+  async deactivateUser(userId: number, userData: DeleteUserDto) {
+    const { password, ...rest } = await this.usersHelperService.findUserByField('id', userId);
+
+    const isMatch = await bcrypt.compare(userData.password, password);
+    if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+
+    await this.usersRepository.update(userId, { isActive: false });
+
+    return { statusCode: 200 };
+  }
+
+  // 회원 계정 탈퇴
   async withdrawal(userId: number, userData: DeleteUserDto) {
-    const password = (await this.usersHelperService.findUserByField('id', userId)).password;
+    const { password, ...rest } = await this.usersHelperService.findUserByField('id', userId);
 
     const isMatch = await bcrypt.compare(userData.password, password);
     if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
