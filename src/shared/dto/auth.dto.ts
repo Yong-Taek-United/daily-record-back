@@ -10,3 +10,9 @@ export class LoginDto {
   @ApiProperty({ example: 'qwer1234' })
   password: string;
 }
+
+export class AuthPasswordDto {
+  @IsString()
+  @ApiProperty({ example: 'qwer1234' })
+  password: string;
+}
