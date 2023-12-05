@@ -5,7 +5,7 @@ import { EmailService } from './email.service';
 import { VerifyEmailDto } from '../shared/dto/email.dto';
 
 @Controller('emails')
-@ApiTags('Emails')
+@ApiTags('Email')
 @Public()
 export class EmailController {
   constructor(private readonly emailService: EmailService) {}
