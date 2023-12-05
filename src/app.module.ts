@@ -3,13 +3,12 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
+import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-import { DailiesModule } from './dailies/dailies.module';
-import { EventsModule } from './events/events.module';
-import { CategoriesModule } from './categories/categories.module';
-import { ProjectsModule } from './projects/projects.module';
-import { TasksModule } from './tasks/tasks.module';
+import { CategoryModule } from './category/category.module';
+import { ProjectModule } from './project/project.module';
+import { TaskModule } from './task/task.module';
+import { ActivityModule } from './activity/activity.module';
 import { EmailModule } from './email/email.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ApiResponseInterceptor } from './shared/interceptors/api-response.interceptor';
@@ -28,15 +27,12 @@ const envFilePath = `.env.${nodeEnv}`;
       imports: [ConfigModule],
       useClass: TypeOrmConfig,
     }),
-    UsersModule,
+    UserModule,
     AuthModule,
-    DailiesModule,
-    EventsModule,
-    ProjectsModule,
-    TasksModule,
-    CategoriesModule,
-    ProjectsModule,
-    TasksModule,
+    CategoryModule,
+    ProjectModule,
+    TaskModule,
+    ActivityModule,
     EmailModule,
   ],
   controllers: [AppController],

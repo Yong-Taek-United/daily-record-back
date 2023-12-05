@@ -34,7 +34,7 @@ export class EmailController {
     description: '이메일에 제공된 버튼을 클릭해 사용자를 인증합니다.',
   })
   async verifyEmail(@Query('id') emailLogId: number, @Query('token') emailToken: string) {
-    return this.emailService.verifyEmail(emailLogId, emailToken);
+    return await this.emailService.verifyEmail(emailLogId, emailToken);
   }
 
   @Post('/email-verification/check')

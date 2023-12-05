@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { UsersHelperService } from '../services/users-helper.service';
+import { UserHelperService } from '../services/user-helper.service';
 import { TokenHelperService } from '../services/token-helper.service';
 import * as bcrypt from 'bcrypt';
 
@@ -11,7 +11,7 @@ import * as bcrypt from 'bcrypt';
 export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   constructor(
     private readonly configService: ConfigService,
-    private readonly usersHelperService: UsersHelperService,
+    private readonly userHelperService: UserHelperService,
     private readonly tokenHelperService: TokenHelperService,
   ) {
     super({
@@ -23,7 +23,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
   }
 
   async validate(req: Request, payload: any) {
-    const { password, ...user } = await this.usersHelperService.findUserByField('id', payload.sub);
+    const { password, ...user } = await this.userHelperService.findUserByField('id', payload.sub);
     const refreshToken = req.get('Authorization').replace('Bearer', '').trim();
 
     const tokenData = await this.tokenHelperService.findRefreshTokenByUserId(user.id);

@@ -3,14 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { RefreshTokens } from '../entities/refreshToken.entity';
+import { RefreshToken } from '../entities/refreshToken.entity';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class TokenHelperService {
   constructor(
-    @InjectRepository(RefreshTokens)
-    private readonly refreshTokensRepository: Repository<RefreshTokens>,
+    @InjectRepository(RefreshToken)
+    private readonly refreshTokenRepository: Repository<RefreshToken>,
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
   ) {}
@@ -55,7 +55,7 @@ export class TokenHelperService {
 
   // 회원 리프레시 토큰 DB 조회
   async findRefreshTokenByUserId(userId: number) {
-    return await this.refreshTokensRepository.findOne({ where: { user: { id: userId } } });
+    return await this.refreshTokenRepository.findOne({ where: { user: { id: userId } } });
   }
 
   // 리프레시 토큰 DB 저장
@@ -70,12 +70,12 @@ export class TokenHelperService {
       isRevoked: false,
     };
 
-    const tokenData = await this.refreshTokensRepository.findOne({ where: { user: { id: user.id } } });
+    const tokenData = await this.refreshTokenRepository.findOne({ where: { user: { id: user.id } } });
     if (!tokenData) {
-      const result = await this.refreshTokensRepository.insert(tokenInfo);
+      const result = await this.refreshTokenRepository.insert(tokenInfo);
       if (result.identifiers.length === 0) throw new InternalServerErrorException();
     } else {
-      const result = await this.refreshTokensRepository.update({ user: user.id }, tokenInfo);
+      const result = await this.refreshTokenRepository.update({ user: user.id }, tokenInfo);
       if (result.affected === 0) throw new InternalServerErrorException();
     }
   }
@@ -87,7 +87,7 @@ export class TokenHelperService {
       expiresAt: null,
       isRevoked: true,
     };
-    await this.refreshTokensRepository.update({ user: { id: userId } }, tokenInfo);
+    await this.refreshTokenRepository.update({ user: { id: userId } }, tokenInfo);
   }
 
   // 리프레시 토큰 해시(DB 데이터)

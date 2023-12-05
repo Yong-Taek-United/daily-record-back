@@ -1,29 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Response } from 'express';
-import { UsersHelperService } from 'src/shared/services/users-helper.service';
+import { UserHelperService } from 'src/shared/services/user-helper.service';
 import { TokenHelperService } from 'src/shared/services/token-helper.service';
 import { CookieHelperService } from 'src/shared/services/cookie-helper.service';
 import * as bcrypt from 'bcrypt';
-import { AuthType } from 'src/shared/types/enums/users.enum';
+import { AuthType } from 'src/shared/types/enums/user.enum';
 import { SIGN_UP_GOOGLE_URL } from 'src/shared/constants/clientURL.constant';
+import { AuthPasswordDto } from 'src/shared/dto/auth.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersHelperService: UsersHelperService,
+    private readonly userHelperService: UserHelperService,
     private readonly tokenHelperService: TokenHelperService,
     private readonly cookieHelperService: CookieHelperService,
   ) {}
 
   // 회원 인증
-  async validateUser(email: string, password: string, authType: AuthType = AuthType.BASIC): Promise<any> {
-    const user = await this.usersHelperService.findUserByField('email', email);
-    if (user !== null && user.authType === authType) {
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (user && isMatch) {
-        const { password, ...result } = user;
-        return result;
-      }
+  async validateUser(email: string, password: string, authType: AuthType = AuthType.BASIC) {
+    const { password: passwordFormDB, ...user } = await this.userHelperService.getUserWithRelations('email', email);
+
+    if (!!user && user.authType === authType) {
+      const isMatch = await bcrypt.compare(password, passwordFormDB);
+      if (isMatch) return user;
     }
     return null;
   }
@@ -80,5 +79,16 @@ export class AuthService {
     await this.tokenHelperService.setRefreshTokenToUserDB(user, refreshToken);
 
     return { accessToken, refreshToken };
+  }
+
+  // 비밀번호 인증
+  async authByPassword(userId: any, authData: AuthPasswordDto) {
+    const user = await this.userHelperService.findUserByField('id', userId);
+    if (!user) throw new NotFoundException('찾을 수 없는 회원입니다.');
+
+    const isMatch = await bcrypt.compare(authData.password, user.password);
+    if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+
+    return { statusCode: 200 };
   }
 }

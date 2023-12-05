@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 import { EmailType } from 'src/shared/types/enums/emailLog.enum';
 
-@Entity({ schema: 'dailyrecord', name: 'EmailLogs' })
-export class EmailLogs {
+@Entity({ schema: 'dailyrecord', name: 'EmailLog' })
+export class EmailLog {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 

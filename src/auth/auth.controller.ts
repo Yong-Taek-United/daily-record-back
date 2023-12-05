@@ -1,20 +1,20 @@
-import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { Public } from 'src/shared/decorators/skip-auth.decorator';
-import { LoginDto } from '../shared/dto/auth.dto';
+import { AuthPasswordDto, LoginDto } from '../shared/dto/auth.dto';
 import { LocalAuthGuard } from '../shared/guards/local-auth.guard';
 import { GoogleAuthGuard } from '../shared/guards/google-auth.guard';
 import { JwtRefreshAuthGuard } from '../shared/guards/jwt-refresh-auth.guard';
 
-@Public()
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
+  @Public()
   @ApiOperation({ summary: '로그인', description: '회원을 인증하여 token을 발급해 클라이언트 cookie에 저장합니다.' })
   @ApiBody({ type: LoginDto })
   @UseGuards(LocalAuthGuard)
@@ -23,6 +23,7 @@ export class AuthController {
   }
 
   @Post('refresh')
+  @Public()
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Refresh Token 재발급',
@@ -34,6 +35,7 @@ export class AuthController {
   }
 
   @Post('logout')
+  @Public()
   @ApiBearerAuth()
   @ApiOperation({ summary: '로그아웃', description: 'cookie에 저장된 token을 제거해 로그아웃합니다.' })
   async logout(@Req() req, @Res() res: Response) {
@@ -41,6 +43,7 @@ export class AuthController {
   }
 
   @Get('google')
+  @Public()
   @UseGuards(GoogleAuthGuard)
   async googleAuth() {}
 
@@ -48,5 +51,12 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   async googleAuthCallback(@Req() req, @Res({ passthrough: true }) res: Response) {
     return await this.authService.googleLogin(req.user, res);
+  }
+
+  @Post('password')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '비밀번호 인증', description: '비밀번호로 사용자를 인증합니다.' })
+  async authByPassword(@Req() req, @Body() authData: AuthPasswordDto) {
+    return await this.authService.authByPassword(req.user.sub, authData);
   }
 }
