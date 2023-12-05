@@ -9,7 +9,6 @@ import {
 } from 'typeorm';
 import { UserProfiles } from './userProfiles.entity';
 import { UserFiles } from './userFiles.entity';
-import { Dailies } from './dailies.entity';
 import { Events } from './events.entity';
 import { Projects } from './projects.entity';
 import { Tasks } from './tasks.entity';
@@ -71,9 +70,6 @@ export class Users {
 
   @OneToMany(() => UserFiles, (userFiles) => userFiles.user)
   userFiles: UserFiles[];
-
-  @OneToMany(() => Dailies, (dailies) => dailies.user)
-  dailies: Dailies[];
 
   @OneToMany(() => Projects, (projects) => projects.user)
   projects: Projects[];

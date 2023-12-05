@@ -5,8 +5,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
-import { DailiesModule } from './dailies/dailies.module';
-import { EventsModule } from './events/events.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ProjectsModule } from './projects/projects.module';
 import { TasksModule } from './tasks/tasks.module';
@@ -15,6 +13,7 @@ import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ApiResponseInterceptor } from './shared/interceptors/api-response.interceptor';
 import { JwtAuthGuard } from './shared/guards/jwt-auth.guard';
 import { TypeOrmConfig } from './shared/configs/typeorm.config';
+import { ActivityModule } from './activity/activity.module';
 
 const nodeEnv = process.env.NODE_ENV || 'development';
 const envFilePath = `.env.${nodeEnv}`;
@@ -30,14 +29,13 @@ const envFilePath = `.env.${nodeEnv}`;
     }),
     UsersModule,
     AuthModule,
-    DailiesModule,
-    EventsModule,
     ProjectsModule,
     TasksModule,
     CategoriesModule,
     ProjectsModule,
     TasksModule,
     EmailModule,
+    ActivityModule,
   ],
   controllers: [AppController],
   providers: [

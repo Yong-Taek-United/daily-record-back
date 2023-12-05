@@ -7,7 +7,6 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { Dailies } from './dailies.entity';
 import { Users } from './users.entity';
 import { Categories } from './categories.entity';
 import { Projects } from './projects.entity';
@@ -42,9 +41,6 @@ export class Events {
 
   @ManyToOne(() => Categories, (category) => category.events)
   category: Categories;
-
-  @ManyToOne(() => Dailies, (daily) => daily.events)
-  daily: Dailies;
 
   @ManyToOne(() => Projects, (project) => project.events, {
     nullable: true,
