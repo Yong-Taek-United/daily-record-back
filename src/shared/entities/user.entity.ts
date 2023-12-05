@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { UserProfile } from './userProfile.entity';
 import { UserFile } from './userFile.entity';
-import { Event } from './event.entity';
+import { Activity } from './activity.entity';
 import { Project } from './project.entity';
 import { Task } from './task.entity';
 import { RefreshToken } from './refreshToken.entity';
@@ -77,8 +77,8 @@ export class User {
   @OneToMany(() => Task, (task) => task.user)
   tasks: Task[];
 
-  @OneToMany(() => Event, (event) => event.user)
-  events: Event[];
+  @OneToMany(() => Activity, (activity) => activity.user)
+  activitys: Activity[];
 
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
   refreshTokens: RefreshToken;

@@ -1,9 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
-import { Event } from './event.entity';
+import { Activity } from './activity.entity';
 import { MimeType } from 'src/shared/types/enums/file.enum';
 
-@Entity({ schema: 'dailyrecord', name: 'EventFile' })
-export class EventFile {
+@Entity({ schema: 'dailyrecord', name: 'ActivityFile' })
+export class ActivityFile {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
@@ -34,6 +34,6 @@ export class EventFile {
   @Column({ type: 'datetime', default: null })
   deletedAt: Date;
 
-  @ManyToOne(() => Event, (event) => event.eventFiles)
-  event: Event;
+  @ManyToOne(() => Activity, (activity) => activity.activityFiles)
+  activity: Activity;
 }

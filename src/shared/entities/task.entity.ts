@@ -10,7 +10,7 @@ import {
 import { User } from './user.entity';
 import { Category } from './category.entity';
 import { Project } from './project.entity';
-import { Event } from './event.entity';
+import { Activity } from './activity.entity';
 import { TaskGoal } from './taskGoal.entity';
 import { Icon } from './icon.entity';
 import { Medal } from './medal.entity';
@@ -65,8 +65,8 @@ export class Task {
   @OneToMany(() => TaskGoal, (taskGoal) => taskGoal.task)
   taskGoals: TaskGoal;
 
-  @OneToMany(() => Event, (event) => event.task)
-  events: Event[];
+  @OneToMany(() => Activity, (activity) => activity.task)
+  activitys: Activity[];
 
   @OneToMany(() => Medal, (medal) => medal.task)
   medals: Medal[];

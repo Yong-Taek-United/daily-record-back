@@ -11,10 +11,10 @@ import { User } from './user.entity';
 import { Category } from './category.entity';
 import { Project } from './project.entity';
 import { Task } from './task.entity';
-import { EventFile } from './eventFile.entity';
+import { ActivityFile } from './activityFile.entity';
 
-@Entity({ schema: 'dailyrecord', name: 'Event' })
-export class Event {
+@Entity({ schema: 'dailyrecord', name: 'Activity' })
+export class Activity {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
@@ -36,22 +36,22 @@ export class Event {
   @Column({ type: 'datetime', default: null })
   deletedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.events)
+  @ManyToOne(() => User, (user) => user.activitys)
   user: User;
 
-  @ManyToOne(() => Category, (category) => category.events)
+  @ManyToOne(() => Category, (category) => category.activitys)
   category: Category;
 
-  @ManyToOne(() => Project, (project) => project.events, {
+  @ManyToOne(() => Project, (project) => project.activitys, {
     nullable: true,
   })
   project: Project;
 
-  @ManyToOne(() => Task, (task) => task.events, {
+  @ManyToOne(() => Task, (task) => task.activitys, {
     nullable: true,
   })
   task: Task;
 
-  @OneToMany(() => EventFile, (eventFile) => eventFile.event)
-  eventFiles: EventFile[];
+  @OneToMany(() => ActivityFile, (activityFile) => activityFile.activity)
+  activityFiles: ActivityFile[];
 }

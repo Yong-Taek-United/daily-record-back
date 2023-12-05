@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 import { Task } from './task.entity';
-import { Event } from './event.entity';
+import { Activity } from './activity.entity';
 
 @Entity({ schema: 'dailyrecord', name: 'Project' })
 export class Project {
@@ -52,6 +52,6 @@ export class Project {
   @OneToMany(() => Task, (task) => task.project)
   tasks: Task[];
 
-  @OneToMany(() => Event, (event) => event.project)
-  events: Event[];
+  @OneToMany(() => Activity, (activity) => activity.project)
+  activitys: Activity[];
 }

@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Task } from './task.entity';
-import { Event } from './event.entity';
+import { Activity } from './activity.entity';
 
 @Entity({ schema: 'dailyrecord', name: 'Category' })
 export class Category {
@@ -25,6 +25,6 @@ export class Category {
   @OneToMany(() => Task, (task) => task.category)
   tasks: Task[];
 
-  @OneToMany(() => Event, (event) => event.category)
-  events: Event[];
+  @OneToMany(() => Activity, (activity) => activity.category)
+  activitys: Activity[];
 }
