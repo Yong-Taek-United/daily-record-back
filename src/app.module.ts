@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
@@ -35,7 +33,6 @@ const envFilePath = `.env.${nodeEnv}`;
     ActivityModule,
     EmailModule,
   ],
-  controllers: [AppController],
   providers: [
     {
       provide: APP_INTERCEPTOR,
@@ -45,7 +42,6 @@ const envFilePath = `.env.${nodeEnv}`;
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
-    AppService,
   ],
 })
 export class AppModule {}
