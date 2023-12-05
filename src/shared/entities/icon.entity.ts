@@ -1,10 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { Tasks } from './tasks.entity';
-import { IconType, MimeType } from 'src/shared/types/enums/files.enum';
-import { Medals } from './medals.entity';
+import { Task } from './task.entity';
+import { IconType } from 'src/shared/types/enums/file.enum';
+import { Medal } from './medal.entity';
 
-@Entity({ schema: 'dailyrecord', name: 'Icons' })
-export class Icons {
+@Entity({ schema: 'dailyrecord', name: 'Icon' })
+export class Icon {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
@@ -23,9 +23,9 @@ export class Icons {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => Tasks, (tasks) => tasks.icon)
-  tasks: Tasks[];
+  @OneToMany(() => Task, (task) => task.icon)
+  tasks: Task[];
 
-  @OneToMany(() => Medals, (medals) => medals.icon)
-  medals: Medals[];
+  @OneToMany(() => Medal, (medal) => medal.icon)
+  medals: Medal[];
 }

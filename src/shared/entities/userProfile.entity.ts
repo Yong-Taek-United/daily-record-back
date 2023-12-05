@@ -7,10 +7,10 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { Users } from './users.entity';
+import { User } from './user.entity';
 
-@Entity({ schema: 'dailyrecord', name: 'UserProfiles' })
-export class UserProfiles {
+@Entity({ schema: 'dailyrecord', name: 'UserProfile' })
+export class UserProfile {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
@@ -32,7 +32,7 @@ export class UserProfiles {
   @Column({ type: 'datetime', default: null })
   deletedAt: Date;
 
-  @OneToOne(() => Users, (user) => user.userProfile)
+  @OneToOne(() => User, (user) => user.userProfile)
   @JoinColumn()
-  user: Users;
+  user: User;
 }

@@ -1,9 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
-import { Tasks } from './tasks.entity';
-import { Icons } from './icons.entity';
+import { Task } from './task.entity';
+import { Icon } from './icon.entity';
 
-@Entity({ schema: 'dailyrecord', name: 'Medals' })
-export class Medals {
+@Entity({ schema: 'dailyrecord', name: 'Medal' })
+export class Medal {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
@@ -22,9 +22,9 @@ export class Medals {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Icons, (icon) => icon.medals)
-  icon: Icons[];
+  @ManyToOne(() => Icon, (icon) => icon.medals)
+  icon: Icon[];
 
-  @ManyToOne(() => Tasks, (task) => task.medals)
-  task: Tasks[];
+  @ManyToOne(() => Task, (task) => task.medals)
+  task: Task[];
 }

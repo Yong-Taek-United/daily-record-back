@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
-import { Users } from './users.entity';
+import { User } from './user.entity';
 
-@Entity({ schema: 'dailyrecord', name: 'RefreshTokens' })
-export class RefreshTokens {
+@Entity({ schema: 'dailyrecord', name: 'RefreshToken' })
+export class RefreshToken {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
@@ -21,6 +21,6 @@ export class RefreshTokens {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Users, (user) => user.refreshTokens)
-  user: Users;
+  @ManyToOne(() => User, (user) => user.refreshTokens)
+  user: User;
 }

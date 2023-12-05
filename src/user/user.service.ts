@@ -9,10 +9,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
-import { Users } from '../shared/entities/users.entity';
-import { UserFiles } from 'src/shared/entities/userFiles.entity';
-import { EmailLogs } from 'src/shared/entities/emailLog.entity';
-import { UserProfiles } from 'src/shared/entities/userProfiles.entity';
+import { User } from '../shared/entities/user.entity';
+import { UserFile } from 'src/shared/entities/userFile.entity';
+import { EmailLog } from 'src/shared/entities/emailLog.entity';
+import { UserProfile } from 'src/shared/entities/userProfile.entity';
 import { ConfigService } from '@nestjs/config';
 import {
   CreateUserDto,
@@ -28,19 +28,19 @@ import { EmailHelperService } from 'src/shared/services/email-helper.service';
 import * as bcrypt from 'bcrypt';
 import { AuthType } from 'src/shared/types/enums/user.enum';
 import { EmailType } from 'src/shared/types/enums/emailLog.enum';
-import { FileStorageType, UserFileType } from 'src/shared/types/enums/files.enum';
+import { FileStorageType, UserFileType } from 'src/shared/types/enums/file.enum';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(Users)
-    private readonly usersRepository: Repository<Users>,
-    @InjectRepository(UserFiles)
-    private readonly userFilesRepository: Repository<UserFiles>,
-    @InjectRepository(UserProfiles)
-    private readonly userProfilesRepository: Repository<UserProfiles>,
-    @InjectRepository(EmailLogs)
-    private readonly emailLogsRepository: Repository<EmailLogs>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(UserFile)
+    private readonly userFileRepository: Repository<UserFile>,
+    @InjectRepository(UserProfile)
+    private readonly userProfileRepository: Repository<UserProfile>,
+    @InjectRepository(EmailLog)
+    private readonly emailLogRepository: Repository<EmailLog>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly authService: AuthService,
@@ -58,7 +58,7 @@ export class UserService {
       authType,
       username: await this.userHelperService.createUsername(),
       isEmailVerified: true,
-      userProfile: new UserProfiles(),
+      userProfile: new UserProfile(),
     };
 
     const user = await this.userHelperService.findUserByField('email', email);
@@ -66,7 +66,7 @@ export class UserService {
 
     userInfo.password = await this.userHelperService.hashPassword(password);
 
-    const { password: remove, ...data } = await this.usersRepository.save(userInfo);
+    const { password: remove, ...data } = await this.userRepository.save(userInfo);
 
     await this.emailHelperService.HandleSendEmail({ email, emailType: EmailType.WELCOME, user: data });
 
@@ -83,7 +83,7 @@ export class UserService {
       authType,
       username: await this.userHelperService.createUsername(),
       isEmailVerified: true,
-      userProfile: new UserProfiles(),
+      userProfile: new UserProfile(),
     };
 
     const user = await this.userHelperService.findUserByField('email', email);
@@ -92,7 +92,7 @@ export class UserService {
 
     userInfo.password = await this.userHelperService.hashPassword(password);
 
-    const { password: remove, ...data } = await this.usersRepository.save(userInfo);
+    const { password: remove, ...data } = await this.userRepository.save(userInfo);
 
     switch (authType) {
       case AuthType.GOOGLE:
@@ -108,7 +108,7 @@ export class UserService {
   // 비밀번호 재설정 처리
   async resetPasswordByEmail(userData: ResetPasswordDto) {
     const { emailToken, emailLogId, newPassword } = userData;
-    const emailLog = await this.emailLogsRepository.findOne({ where: { id: emailLogId } });
+    const emailLog = await this.emailLogRepository.findOne({ where: { id: emailLogId } });
     if (!emailLog.isChecked) throw new UnprocessableEntityException('요청 처리가 가능한 상태가 아닙니다.');
 
     const secretKey = this.configService.get<string>('JWT_EMAIL_SECRET');
@@ -119,7 +119,7 @@ export class UserService {
   // 비밀번호 재설정/변경
   async resetPassword(userId: number, password: string) {
     password = await this.userHelperService.hashPassword(password);
-    const result = await this.usersRepository.update(userId, { password: password, passwordChangedAt: new Date() });
+    const result = await this.userRepository.update(userId, { password: password, passwordChangedAt: new Date() });
     if (result.affected === 0) throw new BadRequestException('비밀번호 변경에 실패했습니다.');
     return { statusCode: 200 };
   }
@@ -147,11 +147,11 @@ export class UserService {
       user: user,
     }));
 
-    await this.userFilesRepository.update(
+    await this.userFileRepository.update(
       { user: { id: userId }, isDeleted: false },
       { isDeleted: true, deletedAt: new Date() },
     );
-    await this.userFilesRepository.insert(fileInfo);
+    await this.userFileRepository.insert(fileInfo);
     return { statusCode: 201 };
   }
 
@@ -174,7 +174,7 @@ export class UserService {
       if (otherUser) throw new ConflictException(`이미 존재하는 계정입니다.`);
     }
 
-    await this.usersRepository.update(userId, userData);
+    await this.userRepository.update(userId, userData);
     const { password: remove, ...data } = await this.userHelperService.findUserByField('id', userId);
 
     return { statusCode: 200, data };
@@ -182,8 +182,8 @@ export class UserService {
 
   // 회원 프로필 정보 수정
   async updateUserProfileInfo(userId: number, userData: UpdateUserProfileDto) {
-    await this.userProfilesRepository.update({ user: { id: userId } }, userData);
-    const data = await this.userProfilesRepository.findOne({ where: { user: { id: userId } } });
+    await this.userProfileRepository.update({ user: { id: userId } }, userData);
+    const data = await this.userProfileRepository.findOne({ where: { user: { id: userId } } });
 
     return { statusCode: 200, data };
   }
@@ -195,7 +195,7 @@ export class UserService {
     const isMatch = await bcrypt.compare(userData.password, password);
     if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
 
-    await this.usersRepository.update(userId, { isActive: false });
+    await this.userRepository.update(userId, { isActive: false });
 
     return { statusCode: 200 };
   }
@@ -207,7 +207,7 @@ export class UserService {
     const isMatch = await bcrypt.compare(userData.password, password);
     if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
 
-    await this.usersRepository.update(userId, { isDeleted: true, deletedAt: new Date() });
+    await this.userRepository.update(userId, { isDeleted: true, deletedAt: new Date() });
 
     return { statusCode: 200 };
   }

@@ -1,9 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
-import { Tasks } from './tasks.entity';
+import { Task } from './task.entity';
 import { CountType, Cycle } from 'src/shared/types/enums/task.enum';
 
-@Entity({ schema: 'dailyrecord', name: 'TaskGoals' })
-export class TaskGoals {
+@Entity({ schema: 'dailyrecord', name: 'TaskGoal' })
+export class TaskGoal {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
@@ -34,6 +34,6 @@ export class TaskGoals {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Tasks, (task) => task.taskGoals)
-  task: Tasks;
+  @ManyToOne(() => Task, (task) => task.taskGoals)
+  task: Task;
 }

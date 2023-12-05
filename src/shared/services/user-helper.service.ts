@@ -1,22 +1,22 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Users } from '../entities/users.entity';
+import { User } from '../entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { GenerateUtility } from '../utilities/generate.utility';
 
 @Injectable()
 export class UserHelperService {
   constructor(
-    @InjectRepository(Users)
-    private readonly usersRepository: Repository<Users>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   // 회원 조회(by 특정 필드)
   async findUserByField(field: string, value: any, optionColumns: {} = {}) {
     const defaultColumns = { [field]: value, isDeleted: false, isActive: true, isAdmin: false };
     const columns = { ...defaultColumns, ...optionColumns };
-    return await this.usersRepository.findOne({ where: columns });
+    return await this.userRepository.findOne({ where: columns });
   }
 
   // username 생성
@@ -43,7 +43,7 @@ export class UserHelperService {
       isDeleted: false,
     };
 
-    const user = await this.usersRepository
+    const user = await this.userRepository
       .createQueryBuilder('users')
       .leftJoinAndSelect('users.userProfile', 'userProfile')
       .leftJoinAndSelect('users.userFiles', 'userFiles', 'userFiles.isDeleted = :isDeleted')

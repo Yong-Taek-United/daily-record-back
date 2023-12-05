@@ -1,9 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { Tasks } from './tasks.entity';
-import { Events } from './events.entity';
+import { Task } from './task.entity';
+import { Event } from './event.entity';
 
-@Entity({ schema: 'dailyrecord', name: 'Categories' })
-export class Categories {
+@Entity({ schema: 'dailyrecord', name: 'Category' })
+export class Category {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
@@ -22,9 +22,9 @@ export class Categories {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => Tasks, (tasks) => tasks.category)
-  tasks: Tasks[];
+  @OneToMany(() => Task, (task) => task.category)
+  tasks: Task[];
 
-  @OneToMany(() => Events, (events) => events.category)
-  events: Events[];
+  @OneToMany(() => Event, (event) => event.category)
+  events: Event[];
 }

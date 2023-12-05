@@ -7,12 +7,12 @@ import {
   OneToMany,
   ManyToOne,
 } from 'typeorm';
-import { Users } from './users.entity';
-import { Tasks } from './tasks.entity';
-import { Events } from './events.entity';
+import { User } from './user.entity';
+import { Task } from './task.entity';
+import { Event } from './event.entity';
 
-@Entity({ schema: 'dailyrecord', name: 'Projects' })
-export class Projects {
+@Entity({ schema: 'dailyrecord', name: 'Project' })
+export class Project {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
@@ -46,12 +46,12 @@ export class Projects {
   @Column({ type: 'datetime', default: null })
   deletedAt: Date;
 
-  @ManyToOne(() => Users, (users) => users.projects)
-  user: Users;
+  @ManyToOne(() => User, (user) => user.projects)
+  user: User;
 
-  @OneToMany(() => Tasks, (tasks) => tasks.project)
-  tasks: Tasks[];
+  @OneToMany(() => Task, (task) => task.project)
+  tasks: Task[];
 
-  @OneToMany(() => Events, (events) => events.project)
-  events: Events[];
+  @OneToMany(() => Event, (event) => event.project)
+  events: Event[];
 }

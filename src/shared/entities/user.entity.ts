@@ -7,16 +7,16 @@ import {
   OneToMany,
   OneToOne,
 } from 'typeorm';
-import { UserProfiles } from './userProfiles.entity';
-import { UserFiles } from './userFiles.entity';
-import { Events } from './events.entity';
-import { Projects } from './projects.entity';
-import { Tasks } from './tasks.entity';
-import { RefreshTokens } from './refreshToken.entity';
+import { UserProfile } from './userProfile.entity';
+import { UserFile } from './userFile.entity';
+import { Event } from './event.entity';
+import { Project } from './project.entity';
+import { Task } from './task.entity';
+import { RefreshToken } from './refreshToken.entity';
 import { AuthType, UserType } from 'src/shared/types/enums/user.enum';
 
-@Entity({ schema: 'dailyrecord', name: 'Users' })
-export class Users {
+@Entity({ schema: 'dailyrecord', name: 'User' })
+export class User {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
@@ -65,21 +65,21 @@ export class Users {
   @Column({ type: 'datetime', default: null })
   deletedAt: Date;
 
-  @OneToOne(() => UserProfiles, (userProfile) => userProfile.user, { cascade: true })
-  userProfile: UserProfiles;
+  @OneToOne(() => UserProfile, (userProfile) => userProfile.user, { cascade: true })
+  userProfile: UserProfile;
 
-  @OneToMany(() => UserFiles, (userFiles) => userFiles.user)
-  userFiles: UserFiles[];
+  @OneToMany(() => UserFile, (userFile) => userFile.user)
+  userFiles: UserFile[];
 
-  @OneToMany(() => Projects, (projects) => projects.user)
-  projects: Projects[];
+  @OneToMany(() => Project, (project) => project.user)
+  projects: Project[];
 
-  @OneToMany(() => Tasks, (tasks) => tasks.user)
-  tasks: Tasks[];
+  @OneToMany(() => Task, (task) => task.user)
+  tasks: Task[];
 
-  @OneToMany(() => Events, (events) => events.user)
-  events: Events[];
+  @OneToMany(() => Event, (event) => event.user)
+  events: Event[];
 
-  @OneToMany(() => RefreshTokens, (refreshTokens) => refreshTokens.user)
-  refreshTokens: RefreshTokens;
+  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
+  refreshTokens: RefreshToken;
 }

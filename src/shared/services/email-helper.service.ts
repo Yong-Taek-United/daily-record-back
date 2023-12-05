@@ -2,9 +2,9 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
-import { EmailLogs } from '../entities/emailLog.entity';
+import { EmailLog } from '../entities/emailLog.entity';
+import { User } from '../entities/user.entity';
 import { TokenHelperService } from './token-helper.service';
-import { Users } from '../entities/users.entity';
 import {
   EMAIL_VERIFICATION_SUBJECT,
   EMAIL_VERIFICATION_TEMPLATE,
@@ -23,10 +23,10 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class EmailHelperService {
   constructor(
-    @InjectRepository(EmailLogs)
-    private emailLogsRepository: Repository<EmailLogs>,
-    @InjectRepository(Users)
-    private usersRepository: Repository<Users>,
+    @InjectRepository(EmailLog)
+    private emailLogRepository: Repository<EmailLog>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     private readonly mailerService: MailerService,
     private readonly configService: ConfigService,
     private readonly tokenHelperService: TokenHelperService,
@@ -63,11 +63,11 @@ export class EmailHelperService {
   async createEmailLog(emailLogData: EmailLogData) {
     const { email, emailType, userId } = emailLogData;
 
-    await this.emailLogsRepository.update({ email, emailType }, { isVerifable: false });
+    await this.emailLogRepository.update({ email, emailType }, { isVerifable: false });
 
     const payload = { email, ...(userId && { userId }) };
     const emailToken = await this.tokenHelperService.generateToken(payload, 'EMAIL');
-    const emailLog = await this.emailLogsRepository.save({
+    const emailLog = await this.emailLogRepository.save({
       email,
       emailToken,
       emailType,
@@ -145,7 +145,7 @@ export class EmailHelperService {
     if (isSuccess)
       switch (emailLog.emailType) {
         case 'VERIFICATION':
-          await this.usersRepository.update({ email: emailLog.email }, { isEmailVerified: true });
+          await this.userRepository.update({ email: emailLog.email }, { isEmailVerified: true });
           redirectURL = `${EMAIL_VERIFICATION_URL}`;
           break;
         case 'PASSWORD':

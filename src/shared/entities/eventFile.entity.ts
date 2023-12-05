@@ -1,20 +1,14 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
-import { Users } from './users.entity';
-import { FileStorageType, MimeType, UserFileType } from 'src/shared/types/enums/files.enum';
+import { Event } from './event.entity';
+import { MimeType } from 'src/shared/types/enums/file.enum';
 
-@Entity({ schema: 'dailyrecord', name: 'UserFiles' })
-export class UserFiles {
+@Entity({ schema: 'dailyrecord', name: 'EventFile' })
+export class EventFile {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
   @Column({ type: 'int' })
   seqNo: number;
-
-  @Column({ type: 'enum', enum: UserFileType, default: UserFileType.PROFILE })
-  fileType: string;
-
-  @Column({ type: 'enum', enum: FileStorageType, default: FileStorageType.DISK })
-  fileStorageType: string;
 
   @Column({ type: 'varchar', length: 100 })
   filePath: string;
@@ -40,6 +34,6 @@ export class UserFiles {
   @Column({ type: 'datetime', default: null })
   deletedAt: Date;
 
-  @ManyToOne(() => Users, (user) => user.userFiles)
-  user: Users;
+  @ManyToOne(() => Event, (event) => event.eventFiles)
+  event: Event;
 }
