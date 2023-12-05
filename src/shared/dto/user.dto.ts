@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
 import { textLength } from '../configs/settings/dto.config';
-import { AuthType } from 'src/shared/types/enums/users.enum';
+import { AuthType } from 'src/shared/types/enums/user.enum';
 
 export class CreateUserDto {
   @IsEmail()

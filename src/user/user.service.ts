@@ -26,7 +26,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { UserHelperService } from 'src/shared/services/user-helper.service';
 import { EmailHelperService } from 'src/shared/services/email-helper.service';
 import * as bcrypt from 'bcrypt';
-import { AuthType } from 'src/shared/types/enums/users.enum';
+import { AuthType } from 'src/shared/types/enums/user.enum';
 import { EmailType } from 'src/shared/types/enums/emailLog.enum';
 import { FileStorageType, UserFileType } from 'src/shared/types/enums/files.enum';
 
