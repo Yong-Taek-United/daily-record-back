@@ -17,7 +17,7 @@ export class TaskGoal {
   cycleCount: string;
 
   @Column({ type: 'int', default: 0 })
-  target: number;
+  goal: number;
 
   @Column({ type: 'int', default: 0 })
   accumulation: number;
