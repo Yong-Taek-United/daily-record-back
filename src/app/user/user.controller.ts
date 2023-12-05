@@ -9,7 +9,7 @@ import {
   ChangePasswordDto,
   UpdateUserBasicDto,
   UpdateUserProfileDto,
-} from '../shared/dto/user.dto';
+} from '../../shared/dto/user.dto';
 import { Public } from 'src/shared/decorators/skip-auth.decorator';
 import { FilesInterceptor } from '@nestjs/platform-express';
 

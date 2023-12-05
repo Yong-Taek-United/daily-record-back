@@ -9,9 +9,9 @@ import { TaskModule } from './task/task.module';
 import { ActivityModule } from './activity/activity.module';
 import { EmailModule } from './email/email.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { ApiResponseInterceptor } from './shared/interceptors/api-response.interceptor';
-import { JwtAuthGuard } from './shared/guards/jwt-auth.guard';
-import { TypeOrmConfig } from './shared/configs/typeorm.config';
+import { ApiResponseInterceptor } from '../shared/interceptors/api-response.interceptor';
+import { JwtAuthGuard } from '../shared/guards/jwt-auth.guard';
+import { TypeOrmConfig } from '../shared/configs/typeorm.config';
 
 const nodeEnv = process.env.NODE_ENV || 'development';
 const envFilePath = `.env.${nodeEnv}`;
