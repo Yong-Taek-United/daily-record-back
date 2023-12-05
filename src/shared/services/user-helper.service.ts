@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { GenerateUtility } from '../utilities/generate.utility';
 
 @Injectable()
-export class UsersHelperService {
+export class UserHelperService {
   constructor(
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,

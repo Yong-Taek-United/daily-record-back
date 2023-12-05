@@ -2,7 +2,7 @@ import { Module, forwardRef } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
-import { UsersModule } from 'src/users/users.module';
+import { UserModule } from 'src/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -24,7 +24,7 @@ import { GoogleStrategy } from '../shared/strategies/google.strategy';
       useClass: JwtConfig,
     }),
     TypeOrmModule.forFeature([RefreshTokens]),
-    forwardRef(() => UsersModule),
+    forwardRef(() => UserModule),
   ],
   controllers: [AuthController],
   providers: [

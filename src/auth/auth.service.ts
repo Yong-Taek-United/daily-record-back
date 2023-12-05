@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Response } from 'express';
-import { UsersHelperService } from 'src/shared/services/users-helper.service';
+import { UserHelperService } from 'src/shared/services/user-helper.service';
 import { TokenHelperService } from 'src/shared/services/token-helper.service';
 import { CookieHelperService } from 'src/shared/services/cookie-helper.service';
 import * as bcrypt from 'bcrypt';
@@ -11,14 +11,14 @@ import { AuthPasswordDto } from 'src/shared/dto/auth.dto';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersHelperService: UsersHelperService,
+    private readonly userHelperService: UserHelperService,
     private readonly tokenHelperService: TokenHelperService,
     private readonly cookieHelperService: CookieHelperService,
   ) {}
 
   // 회원 인증
   async validateUser(email: string, password: string, authType: AuthType = AuthType.BASIC) {
-    const { password: passwordFormDB, ...user } = await this.usersHelperService.getUserWithRelations('email', email);
+    const { password: passwordFormDB, ...user } = await this.userHelperService.getUserWithRelations('email', email);
 
     if (!!user && user.authType === authType) {
       const isMatch = await bcrypt.compare(password, passwordFormDB);
@@ -83,7 +83,7 @@ export class AuthService {
 
   // 비밀번호 인증
   async authByPassword(userId: any, authData: AuthPasswordDto) {
-    const user = await this.usersHelperService.findUserByField('id', userId);
+    const user = await this.userHelperService.findUserByField('id', userId);
     if (!user) throw new NotFoundException('찾을 수 없는 회원입니다.');
 
     const isMatch = await bcrypt.compare(authData.password, user.password);

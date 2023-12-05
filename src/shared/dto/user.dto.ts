@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString, Length } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
 import { textLength } from '../configs/settings/dto.config';
 import { AuthType } from 'src/shared/types/enums/users.enum';
 

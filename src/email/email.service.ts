@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EmailLogs } from 'src/shared/entities/emailLog.entity';
 import { EmailHelperService } from 'src/shared/services/email-helper.service';
-import { UsersHelperService } from 'src/shared/services/users-helper.service';
+import { UserHelperService } from 'src/shared/services/user-helper.service';
 import { VerifyEmailDto } from 'src/shared/dto/email.dto';
 import { EMAIL_VERIFICATION_EXPIRY } from 'src/shared/constants/dateTime.constant';
 
@@ -13,13 +13,13 @@ export class EmailService {
     @InjectRepository(EmailLogs)
     private emailLogsRepository: Repository<EmailLogs>,
     private readonly emailHelperService: EmailHelperService,
-    private readonly usersHelperService: UsersHelperService,
+    private readonly userHelperService: UserHelperService,
   ) {}
 
   // 사용자 인증 이메일 발송
   async sendEmailVerification(emailData: VerifyEmailDto) {
     const { email, emailType } = emailData;
-    const user = await this.usersHelperService.findUserByField('email', email);
+    const user = await this.userHelperService.findUserByField('email', email);
     if (user) throw new ConflictException('이미 존재하는 이메일입니다.');
 
     await this.emailHelperService.HandleSendEmail({ email, emailType });
@@ -30,7 +30,7 @@ export class EmailService {
   // 비밀번호 재설정 이메일 발송 처리
   async emailResetPassword(emailData: VerifyEmailDto) {
     const { email, emailType } = emailData;
-    const user = await this.usersHelperService.findUserByField('email', email);
+    const user = await this.userHelperService.findUserByField('email', email);
     if (!user) throw new NotFoundException('일치하는 회원 정보가 존재하지 않습니다.');
 
     await this.emailHelperService.HandleSendEmail({ email, emailType, user });

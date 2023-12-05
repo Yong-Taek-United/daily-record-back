@@ -1,19 +1,7 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Req,
-  Res,
-  UploadedFiles,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Patch, Post, Req, Res, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { UsersService } from './users.service';
+import { UserService } from './user.service';
 import {
   CreateUserDto,
   DeleteUserDto,
@@ -21,21 +9,21 @@ import {
   ChangePasswordDto,
   UpdateUserBasicDto,
   UpdateUserProfileDto,
-} from '../shared/dto/users.dto';
+} from '../shared/dto/user.dto';
 import { Public } from 'src/shared/decorators/skip-auth.decorator';
 import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
-@ApiTags('Users')
+@ApiTags('User')
 @ApiBearerAuth()
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+export class UserController {
+  constructor(private readonly userService: UserService) {}
 
   @Post('/sign-up')
   @Public()
   @ApiOperation({ summary: '회원가입: 일반', description: 'email은 중복 불가입니다.' })
   async signUp(@Body() userData: CreateUserDto) {
-    return await this.usersService.signUp(userData);
+    return await this.userService.signUp(userData);
   }
 
   @Post('/sign-up/socail')
@@ -45,21 +33,21 @@ export class UsersController {
     description: 'email 중복 시, 에러메세지 안내 후 로그인페이지로 이동합니다.',
   })
   async signUpSocail(@Body() userData: CreateUserDto, @Res({ passthrough: true }) res: Response) {
-    return await this.usersService.signUpSocail(userData, res);
+    return await this.userService.signUpSocail(userData, res);
   }
 
   @Patch('/password/reset')
   @Public()
   @ApiOperation({ summary: '비밀번호 재설정', description: '이메일 인증을 통해 비밀번호를 재설정합니다.' })
   async ResetPasswordByEmail(@Body() userData: ResetPasswordDto) {
-    return await this.usersService.resetPasswordByEmail(userData);
+    return await this.userService.resetPasswordByEmail(userData);
   }
 
   @Get('info')
   @ApiOperation({ summary: '회원 정보 조회', description: 'accessToken의 회원 기본/프로필 정보를 조회합니다.' })
   async getUserInfo(@Req() req) {
     const userId: number = req.user.sub;
-    return await this.usersService.getUserInfo(userId);
+    return await this.userService.getUserInfo(userId);
   }
 
   @Post('/profile-image/upload')
@@ -85,7 +73,7 @@ export class UsersController {
   })
   async uploadProfileImage(@Req() req, @UploadedFiles() files: Express.Multer.File[]) {
     const userId: number = req.user.sub;
-    return await this.usersService.uploadProfileImage(userId, files);
+    return await this.userService.uploadProfileImage(userId, files);
   }
 
   @Patch('/password/change')
@@ -95,34 +83,34 @@ export class UsersController {
   })
   async changePassword(@Req() req, @Body() userData: ChangePasswordDto) {
     const userId: number = req.user.sub;
-    return await this.usersService.changePassword(userId, userData);
+    return await this.userService.changePassword(userId, userData);
   }
 
   @Patch('basic')
   @ApiOperation({ summary: '회원 기본 정보 수정', description: '수정 가능 항목: 이름(nickname), 계정(username)' })
   async updateUserBasicInfo(@Req() req, @Body() userData: UpdateUserBasicDto) {
     const user = req.user;
-    return await this.usersService.updateUserBasicInfo(user, userData);
+    return await this.userService.updateUserBasicInfo(user, userData);
   }
 
   @Patch('profile')
   @ApiOperation({ summary: '회원 프로필 정보 수정', description: '수정 가능 항목: 한 줄 소개(introduce)' })
   async updateUserProfileInfo(@Req() req, @Body() userData: UpdateUserProfileDto) {
     const userId: number = req.user.sub;
-    return await this.usersService.updateUserProfileInfo(userId, userData);
+    return await this.userService.updateUserProfileInfo(userId, userData);
   }
 
   @Patch('deactivate')
   @ApiOperation({ summary: '회원 계정 비활성화', description: '비밀번호를 입력해야 비활성화가 가능합니다.' })
   async deactivateUser(@Req() req, @Body() userData: DeleteUserDto) {
     const userId: number = req.user.sub;
-    return await this.usersService.deactivateUser(userId, userData);
+    return await this.userService.deactivateUser(userId, userData);
   }
 
   @Delete('withdrawal')
   @ApiOperation({ summary: '회원 계정 탈퇴', description: '비밀번호를 입력해야 탈퇴가 가능합니다.' })
   async withdrawal(@Req() req, @Body() userData: DeleteUserDto) {
     const userId: number = req.user.sub;
-    return await this.usersService.withdrawal(userId, userData);
+    return await this.userService.withdrawal(userId, userData);
   }
 }

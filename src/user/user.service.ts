@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -22,9 +21,9 @@ import {
   ChangePasswordDto,
   UpdateUserBasicDto,
   UpdateUserProfileDto,
-} from '../shared/dto/users.dto';
+} from '../shared/dto/user.dto';
 import { AuthService } from 'src/auth/auth.service';
-import { UsersHelperService } from 'src/shared/services/users-helper.service';
+import { UserHelperService } from 'src/shared/services/user-helper.service';
 import { EmailHelperService } from 'src/shared/services/email-helper.service';
 import * as bcrypt from 'bcrypt';
 import { AuthType } from 'src/shared/types/enums/users.enum';
@@ -32,7 +31,7 @@ import { EmailType } from 'src/shared/types/enums/emailLog.enum';
 import { FileStorageType, UserFileType } from 'src/shared/types/enums/files.enum';
 
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
@@ -45,7 +44,7 @@ export class UsersService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly authService: AuthService,
-    private readonly usersHelperService: UsersHelperService,
+    private readonly userHelperService: UserHelperService,
     private readonly emailHelperService: EmailHelperService,
   ) {}
 
@@ -57,15 +56,15 @@ export class UsersService {
       nickname,
       password,
       authType,
-      username: await this.usersHelperService.createUsername(),
+      username: await this.userHelperService.createUsername(),
       isEmailVerified: true,
       userProfile: new UserProfiles(),
     };
 
-    const user = await this.usersHelperService.findUserByField('email', email);
+    const user = await this.userHelperService.findUserByField('email', email);
     if (user) throw new ConflictException('이미 존재하는 이메일입니다.');
 
-    userInfo.password = await this.usersHelperService.hashPassword(password);
+    userInfo.password = await this.userHelperService.hashPassword(password);
 
     const { password: remove, ...data } = await this.usersRepository.save(userInfo);
 
@@ -82,16 +81,16 @@ export class UsersService {
       nickname,
       password,
       authType,
-      username: await this.usersHelperService.createUsername(),
+      username: await this.userHelperService.createUsername(),
       isEmailVerified: true,
       userProfile: new UserProfiles(),
     };
 
-    const user = await this.usersHelperService.findUserByField('email', email);
+    const user = await this.userHelperService.findUserByField('email', email);
     if (user)
       throw new ConflictException(`이미 ${user.authType} 회원가입으로 등록된 이메일입니다. 로그인을 진행할까요?`);
 
-    userInfo.password = await this.usersHelperService.hashPassword(password);
+    userInfo.password = await this.userHelperService.hashPassword(password);
 
     const { password: remove, ...data } = await this.usersRepository.save(userInfo);
 
@@ -119,7 +118,7 @@ export class UsersService {
 
   // 비밀번호 재설정/변경
   async resetPassword(userId: number, password: string) {
-    password = await this.usersHelperService.hashPassword(password);
+    password = await this.userHelperService.hashPassword(password);
     const result = await this.usersRepository.update(userId, { password: password, passwordChangedAt: new Date() });
     if (result.affected === 0) throw new BadRequestException('비밀번호 변경에 실패했습니다.');
     return { statusCode: 200 };
@@ -127,7 +126,7 @@ export class UsersService {
 
   // 회원 정보 조회 처리
   async getUserInfo(userId: number) {
-    const { password, ...data } = await this.usersHelperService.getUserWithRelations('id', userId);
+    const { password, ...data } = await this.userHelperService.getUserWithRelations('id', userId);
     return { statusCode: 200, data };
   }
 
@@ -135,7 +134,7 @@ export class UsersService {
   async uploadProfileImage(userId: number, files: Express.Multer.File[]) {
     const fileRootDirectory = this.configService.get<string>('FILE_STORAGE_PATH');
 
-    const user = await this.usersHelperService.findUserByField('id', userId);
+    const user = await this.userHelperService.findUserByField('id', userId);
 
     const fileInfo = files.map((file, index) => ({
       seqNo: index,
@@ -159,7 +158,7 @@ export class UsersService {
   // 비밀번호 변경 처리
   async changePassword(userId: number, userData: ChangePasswordDto) {
     let { currentPassword, newPassword } = userData;
-    const user = await this.usersHelperService.findUserByField('id', userId);
+    const user = await this.userHelperService.findUserByField('id', userId);
     if (!user || !(await bcrypt.compare(currentPassword, user.password)))
       throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
 
@@ -171,12 +170,12 @@ export class UsersService {
     const { sub: userId, username } = user;
 
     if (username !== userData.username) {
-      const otherUser = await this.usersHelperService.findUserByField('username', userData.username);
+      const otherUser = await this.userHelperService.findUserByField('username', userData.username);
       if (otherUser) throw new ConflictException(`이미 존재하는 계정입니다.`);
     }
 
     await this.usersRepository.update(userId, userData);
-    const { password: remove, ...data } = await this.usersHelperService.findUserByField('id', userId);
+    const { password: remove, ...data } = await this.userHelperService.findUserByField('id', userId);
 
     return { statusCode: 200, data };
   }
@@ -191,7 +190,7 @@ export class UsersService {
 
   // 회원 계정 비활성화
   async deactivateUser(userId: number, userData: DeleteUserDto) {
-    const { password, ...rest } = await this.usersHelperService.findUserByField('id', userId);
+    const { password, ...rest } = await this.userHelperService.findUserByField('id', userId);
 
     const isMatch = await bcrypt.compare(userData.password, password);
     if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
@@ -203,7 +202,7 @@ export class UsersService {
 
   // 회원 계정 탈퇴
   async withdrawal(userId: number, userData: DeleteUserDto) {
-    const { password, ...rest } = await this.usersHelperService.findUserByField('id', userId);
+    const { password, ...rest } = await this.userHelperService.findUserByField('id', userId);
 
     const isMatch = await bcrypt.compare(userData.password, password);
     if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
