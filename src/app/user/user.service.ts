@@ -9,7 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '../shared/entities/user.entity';
+import { User } from '../../shared/entities/user.entity';
 import { UserFile } from 'src/shared/entities/userFile.entity';
 import { EmailLog } from 'src/shared/entities/emailLog.entity';
 import { UserProfile } from 'src/shared/entities/userProfile.entity';
@@ -21,8 +21,8 @@ import {
   ChangePasswordDto,
   UpdateUserBasicDto,
   UpdateUserProfileDto,
-} from '../shared/dto/user.dto';
-import { AuthService } from 'src/auth/auth.service';
+} from '../../shared/dto/user.dto';
+import { AuthService } from 'src/app/auth/auth.service';
 import { UserHelperService } from 'src/shared/services/user-helper.service';
 import { EmailHelperService } from 'src/shared/services/email-helper.service';
 import * as bcrypt from 'bcrypt';
