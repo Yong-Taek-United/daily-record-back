@@ -35,6 +35,9 @@ export class Task {
   @Column({ type: 'tinyint', default: true })
   isActive: Boolean;
 
+  @Column({ type: 'tinyint', default: true })
+  isPushEnabled: Boolean;
+
   @Column({ type: 'tinyint', default: false })
   isComplated: Boolean;
 

@@ -1,17 +1,20 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 import { Task } from './task.entity';
-import { CountType, Cycle } from 'src/shared/types/enums/task.enum';
+import { CountType, CycleType } from 'src/shared/types/enums/task.enum';
 
 @Entity({ schema: 'dailyrecord', name: 'TaskGoal' })
 export class TaskGoal {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
-  @Column({ type: 'enum', enum: Cycle })
-  cycle: string;
+  @Column({ type: 'enum', enum: CycleType })
+  cycleType: string;
 
   @Column({ type: 'enum', enum: CountType })
   countType: string;
+
+  @Column({ type: 'int' })
+  cycleCount: string;
 
   @Column({ type: 'int', default: 0 })
   target: number;
