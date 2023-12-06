@@ -6,12 +6,14 @@ import {
   UpdateDateColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Category } from './category.entity';
 import { Project } from './project.entity';
 import { Activity } from './activity.entity';
 import { TaskGoal } from './taskGoal.entity';
+import { TaskPush } from './taskPush.entity';
 import { Icon } from './icon.entity';
 import { Medal } from './medal.entity';
 
@@ -34,9 +36,6 @@ export class Task {
 
   @Column({ type: 'tinyint', default: true })
   isActive: Boolean;
-
-  @Column({ type: 'tinyint', default: true })
-  isPushEnabled: Boolean;
 
   @Column({ type: 'tinyint', default: false })
   isComplated: Boolean;
@@ -65,8 +64,11 @@ export class Task {
   @ManyToOne(() => Project, (project) => project.tasks)
   project: Project;
 
+  @OneToOne(() => TaskPush, (taskPush) => taskPush.task)
+  taskPush: TaskPush;
+
   @OneToMany(() => TaskGoal, (taskGoal) => taskGoal.task)
-  taskGoals: TaskGoal;
+  taskGoal: TaskGoal;
 
   @OneToMany(() => Activity, (activity) => activity.task)
   activitys: Activity[];

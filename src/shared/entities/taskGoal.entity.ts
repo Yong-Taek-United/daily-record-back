@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Task } from './task.entity';
 import { CountType, CycleType } from 'src/shared/types/enums/task.enum';
 
@@ -14,7 +22,7 @@ export class TaskGoal {
   countType: string;
 
   @Column({ type: 'int' })
-  cycleCount: string;
+  cycleCount: number;
 
   @Column({ type: 'int', default: 0 })
   goal: number;
@@ -37,6 +45,7 @@ export class TaskGoal {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Task, (task) => task.taskGoals)
+  @OneToOne(() => Task, (task) => task.taskGoal)
+  @JoinColumn()
   task: Task;
 }
