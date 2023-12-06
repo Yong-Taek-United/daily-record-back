@@ -59,7 +59,7 @@ export class Task {
   category: Category;
 
   @ManyToOne(() => Icon, (icon) => icon.tasks)
-  icon: Icon[];
+  icon: Icon;
 
   @ManyToOne(() => Project, (project) => project.tasks)
   project: Project;
