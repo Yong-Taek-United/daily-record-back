@@ -48,4 +48,12 @@ export class TaskGoal {
   @OneToOne(() => Task, (task) => task.taskGoal)
   @JoinColumn()
   task: Task;
+
+  // constructor(cycleType?: string, countType?: string, cycleCount?: number, isWeekendsExcl?: Boolean) {
+  //   // cycleType?: string, countType?: string, cycleCount?: number, goal?: number, accumulation?: number, isWeekendsExcl?: Boolean, isActive?: Boolean, isComplated?: Boolean
+  //   this.cycleType = cycleType;
+  //   this.countType = countType;
+  //   this.cycleCount = cycleCount;
+  //   this.isWeekendsExcl = isWeekendsExcl;
+  // }
 }

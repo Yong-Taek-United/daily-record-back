@@ -22,10 +22,10 @@ export class Task {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
-  @Column({ type: 'varchar', length: 100, default: '' })
+  @Column({ type: 'varchar', length: 100, default: null })
   title: string;
 
-  @Column({ type: 'varchar', length: 300, default: '' })
+  @Column({ type: 'varchar', length: 300, default: null })
   description: string;
 
   @Column({ type: 'date' })
@@ -64,11 +64,11 @@ export class Task {
   @ManyToOne(() => Project, (project) => project.tasks)
   project: Project;
 
-  @OneToOne(() => TaskPush, (taskPush) => taskPush.task)
-  taskPush: TaskPush;
-
-  @OneToMany(() => TaskGoal, (taskGoal) => taskGoal.task)
+  @OneToOne(() => TaskGoal, (taskGoal) => taskGoal.task, { cascade: true })
   taskGoal: TaskGoal;
+
+  @OneToOne(() => TaskPush, (taskPush) => taskPush.task, { cascade: true })
+  taskPush: TaskPush;
 
   @OneToMany(() => Activity, (activity) => activity.task)
   activitys: Activity[];

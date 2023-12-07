@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Task } from './task.entity';
 import { CycleType } from 'src/shared/types/enums/task.enum';
 
@@ -10,7 +18,7 @@ export class TaskPush {
   @Column({ type: 'enum', enum: CycleType })
   cycleType: string;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'int', default: 0 })
   pushTime: number;
 
   @Column({ type: 'tinyint', default: true })
