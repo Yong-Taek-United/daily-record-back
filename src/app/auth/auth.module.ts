@@ -11,6 +11,7 @@ import { CookieHelperService } from 'src/shared/services/cookie-helper.service';
 import { LocalStrategy } from '../../shared/strategies/local.strategy';
 import { JwtStrategy } from '../../shared/strategies/jwt.strategy';
 import { JwtRefreshStrategy } from '../../shared/strategies/jwt-refresh.strategy';
+import { User } from 'src/shared/entities/user.entity';
 import { RefreshToken } from 'src/shared/entities/refreshToken.entity';
 import { JwtConfig } from '../../shared/configs/jwt.config';
 import { GoogleStrategy } from '../../shared/strategies/google.strategy';
@@ -23,7 +24,7 @@ import { GoogleStrategy } from '../../shared/strategies/google.strategy';
       imports: [ConfigModule],
       useClass: JwtConfig,
     }),
-    TypeOrmModule.forFeature([RefreshToken]),
+    TypeOrmModule.forFeature([User, RefreshToken]),
     forwardRef(() => UserModule),
   ],
   controllers: [AuthController],
