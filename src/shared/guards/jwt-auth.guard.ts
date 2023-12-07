@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, ExecutionContext } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ExecutionContext, NotFoundException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from 'src/shared/decorators/skip-auth.decorator';
@@ -11,13 +11,22 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   handleRequest(err, user, info, context) {
     if (err || !user) {
-      switch (info.name) {
-        case 'TokenExpiredError':
-          throw new UnauthorizedException('인증 토큰이 만료되었습니다.');
-        case 'JsonWebTokenError':
-          throw new UnauthorizedException('인증 토큰이 유효하지 않습니다.');
-        default:
-          throw new UnauthorizedException(info.message);
+      let errorMessage: string;
+      if (info === undefined) {
+        throw new NotFoundException('회원 정보가 존재하지 않습니다.');
+      } else {
+        switch (info.name) {
+          case 'TokenExpiredError':
+            errorMessage = '인증 토큰이 만료되었습니다.';
+            break;
+          case 'JsonWebTokenError':
+            errorMessage = '인증 토큰이 유효하지 않습니다.';
+            break;
+          default:
+            errorMessage = info.message;
+            break;
+        }
+        throw new UnauthorizedException(errorMessage);
       }
     }
     return user;

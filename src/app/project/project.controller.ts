@@ -12,7 +12,6 @@ export class ProjectController {
   @Post('')
   @ApiOperation({ summary: '프로젝트 생성', description: '프로젝트와 테스크를 모두 생성합니다.' })
   async createProject(@Req() req, @Body() projectData: CreateProjectDto) {
-    const userId: number = req.user.sub;
-    return await this.projectService.createProject(userId, projectData);
+    return await this.projectService.createProject(req.user, projectData);
   }
 }

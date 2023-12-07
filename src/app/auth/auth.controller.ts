@@ -57,6 +57,6 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: '비밀번호 인증', description: '비밀번호로 사용자를 인증합니다.' })
   async authByPassword(@Req() req, @Body() authData: AuthPasswordDto) {
-    return await this.authService.authByPassword(req.user.sub, authData);
+    return await this.authService.authByPassword(req.user, authData);
   }
 }
