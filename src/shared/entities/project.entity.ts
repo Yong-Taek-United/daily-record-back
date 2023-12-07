@@ -16,10 +16,10 @@ export class Project {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
-  @Column({ type: 'varchar', length: 100, default: '' })
+  @Column({ type: 'varchar', length: 100, default: null })
   title: string;
 
-  @Column({ type: 'varchar', length: 300, default: '' })
+  @Column({ type: 'varchar', length: 300, default: null })
   description: string;
 
   @Column({ type: 'date' })
@@ -49,7 +49,7 @@ export class Project {
   @ManyToOne(() => User, (user) => user.projects)
   user: User;
 
-  @OneToMany(() => Task, (task) => task.project)
+  @OneToMany(() => Task, (task) => task.project, { cascade: true })
   tasks: Task[];
 
   @OneToMany(() => Activity, (activity) => activity.project)

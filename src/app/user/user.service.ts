@@ -113,7 +113,8 @@ export class UserService {
 
     const secretKey = this.configService.get<string>('JWT_EMAIL_SECRET');
     const payload = this.jwtService.verify(emailToken, { secret: secretKey, ignoreExpiration: true });
-    return await this.resetPassword(payload.userId, newPassword);
+    await this.resetPassword(payload.userId, newPassword);
+    return { statusCode: 200 };
   }
 
   // 비밀번호 재설정/변경
@@ -121,20 +122,17 @@ export class UserService {
     password = await this.userHelperService.hashPassword(password);
     const result = await this.userRepository.update(userId, { password: password, passwordChangedAt: new Date() });
     if (result.affected === 0) throw new BadRequestException('비밀번호 변경에 실패했습니다.');
-    return { statusCode: 200 };
   }
 
   // 회원 정보 조회 처리
-  async getUserInfo(userId: number) {
-    const { password, ...data } = await this.userHelperService.getUserWithRelations('id', userId);
+  async getUserInfo(user: User) {
+    const { password, ...data } = await this.userHelperService.getUserWithRelations('id', user.id);
     return { statusCode: 200, data };
   }
 
   // 회원 프로필 이미지 등록 처리
-  async uploadProfileImage(userId: number, files: Express.Multer.File[]) {
+  async uploadProfileImage(user: User, files: Express.Multer.File[]) {
     const fileRootDirectory = this.configService.get<string>('FILE_STORAGE_PATH');
-
-    const user = await this.userHelperService.findUserByField('id', userId);
 
     const fileInfo = files.map((file, index) => ({
       seqNo: index,
@@ -148,7 +146,7 @@ export class UserService {
     }));
 
     await this.userFileRepository.update(
-      { user: { id: userId }, isDeleted: false },
+      { user: { id: user.id }, isDeleted: false },
       { isDeleted: true, deletedAt: new Date() },
     );
     await this.userFileRepository.insert(fileInfo);
@@ -156,18 +154,19 @@ export class UserService {
   }
 
   // 비밀번호 변경 처리
-  async changePassword(userId: number, userData: ChangePasswordDto) {
+  async changePassword(user: User, userData: ChangePasswordDto) {
     let { currentPassword, newPassword } = userData;
-    const user = await this.userHelperService.findUserByField('id', userId);
-    if (!user || !(await bcrypt.compare(currentPassword, user.password)))
-      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
 
-    return await this.resetPassword(userId, newPassword);
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+
+    await this.resetPassword(user.id, newPassword);
+    return { statusCode: 200 };
   }
 
   // 회원 기본 정보 수정
-  async updateUserBasicInfo(user: any, userData: UpdateUserBasicDto) {
-    const { sub: userId, username } = user;
+  async updateUserBasicInfo(user: User, userData: UpdateUserBasicDto) {
+    const { id: userId, username } = user;
 
     if (username !== userData.username) {
       const otherUser = await this.userHelperService.findUserByField('username', userData.username);
@@ -181,33 +180,29 @@ export class UserService {
   }
 
   // 회원 프로필 정보 수정
-  async updateUserProfileInfo(userId: number, userData: UpdateUserProfileDto) {
-    await this.userProfileRepository.update({ user: { id: userId } }, userData);
-    const data = await this.userProfileRepository.findOne({ where: { user: { id: userId } } });
+  async updateUserProfileInfo(user: User, userData: UpdateUserProfileDto) {
+    await this.userProfileRepository.update({ user: { id: user.id } }, userData);
+    const data = await this.userProfileRepository.findOne({ where: { user: { id: user.id } } });
 
     return { statusCode: 200, data };
   }
 
   // 회원 계정 비활성화
-  async deactivateUser(userId: number, userData: DeleteUserDto) {
-    const { password, ...rest } = await this.userHelperService.findUserByField('id', userId);
-
-    const isMatch = await bcrypt.compare(userData.password, password);
+  async deactivateUser(user: User, userData: DeleteUserDto) {
+    const isMatch = await bcrypt.compare(userData.password, user.password);
     if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
 
-    await this.userRepository.update(userId, { isActive: false });
+    await this.userRepository.update(user.id, { isActive: false });
 
     return { statusCode: 200 };
   }
 
   // 회원 계정 탈퇴
-  async withdrawal(userId: number, userData: DeleteUserDto) {
-    const { password, ...rest } = await this.userHelperService.findUserByField('id', userId);
-
-    const isMatch = await bcrypt.compare(userData.password, password);
+  async withdrawal(user: User, userData: DeleteUserDto) {
+    const isMatch = await bcrypt.compare(userData.password, user.password);
     if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
 
-    await this.userRepository.update(userId, { isDeleted: true, deletedAt: new Date() });
+    await this.userRepository.update(user.id, { isDeleted: true, deletedAt: new Date() });
 
     return { statusCode: 200 };
   }

@@ -6,12 +6,14 @@ import {
   UpdateDateColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Category } from './category.entity';
 import { Project } from './project.entity';
 import { Activity } from './activity.entity';
 import { TaskGoal } from './taskGoal.entity';
+import { TaskPush } from './taskPush.entity';
 import { Icon } from './icon.entity';
 import { Medal } from './medal.entity';
 
@@ -20,10 +22,10 @@ export class Task {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
-  @Column({ type: 'varchar', length: 100, default: '' })
+  @Column({ type: 'varchar', length: 100, default: null })
   title: string;
 
-  @Column({ type: 'varchar', length: 300, default: '' })
+  @Column({ type: 'varchar', length: 300, default: null })
   description: string;
 
   @Column({ type: 'date' })
@@ -34,9 +36,6 @@ export class Task {
 
   @Column({ type: 'tinyint', default: true })
   isActive: Boolean;
-
-  @Column({ type: 'tinyint', default: true })
-  isPushEnabled: Boolean;
 
   @Column({ type: 'tinyint', default: false })
   isComplated: Boolean;
@@ -60,13 +59,16 @@ export class Task {
   category: Category;
 
   @ManyToOne(() => Icon, (icon) => icon.tasks)
-  icon: Icon[];
+  icon: Icon;
 
   @ManyToOne(() => Project, (project) => project.tasks)
   project: Project;
 
-  @OneToMany(() => TaskGoal, (taskGoal) => taskGoal.task)
-  taskGoals: TaskGoal;
+  @OneToOne(() => TaskGoal, (taskGoal) => taskGoal.task, { cascade: true })
+  taskGoal: TaskGoal;
+
+  @OneToOne(() => TaskPush, (taskPush) => taskPush.task, { cascade: true })
+  taskPush: TaskPush;
 
   @OneToMany(() => Activity, (activity) => activity.task)
   activitys: Activity[];

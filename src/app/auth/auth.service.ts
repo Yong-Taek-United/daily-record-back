@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { UserHelperService } from 'src/shared/services/user-helper.service';
 import { TokenHelperService } from 'src/shared/services/token-helper.service';
 import { CookieHelperService } from 'src/shared/services/cookie-helper.service';
+import { User } from 'src/shared/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { AuthType } from 'src/shared/types/enums/user.enum';
 import { SIGN_UP_GOOGLE_URL } from 'src/shared/constants/clientURL.constant';
@@ -82,10 +83,7 @@ export class AuthService {
   }
 
   // 비밀번호 인증
-  async authByPassword(userId: any, authData: AuthPasswordDto) {
-    const user = await this.userHelperService.findUserByField('id', userId);
-    if (!user) throw new NotFoundException('찾을 수 없는 회원입니다.');
-
+  async authByPassword(user: User, authData: AuthPasswordDto) {
     const isMatch = await bcrypt.compare(authData.password, user.password);
     if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
 
