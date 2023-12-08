@@ -20,7 +20,7 @@ const exampleTasks = [
     finishedAt: '2023-11-14',
     category: { id: 1 },
     icon: { id: 1 },
-    taskGoal: { countType: 'COUNT', cycleType: 'DAY', cycleCount: 2, isWeekendsExcl: true },
+    taskGoal: { countType: 'COUNT', cycleType: 'DAY', cycleCount: 2, goal: 62, isWeekendsExcl: true },
     taskPush: { cycleType: 'DAY', pushTime: 12, isPushEnabled: true },
   },
   {
@@ -30,7 +30,7 @@ const exampleTasks = [
     finishedAt: '2023-12-14',
     category: { id: 1 },
     icon: { id: 1 },
-    taskGoal: { countType: 'DURATION', cycleType: 'WEEK', cycleCount: 5, isWeekendsExcl: false },
+    taskGoal: { countType: 'DURATION', cycleType: 'WEEK', cycleCount: 5, goal: 22, isWeekendsExcl: false },
     taskPush: { cycleType: 'DAY', pushTime: 22, isPushEnabled: true },
   },
 ];
@@ -47,6 +47,10 @@ export class CreateTaskGoalDto {
   @IsNumber()
   @ApiProperty({ example: 2 })
   cycleCount: number;
+
+  @IsNumber()
+  @ApiProperty({ example: 2 })
+  goal: number;
 
   @IsBoolean()
   @ApiProperty({ example: false })
