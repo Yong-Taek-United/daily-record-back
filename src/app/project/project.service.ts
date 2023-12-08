@@ -12,8 +12,8 @@ export class ProjectService {
     private readonly projectRepository: Repository<Project>,
   ) {}
 
-  // 프로젝트 생성 처리
-  async createProject(user: User, projectData: CreateProjectDto) {
+  // 프로젝트 생성 처리: 방식-1
+  async createProjectWithTask(user: User, projectData: CreateProjectDto) {
     const { password, ...userInfo } = user;
     const { tasks, ...project } = projectData;
     const tasksWithUser = await this.setUserForTask(userInfo, tasks);
@@ -30,5 +30,18 @@ export class ProjectService {
   // 테스크 회원 설정
   async setUserForTask(userInfo: any, tasks: CreateTaskDto[]) {
     return tasks.map((task) => ({ user: userInfo, ...task }));
+  }
+
+  // 프로젝트 생성 처리: 방식-2
+  async createProject(user: User, projectData: CreateProjectDto) {
+    const { password, ...userInfo } = user;
+    const { tasks, ...project } = projectData;
+    const projectInfo = {
+      ...project,
+      user: userInfo,
+    };
+    const data = await this.projectRepository.save(projectInfo);
+
+    return { statusCode: 201, data };
   }
 }

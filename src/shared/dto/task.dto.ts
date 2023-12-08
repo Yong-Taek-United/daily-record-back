@@ -12,29 +12,6 @@ import {
 import { Type } from 'class-transformer';
 import { CountType, CycleType } from '../types/enums/task.enum';
 
-const exampleTasks = [
-  {
-    title: '테스크 제목을 작성해주세요.',
-    description: '테스크 내용을 작성해주세요.',
-    startedAt: '2023-10-15',
-    finishedAt: '2023-11-14',
-    category: { id: 1 },
-    icon: { id: 1 },
-    taskGoal: { countType: 'COUNT', cycleType: 'DAY', cycleCount: 2, goal: 62, isWeekendsExcl: true },
-    taskPush: { cycleType: 'DAY', pushTime: 12, isPushEnabled: true },
-  },
-  {
-    title: '테스크2 제목을 작성해주세요.',
-    description: '테스크2 내용을 작성해주세요.',
-    startedAt: '2023-11-15',
-    finishedAt: '2023-12-14',
-    category: { id: 1 },
-    icon: { id: 1 },
-    taskGoal: { countType: 'DURATION', cycleType: 'WEEK', cycleCount: 5, goal: 22, isWeekendsExcl: false },
-    taskPush: { cycleType: 'DAY', pushTime: 22, isPushEnabled: true },
-  },
-];
-
 export class CreateTaskGoalDto {
   @IsString()
   @ApiProperty({ example: CountType.COUNT })
@@ -49,7 +26,7 @@ export class CreateTaskGoalDto {
   cycleCount: number;
 
   @IsNumber()
-  @ApiProperty({ example: 2 })
+  @ApiProperty({ example: 62 })
   goal: number;
 
   @IsBoolean()
@@ -74,7 +51,8 @@ export class CreateTaskPushDto {
 }
 
 export class CreateTaskDto {
-  @IsOptional()
+  @IsObject()
+  @ApiProperty({ example: { id: 1 } })
   project: object;
 
   @IsOptional()
@@ -96,11 +74,11 @@ export class CreateTaskDto {
   finishedAt: Date;
 
   @IsObject()
-  @ApiProperty()
+  @ApiProperty({ example: { id: 1 } })
   category: object;
 
   @IsObject()
-  @ApiProperty()
+  @ApiProperty({ example: { id: 1 } })
   icon: object;
 
   @IsObject()
@@ -114,35 +92,4 @@ export class CreateTaskDto {
   @Type(() => CreateTaskPushDto)
   @ApiProperty()
   taskPush: CreateTaskPushDto;
-}
-
-export class CreateProjectDto {
-  @IsOptional()
-  @IsString()
-  @ApiProperty({ example: '프로젝트 제목을 작성해주세요.' })
-  title: string;
-
-  @IsOptional()
-  @IsString()
-  @ApiProperty({ example: '프로젝트 내용을 작성해주세요.' })
-  description: string;
-
-  @IsDateString()
-  @ApiProperty({ example: '2023-10-01' })
-  startedAt: Date;
-
-  @IsDateString()
-  @ApiProperty({ example: '2023-12-31' })
-  finishedAt: Date;
-
-  @IsBoolean()
-  @ApiProperty({ example: true })
-  isActive: boolean;
-
-  @IsOptional()
-  @IsArray()
-  @ValidateNested()
-  @Type(() => CreateTaskDto)
-  @ApiProperty({ example: exampleTasks })
-  tasks: CreateTaskDto[];
 }
