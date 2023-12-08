@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateProjectDto, CreateTaskDto } from 'src/shared/dto/project.dto';
+import { CreateProjectDto, CreateTaskDto, UpdateProjectDto } from 'src/shared/dto/project.dto';
 import { Project } from 'src/shared/entities/project.entity';
 import { User } from 'src/shared/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -35,13 +35,23 @@ export class ProjectService {
   // 프로젝트 생성 처리: 방식-2
   async createProject(user: User, projectData: CreateProjectDto) {
     const { password, ...userInfo } = user;
-    const { tasks, ...project } = projectData;
     const projectInfo = {
-      ...project,
+      ...projectData,
       user: userInfo,
     };
     const data = await this.projectRepository.save(projectInfo);
 
     return { statusCode: 201, data };
+  }
+
+  // 프로젝트 수정 처리: 방식-2
+  async updateProject(user: User, projectId: number, projectData: UpdateProjectDto) {
+    const project = await this.projectRepository.findOne({ where: { id: projectId }, relations: ['user'] });
+    if (project.user.id !== user.id) throw new ForbiddenException('접근 권한이 없습니다.');
+
+    await this.projectRepository.update(projectId, projectData);
+    const data = await this.projectRepository.findOne({ where: { id: projectId } });
+
+    return { statusCode: 200, data };
   }
 }

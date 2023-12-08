@@ -1,7 +1,7 @@
-import { Body, Controller, Post, Req } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Param, Post, Put, Req } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ProjectService } from './project.service';
-import { CreateProjectDto } from 'src/shared/dto/project.dto';
+import { CreateProjectDto, UpdateProjectDto } from 'src/shared/dto/project.dto';
 
 @Controller('projects')
 @ApiTags('Project')
@@ -19,5 +19,15 @@ export class ProjectController {
   @ApiOperation({ summary: '프로젝트 생성: 방식-2', description: '프로젝트를 생성합니다.' })
   async createProject(@Req() req, @Body() projectData: CreateProjectDto) {
     return await this.projectService.createProject(req.user, projectData);
+  }
+
+  @Put(':projectId')
+  @ApiOperation({ summary: '프로젝트 수정: 방식-2', description: '프로젝트를 수정합니다.' })
+  @ApiParam({
+    name: 'projectId',
+    example: 1,
+  })
+  async updateProject(@Req() req, @Param('projectId') projectId, @Body() projectData: UpdateProjectDto) {
+    return await this.projectService.updateProject(req.user, projectId, projectData);
   }
 }
