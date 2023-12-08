@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Put, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, Put, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { TaskService } from './task.service';
 import { CreateTaskDto, UpdateTaskDto } from 'src/shared/dto/task.dto';
@@ -23,5 +23,15 @@ export class TaskController {
   })
   async updateTask(@Req() req, @Param('taskId') taskId: number, @Body() taskData: UpdateTaskDto) {
     return await this.taskService.updateTask(req.user, taskId, taskData);
+  }
+
+  @Delete(':taskId')
+  @ApiOperation({ summary: '테스크 삭제', description: '테스크를 삭제합니다.' })
+  @ApiParam({
+    name: 'taskId',
+    example: 1,
+  })
+  async deleteTask(@Req() req, @Param('taskId') taskId: number) {
+    return await this.taskService.deleteTask(req.user, taskId);
   }
 }

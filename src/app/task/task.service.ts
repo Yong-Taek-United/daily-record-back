@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/shared/entities/user.entity';
@@ -36,5 +36,16 @@ export class TaskService {
     const data = await this.taskRepository.save(taskInfo);
 
     return { statusCode: 200, data };
+  }
+
+  // 테스크 삭제 처리
+  async deleteTask(user: User, taskId: number) {
+    const task = await this.taskRepository.findOne({ where: { id: taskId }, relations: ['user'] });
+    if (task.user.id !== user.id) throw new ForbiddenException('접근 권한이 없습니다.');
+
+    const result = await this.taskRepository.update(taskId, { isDeleted: true, deletedAt: new Date() });
+    if (result.affected === 0) throw new InternalServerErrorException();
+
+    return { statusCode: 200 };
   }
 }
