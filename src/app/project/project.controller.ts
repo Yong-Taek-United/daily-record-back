@@ -27,7 +27,7 @@ export class ProjectController {
     name: 'projectId',
     example: 1,
   })
-  async updateProject(@Req() req, @Param('projectId') projectId, @Body() projectData: UpdateProjectDto) {
+  async updateProject(@Req() req, @Param('projectId') projectId: number, @Body() projectData: UpdateProjectDto) {
     return await this.projectService.updateProject(req.user, projectId, projectData);
   }
 }

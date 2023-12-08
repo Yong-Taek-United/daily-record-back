@@ -49,8 +49,11 @@ export class ProjectService {
     const project = await this.projectRepository.findOne({ where: { id: projectId }, relations: ['user'] });
     if (project.user.id !== user.id) throw new ForbiddenException('접근 권한이 없습니다.');
 
-    await this.projectRepository.update(projectId, projectData);
-    const data = await this.projectRepository.findOne({ where: { id: projectId } });
+    const projectInfo = {
+      ...projectData,
+      id: projectId,
+    };
+    const data = await this.projectRepository.save(projectInfo);
 
     return { statusCode: 200, data };
   }
