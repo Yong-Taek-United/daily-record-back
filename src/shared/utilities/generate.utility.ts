@@ -1,8 +1,7 @@
 export class GenerateUtility {
-  static generateDatetime(option) {
-    const { numberOnly = false } = option;
+  static generateDatetimeLocalString(date: Date, option: {} = {}) {
+    const { numberOnly } = { numberOnly: false, ...option };
 
-    const currentDate = new Date();
     const formatOptions: Intl.DateTimeFormatOptions = {
       timeZone: 'Asia/Seoul',
       year: 'numeric',
@@ -11,8 +10,9 @@ export class GenerateUtility {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
+      hour12: false,
     };
-    const datetime = currentDate.toLocaleString('ko-KR', formatOptions).replace(/\D/g, '');
+    const datetime = date.toLocaleString('ko-KR', formatOptions);
     return numberOnly ? datetime.replace(/\D/g, '') : datetime;
   }
 

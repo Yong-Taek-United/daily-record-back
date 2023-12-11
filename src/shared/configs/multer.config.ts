@@ -47,7 +47,7 @@ export class MulterConfig implements MulterOptionsFactory {
   // 이미지 파일명 생성
   private generateFileName(file: Express.Multer.File) {
     const randomString = GenerateUtility.generateRandomString('img-', 10);
-    const datetime = GenerateUtility.generateDatetime({ numberOnly: true });
+    const datetime = GenerateUtility.generateDatetimeLocalString(new Date(), { numberOnly: true });
 
     return `${randomString}_${datetime}.${mime.extension(file.mimetype)}`;
   }
