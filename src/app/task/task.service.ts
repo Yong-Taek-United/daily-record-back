@@ -1,9 +1,10 @@
 import { ForbiddenException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from 'src/shared/entities/user.entity';
+import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Task } from 'src/shared/entities/task.entity';
+import { User } from 'src/shared/entities/user.entity';
 import { CreateTaskDto, UpdateTaskDto } from 'src/shared/dto/task.dto';
+import { ConvertDateUtility } from 'src/shared/utilities/convert-date.utility';
 
 @Injectable()
 export class TaskService {
@@ -47,5 +48,22 @@ export class TaskService {
     if (result.affected === 0) throw new InternalServerErrorException();
 
     return { statusCode: 200 };
+  }
+
+  // 나의 테스크 목록 조회: 액티비티 생성
+  async getTaskForActivity(user: User, projectId: number) {
+    const convertedDate = ConvertDateUtility.convertDateWithoutTime(new Date());
+
+    const options = {
+      isComplated: false,
+      isDeleted: false,
+      startedAt: LessThanOrEqual(convertedDate),
+      finishedAt: MoreThanOrEqual(convertedDate),
+      user: { id: user.id },
+      project: { id: projectId },
+    };
+    const data = await this.taskRepository.find({ where: options });
+
+    return { statusCode: 200, data };
   }
 }

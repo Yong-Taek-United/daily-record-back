@@ -15,4 +15,12 @@ export class ConvertDateUtility {
     const datetime = date.toLocaleString('ko-KR', formatOptions);
     return numberOnly ? datetime.replace(/\D/g, '') : datetime;
   }
+
+  static convertDateWithoutTime(date: Date) {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const day = date.getDate();
+
+    return new Date(year, month, day);
+  }
 }

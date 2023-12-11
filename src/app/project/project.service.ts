@@ -1,9 +1,10 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateProjectDto, CreateTaskDto, UpdateProjectDto } from 'src/shared/dto/project.dto';
+import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Project } from 'src/shared/entities/project.entity';
 import { User } from 'src/shared/entities/user.entity';
-import { Repository } from 'typeorm';
+import { CreateProjectDto, CreateTaskDto, UpdateProjectDto } from 'src/shared/dto/project.dto';
+import { ConvertDateUtility } from 'src/shared/utilities/convert-date.utility';
 
 @Injectable()
 export class ProjectService {
@@ -54,6 +55,22 @@ export class ProjectService {
       id: projectId,
     };
     const data = await this.projectRepository.save(projectInfo);
+
+    return { statusCode: 200, data };
+  }
+
+  // 나의 프로젝트 목록 조회: 액티비티 생성
+  async getProjectsForActivity(user: User) {
+    const convertedDate = ConvertDateUtility.convertDateWithoutTime(new Date());
+
+    const options = {
+      isComplated: false,
+      isDeleted: false,
+      startedAt: LessThanOrEqual(convertedDate),
+      finishedAt: MoreThanOrEqual(convertedDate),
+      user: { id: user.id },
+    };
+    const data = await this.projectRepository.find({ where: options });
 
     return { statusCode: 200, data };
   }

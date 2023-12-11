@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Put, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ProjectService } from './project.service';
 import { CreateProjectDto, UpdateProjectDto } from 'src/shared/dto/project.dto';
@@ -29,5 +29,14 @@ export class ProjectController {
   })
   async updateProject(@Req() req, @Param('projectId') projectId: number, @Body() projectData: UpdateProjectDto) {
     return await this.projectService.updateProject(req.user, projectId, projectData);
+  }
+
+  @Get('self/list/for-activity')
+  @ApiOperation({
+    summary: '나의 프로젝트 목록 조회: 액티비티 생성',
+    description: '액티비티 생성 시 연결할 현재 활성화 중인 프로젝트 목록을 조회합니다.',
+  })
+  async getProjectsForActivity(@Req() req) {
+    return await this.projectService.getProjectsForActivity(req.user);
   }
 }
