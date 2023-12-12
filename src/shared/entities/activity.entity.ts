@@ -18,11 +18,20 @@ export class Activity {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
-  @Column({ type: 'varchar', length: 100, default: '' })
+  @Column({ type: 'varchar', length: 100, default: null })
   title: string;
 
-  @Column({ type: 'varchar', length: 300, default: '' })
+  @Column({ type: 'varchar', length: 300, default: null })
   description: string;
+
+  @Column({ type: 'date' })
+  actedDate: Date;
+
+  @Column({ type: 'int', default: 0 })
+  actedHour: number;
+
+  @Column({ type: 'int', default: 0 })
+  actedMinute: number;
 
   @Column({ type: 'tinyint', default: false })
   isDeleted: Boolean;
