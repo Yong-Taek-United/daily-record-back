@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Activity } from 'src/shared/entities/activity.entity';
 import { User } from 'src/shared/entities/user.entity';
-import { ActivityDto } from 'src/shared/dto/activity.dto';
+import { createActivityDto, updateActivityDto } from 'src/shared/dto/activity.dto';
 
 @Injectable()
 export class ActivityService {
@@ -13,7 +13,7 @@ export class ActivityService {
   ) {}
 
   // 액티비티 생성
-  async createActivity(user: User, activityData: ActivityDto) {
+  async createActivity(user: User, activityData: createActivityDto) {
     const { password, ...userInfo } = user;
 
     const activityInfo = {
@@ -24,5 +24,20 @@ export class ActivityService {
     const data = await this.activityRepository.save(activityInfo);
 
     return { statusCode: 201, data };
+  }
+
+  // 액티비티 수정
+  async updateActivity(user: User, activityId: number, activityData: updateActivityDto) {
+    const activity = await this.activityRepository.findOne({ where: { id: activityId }, relations: ['user'] });
+    if (activity.user.id !== user.id) throw new ForbiddenException('접근 권한이 없습니다.');
+    
+    const activityInfo = {
+      ...activityData,
+      id: activityId,
+    };
+
+    const data = await this.activityRepository.save(activityInfo);
+
+    return { statusCode: 200, data };
   }
 }

@@ -1,7 +1,7 @@
-import { Body, Controller, Post, Req } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Param, Post, Put, Req } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ActivityService } from './activity.service';
-import { ActivityDto } from 'src/shared/dto/activity.dto';
+import { createActivityDto, updateActivityDto } from 'src/shared/dto/activity.dto';
 
 @Controller('activities')
 @ApiTags('Activitiy')
@@ -11,7 +11,16 @@ export class ActivityController {
 
   @Post('')
   @ApiOperation({ summary: '액티비티 생성', description: '액티비티를 생성합니다.' })
-  async createActivity(@Req() req, @Body() activityData: ActivityDto) {
+  async createActivity(@Req() req, @Body() activityData: createActivityDto) {
     return await this.activityService.createActivity(req.user, activityData);
+  }
+
+  @Put(':activityId')
+  @ApiOperation({ summary: '액티비티 수정', description: '액티비티를 수정합니다.' })
+  @ApiParam({
+    name: 'activityId',
+  })
+  async updateActivity(@Req() req, @Param('activityId') activityId: number, @Body() activityData: updateActivityDto) {
+    return await this.activityService.updateActivity(req.user, activityId, activityData);
   }
 }
