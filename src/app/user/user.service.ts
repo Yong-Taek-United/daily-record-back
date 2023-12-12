@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  InternalServerErrorException,
   UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -192,7 +193,8 @@ export class UserService {
     const isMatch = await bcrypt.compare(userData.password, user.password);
     if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
 
-    await this.userRepository.update(user.id, { isActive: false });
+    const result = await this.userRepository.update(user.id, { isActive: false });
+    if (result.affected === 0) throw new InternalServerErrorException();
 
     return { statusCode: 200 };
   }
@@ -202,7 +204,8 @@ export class UserService {
     const isMatch = await bcrypt.compare(userData.password, user.password);
     if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
 
-    await this.userRepository.update(user.id, { isDeleted: true, deletedAt: new Date() });
+    const result = await this.userRepository.update(user.id, { isDeleted: true, deletedAt: new Date() });
+    if (result.affected === 0) throw new InternalServerErrorException();
 
     return { statusCode: 200 };
   }

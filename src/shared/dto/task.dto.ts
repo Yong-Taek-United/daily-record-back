@@ -12,29 +12,6 @@ import {
 import { Type } from 'class-transformer';
 import { CountType, CycleType } from '../types/enums/task.enum';
 
-const exampleTasks = [
-  {
-    title: '테스크 제목을 작성해주세요.',
-    description: '테스크 내용을 작성해주세요.',
-    startedAt: '2023-10-15',
-    finishedAt: '2023-11-14',
-    category: { id: 1 },
-    icon: { id: 1 },
-    taskGoal: { countType: 'COUNT', cycleType: 'DAY', cycleCount: 2, goal: 62, isWeekendsExcl: true },
-    taskPush: { cycleType: 'DAY', pushTime: 12, isPushEnabled: true },
-  },
-  {
-    title: '테스크2 제목을 작성해주세요.',
-    description: '테스크2 내용을 작성해주세요.',
-    startedAt: '2023-11-15',
-    finishedAt: '2023-12-14',
-    category: { id: 1 },
-    icon: { id: 1 },
-    taskGoal: { countType: 'DURATION', cycleType: 'WEEK', cycleCount: 5, goal: 22, isWeekendsExcl: false },
-    taskPush: { cycleType: 'DAY', pushTime: 22, isPushEnabled: true },
-  },
-];
-
 export class CreateTaskGoalDto {
   @IsString()
   @ApiProperty({ example: CountType.COUNT })
@@ -49,7 +26,7 @@ export class CreateTaskGoalDto {
   cycleCount: number;
 
   @IsNumber()
-  @ApiProperty({ example: 2 })
+  @ApiProperty({ example: 62 })
   goal: number;
 
   @IsBoolean()
@@ -75,9 +52,6 @@ export class CreateTaskPushDto {
 
 export class CreateTaskDto {
   @IsOptional()
-  project: object;
-
-  @IsOptional()
   @IsString()
   @ApiProperty({ example: '테스크 제목을 작성해주세요.' })
   title: string;
@@ -96,11 +70,15 @@ export class CreateTaskDto {
   finishedAt: Date;
 
   @IsObject()
-  @ApiProperty()
+  @ApiProperty({ example: { id: 1 } })
+  project: object;
+
+  @IsObject()
+  @ApiProperty({ example: { id: 1 } })
   category: object;
 
   @IsObject()
-  @ApiProperty()
+  @ApiProperty({ example: { id: 1 } })
   icon: object;
 
   @IsObject()
@@ -116,57 +94,92 @@ export class CreateTaskDto {
   taskPush: CreateTaskPushDto;
 }
 
-export class CreateProjectDto {
-  @IsOptional()
+export class UpdateTaskGoalDto {
+  @IsNumber()
+  @ApiProperty({ example: 1 })
+  id: number;
+
   @IsString()
-  @ApiProperty({ example: '프로젝트 제목을 작성해주세요.' })
-  title: string;
+  @ApiProperty({ example: CountType.COUNT })
+  countType: CountType;
 
-  @IsOptional()
   @IsString()
-  @ApiProperty({ example: '프로젝트 내용을 작성해주세요.' })
-  description: string;
+  @ApiProperty({ example: CycleType.DAY })
+  cycleType: CycleType;
 
-  @IsDateString()
-  @ApiProperty({ example: '2023-10-01' })
-  startedAt: Date;
+  @IsNumber()
+  @ApiProperty({ example: 2 })
+  cycleCount: number;
 
-  @IsDateString()
-  @ApiProperty({ example: '2023-12-31' })
-  finishedAt: Date;
+  @IsNumber()
+  @ApiProperty({ example: 62 })
+  goal: number;
 
   @IsBoolean()
-  @ApiProperty({ example: true })
-  isActive: boolean;
-
-  @IsOptional()
-  @IsArray()
-  @ValidateNested()
-  @Type(() => CreateTaskDto)
-  @ApiProperty({ example: exampleTasks })
-  tasks: CreateTaskDto[];
+  @ApiProperty({ example: false })
+  isWeekendsExcl: boolean;
 }
 
-export class UpdateProjectDto {
+export class UpdateTaskPushDto {
+  @IsNumber()
+  @ApiProperty({ example: 1 })
+  id: number;
+
   @IsOptional()
   @IsString()
-  @ApiProperty({ example: '프로젝트 제목을 수정합니다.' })
+  @ApiProperty({ example: CycleType.DAY })
+  cycleType: CycleType;
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty({ example: 12 })
+  pushTime: number;
+
+  @IsBoolean()
+  @ApiProperty({ example: true })
+  isPushEnabled: boolean;
+}
+
+export class UpdateTaskDto {
+  @IsOptional()
+  @IsString()
+  @ApiProperty({ example: '테스크 제목을 수정합니다.' })
   title: string;
 
   @IsOptional()
   @IsString()
-  @ApiProperty({ example: '프로젝트 내용을 수정합니다.' })
+  @ApiProperty({ example: '테스크 내용을 수정합니다.' })
   description: string;
 
   @IsDateString()
-  @ApiProperty({ example: '2023-09-01' })
+  @ApiProperty({ example: '2023-09-15' })
   startedAt: Date;
 
   @IsDateString()
-  @ApiProperty({ example: '2023-12-31' })
+  @ApiProperty({ example: '2023-11-14' })
   finishedAt: Date;
 
-  @IsBoolean()
-  @ApiProperty({ example: true })
-  isActive: boolean;
+  @IsObject()
+  @ApiProperty({ example: { id: 1 } })
+  project: object;
+
+  @IsObject()
+  @ApiProperty({ example: { id: 1 } })
+  category: object;
+
+  @IsObject()
+  @ApiProperty({ example: { id: 1 } })
+  icon: object;
+
+  @IsObject()
+  @ValidateNested()
+  @Type(() => UpdateTaskGoalDto)
+  @ApiProperty()
+  taskGoal: UpdateTaskGoalDto;
+
+  @IsObject()
+  @ValidateNested()
+  @Type(() => UpdateTaskPushDto)
+  @ApiProperty()
+  taskPush: UpdateTaskPushDto;
 }

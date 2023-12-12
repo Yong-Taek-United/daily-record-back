@@ -5,6 +5,7 @@ import { diskStorage } from 'multer';
 import * as fs from 'fs/promises';
 import * as mime from 'mime-types';
 import { GenerateUtility } from '../utilities/generate.utility';
+import { ConvertDateUtility } from '../utilities/convert-date.utility';
 
 @Injectable()
 export class MulterConfig implements MulterOptionsFactory {
@@ -47,7 +48,7 @@ export class MulterConfig implements MulterOptionsFactory {
   // 이미지 파일명 생성
   private generateFileName(file: Express.Multer.File) {
     const randomString = GenerateUtility.generateRandomString('img-', 10);
-    const datetime = GenerateUtility.generateDatetime({ numberOnly: true });
+    const datetime = ConvertDateUtility.convertDatetimeLocalString(new Date(), { numberOnly: true });
 
     return `${randomString}_${datetime}.${mime.extension(file.mimetype)}`;
   }
