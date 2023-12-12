@@ -1,8 +1,9 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Project } from 'src/shared/entities/project.entity';
 import { User } from 'src/shared/entities/user.entity';
+import { Task } from 'src/shared/entities/task.entity';
 import { CreateProjectDto, CreateTaskDto, UpdateProjectDto } from 'src/shared/dto/project.dto';
 import { ConvertDateUtility } from 'src/shared/utilities/convert-date.utility';
 
@@ -11,6 +12,8 @@ export class ProjectService {
   constructor(
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
+    @InjectRepository(Task)
+    private readonly taskRepository: Repository<Task>,
   ) {}
 
   // 프로젝트 생성 처리: 방식-1
@@ -57,6 +60,19 @@ export class ProjectService {
     const data = await this.projectRepository.save(projectInfo);
 
     return { statusCode: 200, data };
+  }
+
+  // 프로젝트 삭제 처리
+  async deleteProject(user: User, projectId: number) {
+    const project = await this.projectRepository.findOne({ where: { id: projectId }, relations: ['user'] });
+    if (project.user.id !== user.id) throw new ForbiddenException('접근 권한이 없습니다.');
+
+    const result = await this.projectRepository.update(projectId, { isDeleted: true, deletedAt: new Date() });
+    if (result.affected === 0) throw new InternalServerErrorException();
+
+    await this.taskRepository.update({ project: { id: projectId } }, { isDeleted: true, deletedAt: new Date() });
+
+    return { statusCode: 200 };
   }
 
   // 나의 프로젝트 목록 조회: 액티비티 생성

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ProjectService } from './project.service';
 import { CreateProjectDto, UpdateProjectDto } from 'src/shared/dto/project.dto';
@@ -29,6 +29,19 @@ export class ProjectController {
   })
   async updateProject(@Req() req, @Param('projectId') projectId: number, @Body() projectData: UpdateProjectDto) {
     return await this.projectService.updateProject(req.user, projectId, projectData);
+  }
+
+  @Delete(':projectId')
+  @ApiOperation({
+    summary: '프로젝트 삭제',
+    description: '프로젝트와 하위 모든 테스크를 삭제하고 액티비티 관계를 해제(null)합니다.',
+  })
+  @ApiParam({
+    name: 'projectId',
+    example: 1,
+  })
+  async deleteProject(@Req() req, @Param('projectId') projectId: number) {
+    return await this.projectService.deleteProject(req.user, projectId);
   }
 
   @Get('self/list/for-activity')
