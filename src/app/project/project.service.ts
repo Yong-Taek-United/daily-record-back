@@ -6,6 +6,7 @@ import { User } from 'src/shared/entities/user.entity';
 import { Task } from 'src/shared/entities/task.entity';
 import { CreateProjectDto, CreateTaskDto, UpdateProjectDto } from 'src/shared/dto/project.dto';
 import { ConvertDateUtility } from 'src/shared/utilities/convert-date.utility';
+import { Activity } from 'src/shared/entities/activity.entity';
 
 @Injectable()
 export class ProjectService {
@@ -14,6 +15,8 @@ export class ProjectService {
     private readonly projectRepository: Repository<Project>,
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
+    @InjectRepository(Activity)
+    private readonly activityRepository: Repository<Activity>,
   ) {}
 
   // 프로젝트 생성 처리: 방식-1
@@ -71,6 +74,7 @@ export class ProjectService {
     if (result.affected === 0) throw new InternalServerErrorException();
 
     await this.taskRepository.update({ project: { id: projectId } }, { isDeleted: true, deletedAt: new Date() });
+    await this.activityRepository.update({ project: { id: projectId } }, { project: null, task: null });
 
     return { statusCode: 200 };
   }

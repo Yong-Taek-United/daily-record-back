@@ -34,7 +34,7 @@ export class ProjectController {
   @Delete(':projectId')
   @ApiOperation({
     summary: '프로젝트 삭제',
-    description: '프로젝트와 하위 모든 테스크를 삭제하고 액티비티 관계를 해제(null)합니다.',
+    description: '프로젝트와 하위 모든 테스크를 삭제하고 연결된 액티비티 관계를 해제(null)합니다.',
   })
   @ApiParam({
     name: 'projectId',

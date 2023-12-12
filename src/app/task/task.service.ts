@@ -5,12 +5,15 @@ import { Task } from 'src/shared/entities/task.entity';
 import { User } from 'src/shared/entities/user.entity';
 import { CreateTaskDto, UpdateTaskDto } from 'src/shared/dto/task.dto';
 import { ConvertDateUtility } from 'src/shared/utilities/convert-date.utility';
+import { Activity } from 'src/shared/entities/activity.entity';
 
 @Injectable()
 export class TaskService {
   constructor(
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
+    @InjectRepository(Activity)
+    private readonly activityRepository: Repository<Activity>,
   ) {}
 
   // 테스크 생성 처리: 방식-2
@@ -46,6 +49,8 @@ export class TaskService {
 
     const result = await this.taskRepository.update(taskId, { isDeleted: true, deletedAt: new Date() });
     if (result.affected === 0) throw new InternalServerErrorException();
+
+    await this.activityRepository.update({ task: { id: taskId } }, { project: null, task: null });
 
     return { statusCode: 200 };
   }

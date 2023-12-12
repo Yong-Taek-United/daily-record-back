@@ -26,7 +26,7 @@ export class TaskController {
   }
 
   @Delete(':taskId')
-  @ApiOperation({ summary: '테스크 삭제', description: '테스크를 삭제합니다.' })
+  @ApiOperation({ summary: '테스크 삭제', description: '테스크를 삭제하고 연결된 액티비티 관계를 해제(null)합니다.' })
   @ApiParam({
     name: 'taskId',
     example: 1,
@@ -41,9 +41,9 @@ export class TaskController {
     description: '액티비티 생성 시 연결할 현재 활성화 중인 테스크 목록을 조회합니다.',
   })
   @ApiParam({
-    name: 'projectId'
+    name: 'projectId',
   })
-  async getTaskForActivity(@Req() req, @Param('projectId') projectId: number, ) {
+  async getTaskForActivity(@Req() req, @Param('projectId') projectId: number) {
     return await this.taskService.getTaskForActivity(req.user, projectId);
   }
 }
