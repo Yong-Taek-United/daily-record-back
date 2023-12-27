@@ -57,7 +57,7 @@ export class EmailService {
   async checkEmailVelified(emailData: VerifyEmailDto) {
     const { email, emailType } = emailData;
 
-    const emailLog = await this.emailLogRepository.findOne({ where: { email, emailType, isVerifable: true } });
+    const emailLog = await this.emailLogRepository.findOne({ where: { email, emailType, isChecked: true } });
     if (!emailLog) throw new NotFoundException('이메일 인증 내역이 없습니다.');
 
     return { statusCode: 200 };
