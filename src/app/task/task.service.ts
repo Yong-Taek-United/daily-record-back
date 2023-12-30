@@ -16,7 +16,7 @@ export class TaskService {
     private readonly activityRepository: Repository<Activity>,
   ) {}
 
-  // 테스크 생성 처리: 방식-2
+  // 테스크 생성 처리
   async createTask(user: User, taskData: CreateTaskDto) {
     const { password, ...userInfo } = user;
     const taskInfo = {
@@ -28,7 +28,7 @@ export class TaskService {
     return { statusCode: 201, data };
   }
 
-  // 테스크 수정 처리: 방식-2
+  // 테스크 수정 처리
   async updateTask(user: User, taskId: number, taskData: UpdateTaskDto) {
     const task = await this.taskRepository.findOne({ where: { id: taskId }, relations: ['user'] });
     if (task.user.id !== user.id) throw new ForbiddenException('접근 권한이 없습니다.');

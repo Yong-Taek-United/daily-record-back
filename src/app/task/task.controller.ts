@@ -9,14 +9,14 @@ import { CreateTaskDto, UpdateTaskDto } from 'src/shared/dto/task.dto';
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
-  @Post('second')
-  @ApiOperation({ summary: '테스크 생성: 방식-2', description: '테스크를 생성합니다.' })
+  @Post('')
+  @ApiOperation({ summary: '테스크 생성', description: '테스크를 생성합니다.' })
   async createTask(@Req() req, @Body() taskData: CreateTaskDto) {
     return await this.taskService.createTask(req.user, taskData);
   }
 
   @Put(':taskId')
-  @ApiOperation({ summary: '테스크 수정: 방식-2', description: '테스크를 수정합니다.' })
+  @ApiOperation({ summary: '테스크 수정', description: '테스크를 수정합니다.' })
   @ApiParam({
     name: 'taskId',
     example: 1,
