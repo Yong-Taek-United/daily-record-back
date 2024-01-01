@@ -19,14 +19,14 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('/sign-up')
+  @Post('sign-up')
   @Public()
   @ApiOperation({ summary: '회원가입: 일반', description: 'email은 중복 불가입니다.' })
   async signUp(@Body() userData: CreateUserDto) {
     return await this.userService.signUp(userData);
   }
 
-  @Post('/sign-up/socail')
+  @Post('sign-up/socail')
   @Public()
   @ApiOperation({
     summary: '회원가입: 소셜',
@@ -36,7 +36,7 @@ export class UserController {
     return await this.userService.signUpSocail(userData, res);
   }
 
-  @Patch('/password/reset')
+  @Patch('password/reset')
   @Public()
   @ApiOperation({ summary: '비밀번호 재설정', description: '이메일 인증을 통해 비밀번호를 재설정합니다.' })
   async ResetPasswordByEmail(@Body() userData: ResetPasswordDto) {
@@ -49,7 +49,7 @@ export class UserController {
     return await this.userService.getUserInfo(req.user);
   }
 
-  @Post('/profile-image/upload')
+  @Post('profile-image/upload')
   @UseInterceptors(FilesInterceptor('files', 1))
   @ApiConsumes('multipart/form-data')
   @ApiOperation({
@@ -74,7 +74,7 @@ export class UserController {
     return await this.userService.uploadProfileImage(req.user, files);
   }
 
-  @Patch('/password/change')
+  @Patch('password/change')
   @ApiOperation({
     summary: '비밀번호 변경',
     description: '사용자가 직접 비밀번호를 변경합니다. 변경 완료 후 로그아웃해 주세요.',
