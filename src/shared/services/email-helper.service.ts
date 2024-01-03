@@ -106,7 +106,7 @@ export class EmailHelperService {
   async createEmailContext(emailData: any) {
     const { emailLog, user } = emailData;
 
-    const hostname = this.configService.get<string>('REDIRECT_ORIGIN');
+    const hostname = this.configService.get<string>('SERVER_ORIGIN');
 
     let context: {} = {};
     switch (emailLog.emailType) {
