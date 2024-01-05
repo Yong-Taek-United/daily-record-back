@@ -13,7 +13,7 @@ export class EmailController {
   @Post('email-verification')
   @ApiOperation({
     summary: '사용자 인증 이메일 발송',
-    description: '이메일 중복 확인으로 인한 에러가 발생할 수 있습니다.',
+    description: '이메일 중복 확인으로 인한 에러가 발생할 수 있습니다. [emailType: VERIFICATION]',
   })
   async sendEmailVerification(@Body() emailData: VerifyEmailDto) {
     return await this.emailService.sendEmailVerification(emailData);
@@ -22,7 +22,7 @@ export class EmailController {
   @Post('reset-password')
   @ApiOperation({
     summary: '비밀번호 재설정 이메일 발송',
-    description: '회원 email 정보 조회 에러가 발생할 수 있습니다.',
+    description: '회원 email 정보 조회 에러가 발생할 수 있습니다. [emailType: PASSWORD]',
   })
   async sendEmailResetPassword(@Body() emailData: VerifyEmailDto) {
     return await this.emailService.emailResetPassword(emailData);
