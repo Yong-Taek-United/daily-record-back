@@ -4,7 +4,7 @@ import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Project } from 'src/shared/entities/project.entity';
 import { User } from 'src/shared/entities/user.entity';
 import { Task } from 'src/shared/entities/task.entity';
-import { CreateProjectDto, CreateTaskDto, UpdateProjectDto } from 'src/shared/dto/project.dto';
+import { CreateProjectDto, UpdateProjectDto } from 'src/shared/dto/project.dto';
 import { ConvertDateUtility } from 'src/shared/utilities/convert-date.utility';
 import { Activity } from 'src/shared/entities/activity.entity';
 
