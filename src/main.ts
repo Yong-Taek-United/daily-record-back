@@ -1,12 +1,21 @@
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app/app.module';
+import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const port = app.get(ConfigService).get<number>('PORT');
+  const config = app.get(ConfigService);
+
+  const port = config.get<number>('PORT');
+  const corsOriginDevelopment = config.get<string>('CORS_ORIGIN_DEVELOPMENT');
+  const corsOriginProduction = config.get<string>('CORS_ORIGIN_PRODUCTION');
+
+  app.enableCors({
+    origin: [corsOriginDevelopment, corsOriginProduction],
+    credentials: true,
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -16,21 +25,13 @@ async function bootstrap() {
     }),
   );
 
-  app.enableCors({
-    origin: [
-      app.get(ConfigService).get<string>('CORS_ORIGIN_DEVELOMENT'),
-      app.get(ConfigService).get<string>('CORS_ORIGIN_PRODUCTION'),
-    ],
-    credentials: true,
-  });
-
-  const config = new DocumentBuilder()
+  const swaggerConfig = new DocumentBuilder()
     .setTitle('Daily Record')
     .setDescription('Project "Daily Record" API')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, document);
 
   await app.listen(port);
