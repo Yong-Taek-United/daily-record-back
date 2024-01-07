@@ -14,10 +14,10 @@ export class TypeOrmConfig implements TypeOrmOptionsFactory {
       username: this.configService.get<string>('DB_USERNAME'),
       password: this.configService.get<string>('DB_PASSWORD'),
       database: this.configService.get<string>('DB_DATABASE'),
-      entities: [`${__dirname}/../**/*.entity{.ts,.js}`],
-      synchronize: true,
-      charset: 'utf8mb4',
-      // timezone: 'z',
+      entities: [`${__dirname}/${this.configService.get<string>('DB_ENTITIES')}`],
+      synchronize: this.configService.get<boolean>('DB_SYNCHRONIZE'),
+      charset: this.configService.get<string>('DB_CHARSET'),
+      timezone: this.configService.get<string>('DB_TIMEZONE'),
     };
   }
 }
