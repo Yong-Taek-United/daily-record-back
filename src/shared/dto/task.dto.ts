@@ -79,6 +79,10 @@ export class CreateTaskDto {
 
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
+  color: object;
+
+  @IsObject()
+  @ApiProperty({ example: { id: 1 } })
   icon: object;
 
   @IsObject()
