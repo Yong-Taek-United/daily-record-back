@@ -29,7 +29,6 @@ export class MulterConfig implements MulterOptionsFactory {
   private buildFileStoragePath(req: any) {
     const fileRootDirectory = this.configService.get<string>('FILE_STORAGE_PATH');
     const contentDirectory = this.getContentDirectoryName(req.url);
-    console.log(req.user);
     const userId = req.user.id;
 
     const fileStoragePath = `${fileRootDirectory}/${contentDirectory}/${userId}`;
