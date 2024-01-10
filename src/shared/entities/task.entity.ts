@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 import { Category } from './category.entity';
+import { Color } from './color.entity';
 import { Project } from './project.entity';
 import { Activity } from './activity.entity';
 import { TaskGoal } from './taskGoal.entity';
@@ -57,6 +58,9 @@ export class Task {
 
   @ManyToOne(() => Category, (category) => category.tasks)
   category: Category;
+
+  @ManyToOne(() => Color, (color) => color.tasks)
+  color: Color;
 
   @ManyToOne(() => Icon, (icon) => icon.tasks)
   icon: Icon;
