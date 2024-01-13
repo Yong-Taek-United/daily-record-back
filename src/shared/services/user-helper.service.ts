@@ -16,7 +16,9 @@ export class UserHelperService {
   async findUserByField(field: string, value: any, optionColumns: {} = {}) {
     const defaultColumns = { [field]: value, isDeleted: false, isActive: true, isAdmin: false };
     const columns = { ...defaultColumns, ...optionColumns };
-    return await this.userRepository.findOne({ where: columns });
+    const user = await this.userRepository.findOne({ where: columns });
+    if (!user) throw new NotFoundException('일치하는 회원 정보가 존재하지 않습니다.');
+    return user;
   }
 
   // username 생성
