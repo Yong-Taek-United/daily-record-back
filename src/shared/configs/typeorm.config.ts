@@ -17,7 +17,6 @@ export class TypeOrmConfig implements TypeOrmOptionsFactory {
       entities: [`${__dirname}/${this.configService.get<string>('DB_ENTITIES')}`],
       synchronize: this.configService.get<boolean>('DB_SYNCHRONIZE'),
       charset: this.configService.get<string>('DB_CHARSET'),
-      timezone: this.configService.get<string>('DB_TIMEZONE'),
     };
   }
 }
