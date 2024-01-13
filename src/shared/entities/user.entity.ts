@@ -35,7 +35,7 @@ export class User {
   @Column({ type: 'varchar', length: 30 })
   nickname: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 100, select: false })
   password: string;
 
   @Column({ type: 'datetime', default: null })

@@ -19,7 +19,8 @@ export class AuthService {
 
   // 회원 인증
   async validateUser(email: string, password: string, authType: AuthType = AuthType.BASIC) {
-    const { password: passwordFormDB, ...user } = await this.userHelperService.getUserWithRelations('email', email);
+    const user = await this.userHelperService.getUserWithRelations('email', email);
+    const passwordFormDB = await this.userHelperService.getUserPassword(user.id);
 
     if (!!user && user.authType === authType) {
       const isMatch = await bcrypt.compare(password, passwordFormDB);
@@ -84,7 +85,8 @@ export class AuthService {
 
   // 비밀번호 인증
   async authByPassword(user: User, authData: AuthPasswordDto) {
-    const isMatch = await bcrypt.compare(authData.password, user.password);
+    const passwordFormDB = await this.userHelperService.getUserPassword(user.id);
+    const isMatch = await bcrypt.compare(authData.password, passwordFormDB);
     if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
 
     return { statusCode: 200 };
