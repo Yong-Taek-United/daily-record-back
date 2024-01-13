@@ -156,9 +156,10 @@ export class UserService {
 
   // 비밀번호 변경 처리
   async changePassword(user: User, userData: ChangePasswordDto) {
+    const passwordFormDB = await this.userHelperService.getUserPassword(user.id);
     let { currentPassword, newPassword } = userData;
 
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    const isMatch = await bcrypt.compare(currentPassword, passwordFormDB);
     if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
 
     await this.resetPassword(user.id, newPassword);
@@ -190,7 +191,8 @@ export class UserService {
 
   // 회원 계정 비활성화
   async deactivateUser(user: User, userData: DeleteUserDto) {
-    const isMatch = await bcrypt.compare(userData.password, user.password);
+    const passwordFormDB = await this.userHelperService.getUserPassword(user.id);
+    const isMatch = await bcrypt.compare(userData.password, passwordFormDB);
     if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
 
     const result = await this.userRepository.update(user.id, { isActive: false });
@@ -201,7 +203,8 @@ export class UserService {
 
   // 회원 계정 탈퇴
   async withdrawal(user: User, userData: DeleteUserDto) {
-    const isMatch = await bcrypt.compare(userData.password, user.password);
+    const passwordFormDB = await this.userHelperService.getUserPassword(user.id);
+    const isMatch = await bcrypt.compare(userData.password, passwordFormDB);
     if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
 
     const result = await this.userRepository.update(user.id, { isDeleted: true, deletedAt: new Date() });

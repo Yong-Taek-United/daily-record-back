@@ -14,9 +14,11 @@ export class UserHelperService {
 
   // 회원 조회(by 특정 필드)
   async findUserByField(field: string, value: any, optionColumns: {} = {}) {
-    const defaultColumns = { [field]: value, isDeleted: false, isActive: true, isAdmin: false };
+    const defaultColumns = { [field]: value, isDeleted: false };
     const columns = { ...defaultColumns, ...optionColumns };
-    return await this.userRepository.findOne({ where: columns });
+    const user = await this.userRepository.findOne({ where: columns });
+    if (!user) throw new NotFoundException('회원 정보가 존재하지 않습니다.');
+    return user;
   }
 
   // username 생성
@@ -55,5 +57,12 @@ export class UserHelperService {
     if (!user) throw new NotFoundException('회원 정보가 존재하지 않습니다.');
 
     return user;
+  }
+
+  // 회원 비밀번호 조회
+  async getUserPassword(userId: number) {
+    const { password } = await this.userRepository.findOne({ where: { id: userId }, select: ['password'] });
+    if (!password) throw new NotFoundException('회원 정보가 존재하지 않습니다.');
+    return password;
   }
 }
