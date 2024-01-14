@@ -18,10 +18,9 @@ export class TaskService {
 
   // 테스크 생성 처리
   async createTask(user: User, taskData: CreateTaskDto) {
-    const { password, ...userInfo } = user;
     const taskInfo = {
       ...taskData,
-      user: userInfo,
+      user,
     };
     const data = await this.taskRepository.save(taskInfo);
 

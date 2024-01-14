@@ -21,10 +21,9 @@ export class ProjectService {
 
   // 프로젝트 생성 처리
   async createProject(user: User, projectData: CreateProjectDto) {
-    const { password, ...userInfo } = user;
     const projectInfo = {
       ...projectData,
-      user: userInfo,
+      user,
     };
     const data = await this.projectRepository.save(projectInfo);
 

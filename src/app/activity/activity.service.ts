@@ -14,11 +14,9 @@ export class ActivityService {
 
   // 액티비티 생성 처리
   async createActivity(user: User, activityData: createActivityDto) {
-    const { password, ...userInfo } = user;
-
     const activityInfo = {
       ...activityData,
-      user: userInfo,
+      user
     };
 
     const data = await this.activityRepository.save(activityInfo);
