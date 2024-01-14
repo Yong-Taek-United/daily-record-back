@@ -18,7 +18,7 @@ export class CategoryService {
   }
   //
   async getCategoryList() {
-    const data = await this.categoryRepository.find();
+    const data = await this.categoryRepository.find({ where: { isActive: true } });
     return { statusCode: 200, data };
   }
   //
