@@ -23,7 +23,7 @@ export class CategoryService {
   }
   //
   async updateCategory(categoryId: number, updateData: UpdateCategoryDto) {
-    const categoryInfo = { ...updateData, categoryId };
+    const categoryInfo = { ...updateData, id: categoryId };
     const data = await this.categoryRepository.save(categoryInfo);
     return { statusCode: 200, data };
   }

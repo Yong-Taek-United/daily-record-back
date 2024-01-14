@@ -21,7 +21,7 @@ export class CategoryController {
     return this.categoryService.getCategoryList();
   }
 
-  @Patch(':categotyId')
+  @Patch(':categoryId')
   @ApiOperation({ summary: '카테고리 수정', description: '카테고리를 수정합니다.' })
   @ApiParam({ name: 'categoryId', example: 1 })
   async updateCategory(@Param('categoryId') categoryId: number, @Body() updateData: UpdateCategoryDto) {
