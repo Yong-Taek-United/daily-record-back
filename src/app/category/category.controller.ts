@@ -16,7 +16,7 @@ export class CategoryController {
   }
 
   @Get('list')
-  @ApiOperation({ summary: '카테고리 목록 조회', description: '카테고리를 목록을 조회합니다.' })
+  @ApiOperation({ summary: '카테고리 목록 조회', description: '카테고리 목록을 조회합니다.' })
   async getCategoryList() {
     return this.categoryService.getCategoryList();
   }

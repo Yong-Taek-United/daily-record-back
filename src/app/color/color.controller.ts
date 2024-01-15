@@ -16,7 +16,7 @@ export class ColorController {
   }
 
   @Get('list')
-  @ApiOperation({ summary: '컬러 목록 조회', description: '컬러를 목록을 조회합니다.' })
+  @ApiOperation({ summary: '컬러 목록 조회', description: '컬러 목록을 조회합니다.' })
   async getColorList() {
     return this.colorService.getColorList();
   }
