@@ -5,11 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
+import { ColorModule } from './color/color.module';
+import { IconModule } from './icon/icon.module';
 import { ProjectModule } from './project/project.module';
 import { TaskModule } from './task/task.module';
 import { ActivityModule } from './activity/activity.module';
 import { EmailModule } from './email/email.module';
-import { ColorModule } from './color/color.module';
 import { ApiResponseInterceptor } from '../shared/interceptors/api-response.interceptor';
 import { JwtAuthGuard } from '../shared/guards/jwt-auth.guard';
 import { ErrorExceptionFilter } from 'src/shared/filters/errorException.Filter';
@@ -35,6 +36,7 @@ const envFilePath = `.env.${nodeEnv}`;
     ActivityModule,
     EmailModule,
     ColorModule,
+    IconModule,
   ],
   providers: [
     {
