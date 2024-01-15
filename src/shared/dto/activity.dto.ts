@@ -1,5 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDateString, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
+import { Category } from '../entities/category.entity';
+import { Project } from '../entities/project.entity';
+import { Task } from '../entities/task.entity';
 
 export class createActivityDto {
   @IsOptional()
@@ -25,17 +28,17 @@ export class createActivityDto {
 
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
-  category: object;
+  category: Category;
 
   @IsOptional()
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
-  project: object;
+  project: Project;
 
   @IsOptional()
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
-  task: object;
+  task: Task;
 }
 
 export class updateActivityDto {
@@ -62,15 +65,15 @@ export class updateActivityDto {
 
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
-  category: object;
-
-  @IsOptional()
-  @IsObject()
-  @ApiProperty({ example: { id: 2 } })
-  project: object;
+  category: Category;
 
   @IsOptional()
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
-  task: object;
+  project: Project;
+
+  @IsOptional()
+  @IsObject()
+  @ApiProperty({ example: { id: 1 } })
+  task: Task;
 }

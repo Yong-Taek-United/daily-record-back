@@ -4,6 +4,8 @@ import { Request, Response } from 'express';
 @Catch(Error)
 export class ErrorExceptionFilter implements ExceptionFilter {
   catch(exception: Error, host: ArgumentsHost) {
+    console.error(exception);
+
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
     const request = context.getRequest<Request>();

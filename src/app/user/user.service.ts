@@ -127,7 +127,7 @@ export class UserService {
 
   // 회원 정보 조회 처리
   async getUserInfo(user: User) {
-    const { password, ...data } = await this.userHelperService.getUserWithRelations('id', user.id);
+    const data = await this.userHelperService.getUserWithRelations('id', user.id);
     return { statusCode: 200, data };
   }
 

@@ -11,6 +11,10 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CountType, CycleType } from '../types/enums/task.enum';
+import { Project } from '../entities/project.entity';
+import { Category } from '../entities/category.entity';
+import { Color } from '../entities/color.entity';
+import { Icon } from '../entities/icon.entity';
 
 export class CreateTaskGoalDto {
   @IsString()
@@ -71,19 +75,19 @@ export class CreateTaskDto {
 
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
-  project: object;
+  project: Project;
 
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
-  category: object;
+  category: Category;
 
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
-  color: object;
+  color: Color;
 
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
-  icon: object;
+  icon: Icon;
 
   @IsObject()
   @ValidateNested()
@@ -165,15 +169,19 @@ export class UpdateTaskDto {
 
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
-  project: object;
+  project: Project;
 
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
-  category: object;
+  category: Category;
 
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
-  icon: object;
+  color: Color;
+
+  @IsObject()
+  @ApiProperty({ example: { id: 1 } })
+  icon: Icon;
 
   @IsObject()
   @ValidateNested()
