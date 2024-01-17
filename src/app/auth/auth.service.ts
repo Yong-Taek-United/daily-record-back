@@ -27,7 +27,7 @@ export class AuthService {
         const isMatch = await bcrypt.compare(password, passwordFormDB);
         if (isMatch) return user;
       }
-      throw new UnauthorizedException(`로그인 방식이 다른 회원 유형(${authType})입니다.`);
+      throw new UnauthorizedException(`로그인 방식이 다른 회원 유형(${user.authType})입니다.`);
     }
     return null;
   }
