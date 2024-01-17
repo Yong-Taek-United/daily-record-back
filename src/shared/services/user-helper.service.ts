@@ -17,7 +17,6 @@ export class UserHelperService {
     const defaultColumns = { [field]: value, isDeleted: false };
     const columns = { ...defaultColumns, ...optionColumns };
     const user = await this.userRepository.findOne({ where: columns });
-    if (!user) throw new NotFoundException('회원 정보가 존재하지 않습니다.');
     return user;
   }
 
