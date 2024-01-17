@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsDateString, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsDateString, IsEnum, IsInt, IsNumberString, IsOptional, IsString } from 'class-validator';
+import { ProjectStatus } from '../types/enums/project.enum';
 
 export class CreateProjectDto {
   @IsOptional()
@@ -23,6 +24,20 @@ export class CreateProjectDto {
   @IsBoolean()
   @ApiProperty({ example: true })
   isActive: boolean;
+}
+
+export class getProjectListDto {
+  @IsEnum(ProjectStatus)
+  @ApiProperty({ enum: ProjectStatus, default: ProjectStatus.ONGOING })
+  projectStatus: ProjectStatus;
+
+  @IsNumberString()
+  @ApiProperty({ example: 0 })
+  listSkip: number;
+
+  @IsNumberString()
+  @ApiProperty({ example: 10 })
+  listTake: number;
 }
 
 export class UpdateProjectDto {

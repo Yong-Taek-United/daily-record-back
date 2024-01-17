@@ -1,12 +1,13 @@
 import { ForbiddenException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { FindOperator, LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual, Repository } from 'typeorm';
 import { Project } from 'src/shared/entities/project.entity';
 import { User } from 'src/shared/entities/user.entity';
 import { Task } from 'src/shared/entities/task.entity';
-import { CreateProjectDto, UpdateProjectDto } from 'src/shared/dto/project.dto';
+import { CreateProjectDto, UpdateProjectDto, getProjectListDto } from 'src/shared/dto/project.dto';
 import { ConvertDateUtility } from 'src/shared/utilities/convert-date.utility';
 import { Activity } from 'src/shared/entities/activity.entity';
+import { ProjectStatus } from 'src/shared/types/enums/project.enum';
 
 @Injectable()
 export class ProjectService {
@@ -28,6 +29,32 @@ export class ProjectService {
     const data = await this.projectRepository.save(projectInfo);
 
     return { statusCode: 201, data };
+  }
+
+  // 프로젝트 목록 조회
+  async getProjectList(user: User, projectData: getProjectListDto) {
+    const { projectStatus, listSkip, listTake } = projectData;
+    const convertedDate = ConvertDateUtility.convertDateWithoutTime(new Date());
+
+    const period = await this.setPeriodByProjectStatus(projectStatus, convertedDate);
+
+    const whereOptions = {
+      isComplated: false,
+      isDeleted: false,
+      user: { id: user.id },
+      ...period,
+    };
+
+    const data = await this.projectRepository.find({
+      where: whereOptions,
+      order: {
+        startedAt: 'ASC',
+      },
+      skip: listSkip,
+      take: listTake,
+    });
+
+    return { statusCode: 200, data };
   }
 
   // 프로젝트 수정 처리
@@ -72,5 +99,30 @@ export class ProjectService {
     const data = await this.projectRepository.find({ where: options });
 
     return { statusCode: 200, data };
+  }
+
+  // 조회 기간 설정 By 프로젝트 상태
+  async setPeriodByProjectStatus(status: ProjectStatus, date: Date) {
+    let startedAt: FindOperator<Date>;
+    let finishedAt: FindOperator<Date>;
+
+    switch (status) {
+      case ProjectStatus.SCHEDULED:
+        startedAt = MoreThan(date);
+        finishedAt = startedAt;
+        break;
+      case ProjectStatus.ONGOING:
+        startedAt = LessThanOrEqual(date);
+        finishedAt = MoreThanOrEqual(date);
+        break;
+      case ProjectStatus.COMPLETED:
+        startedAt = LessThan(date);
+        finishedAt = startedAt;
+        break;
+      default:
+        startedAt = LessThanOrEqual(date);
+        finishedAt = MoreThanOrEqual(date);
+    }
+    return { startedAt, finishedAt };
   }
 }
