@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -128,6 +129,7 @@ export class UserService {
   // 회원 정보 조회 처리
   async getUserInfo(user: User) {
     const data = await this.userHelperService.getUserWithRelations('id', user.id);
+    if (!data) throw new NotFoundException('회원 정보가 존재하지 않습니다.');
     return { statusCode: 200, data };
   }
 

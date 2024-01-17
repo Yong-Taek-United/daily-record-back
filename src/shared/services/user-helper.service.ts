@@ -53,8 +53,6 @@ export class UserHelperService {
       .setParameters(setParams)
       .getOne();
 
-    if (!user) throw new NotFoundException('회원 정보가 존재하지 않습니다.');
-
     return user;
   }
 
