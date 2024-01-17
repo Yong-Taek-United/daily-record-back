@@ -48,6 +48,7 @@ export class AuthController {
   async googleAuth() {}
 
   @Get('google/callback')
+  @Public()
   @UseGuards(GoogleAuthGuard)
   async googleAuthCallback(@Req() req, @Res({ passthrough: true }) res: Response) {
     return await this.authService.googleLogin(req.user, res);

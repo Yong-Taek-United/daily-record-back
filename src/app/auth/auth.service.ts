@@ -20,11 +20,14 @@ export class AuthService {
   // 회원 인증
   async validateUser(email: string, password: string, authType: AuthType = AuthType.BASIC) {
     const user = await this.userHelperService.getUserWithRelations('email', email);
-    const passwordFormDB = await this.userHelperService.getUserPassword(user.id);
 
-    if (!!user && user.authType === authType) {
-      const isMatch = await bcrypt.compare(password, passwordFormDB);
-      if (isMatch) return user;
+    if (!!user) {
+      if (user.authType === authType) {
+        const passwordFormDB = await this.userHelperService.getUserPassword(user.id);
+        const isMatch = await bcrypt.compare(password, passwordFormDB);
+        if (isMatch) return user;
+      }
+      throw new UnauthorizedException(`로그인 방식이 다른 회원 유형(${authType})입니다.`);
     }
     return null;
   }
