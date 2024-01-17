@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { IconService } from './icon.service';
 import { CreateIconDto, UpdateIconDto } from 'src/shared/dto/icon.dto';
 import { IconType } from 'src/shared/types/enums/file.enum';
@@ -19,10 +19,10 @@ export class IconController {
     return this.iconService.createIcon(createData);
   }
 
-  @Get('list/:iconType')
+  @Get('list')
   @ApiOperation({ summary: '아이콘 목록 조회', description: '과제 혹은 메달 아이콘 목록을 조회합니다.' })
-  @ApiParam({ name: 'iconType', example: IconType.TASK })
-  async getIconList(@Param('iconType') iconType: IconType) {
+  @ApiQuery({ name: 'iconType', example: IconType.TASK })
+  async getIconList(@Query('iconType') iconType: IconType) {
     return this.iconService.getIconList(iconType);
   }
 
