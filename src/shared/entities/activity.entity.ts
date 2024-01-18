@@ -33,6 +33,9 @@ export class Activity {
   @Column({ type: 'int', default: 0 })
   actedMinute: number;
 
+  @Column({ type: 'int', default: 0 })
+  filledGoal: number;
+
   @Column({ type: 'tinyint', default: false })
   isDeleted: boolean;
 
