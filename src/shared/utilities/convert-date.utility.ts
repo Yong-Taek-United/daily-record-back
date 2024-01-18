@@ -41,9 +41,7 @@ export class ConvertDateUtility {
     const totalDays =
       Math.floor((endDate.getTime() - startDate.getTime()) / this.MILLISECONDS_PER_DAY) + Number(addOneDay);
 
-    const weekends = this.calculateWeekendsBetweenDates(startDate, totalDays);
-
-    return isWeekendsExcl ? totalDays - weekends : totalDays;
+    return isWeekendsExcl ? totalDays - this.calculateWeekendsBetweenDates(startDate, totalDays) : totalDays;
   }
 
   // 두 날짜 간 주말 일수 계산
