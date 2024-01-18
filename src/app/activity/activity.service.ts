@@ -41,14 +41,20 @@ export class ActivityService {
 
   // 액티비티 수정 처리
   async updateActivity(user: User, activityId: number, activityData: updateActivityDto) {
-    const activity = await this.activityRepository.findOne({ where: { id: activityId }, relations: ['user'] });
+    const activity = await this.activityRepository.findOne({ where: { id: activityId }, relations: ['user', 'task'] });
     if (activity.user.id !== user.id) throw new ForbiddenException('접근 권한이 없습니다.');
 
-    const { task, actedDate, filledGoal } = activityData;
+    const previousTask = activity.task;
+    const previousFilledGoal = activity.filledGoal;
+    const { task: newTask, actedDate, filledGoal: newFilledGoal } = activityData;
 
-    if (!!task) {
-      await this.checkTaskPeriod(task.id, actedDate);
-      await this.updateAccumulation(task.id, filledGoal);
+    if (!!previousTask) {
+      await this.updateAccumulation(previousTask.id, -previousFilledGoal);
+    }
+
+    if (!!newTask) {
+      await this.checkTaskPeriod(newTask.id, actedDate);
+      await this.updateAccumulation(newTask.id, newFilledGoal);
     }
 
     const activityInfo = { ...activityData, id: activityId };
