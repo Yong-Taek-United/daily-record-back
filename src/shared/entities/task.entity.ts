@@ -36,13 +36,13 @@ export class Task {
   finishedAt: Date;
 
   @Column({ type: 'tinyint', default: true })
-  isActive: Boolean;
+  isActive: boolean;
 
   @Column({ type: 'tinyint', default: false })
-  isComplated: Boolean;
+  isCompleted: boolean;
 
   @Column({ type: 'tinyint', default: false })
-  isDeleted: Boolean;
+  isDeleted: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

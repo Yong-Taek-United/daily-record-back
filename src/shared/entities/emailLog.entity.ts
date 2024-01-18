@@ -16,10 +16,10 @@ export class EmailLog {
   emailToken: string;
 
   @Column({ type: 'tinyint', default: false })
-  isChecked: Boolean;
+  isChecked: boolean;
 
   @Column({ type: 'tinyint', default: true })
-  isVerifable: Boolean;
+  isVerifable: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -10,7 +10,7 @@ export class Color {
   colorCode: string;
 
   @Column({ type: 'tinyint', default: true })
-  isActive: Boolean;
+  isActive: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

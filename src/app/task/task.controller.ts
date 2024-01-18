@@ -15,6 +15,16 @@ export class TaskController {
     return await this.taskService.createTask(req.user, taskData);
   }
 
+  @Get('list/:projectId')
+  @ApiOperation({ summary: '테스크 목록 조회', description: '특정 프로젝트의 테스크 목록을 조회합니다.' })
+  @ApiParam({
+    name: 'projectId',
+    example: 1,
+  })
+  async getTaskList(@Req() req, @Param('projectId') projectId: number) {
+    return await this.taskService.getTaskList(req.user, projectId);
+  }
+
   @Put(':taskId')
   @ApiOperation({ summary: '테스크 수정', description: '테스크를 수정합니다.' })
   @ApiParam({

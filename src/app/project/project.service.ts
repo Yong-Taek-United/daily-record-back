@@ -39,7 +39,7 @@ export class ProjectService {
     const period = await this.setPeriodByProjectStatus(projectStatus, convertedDate);
 
     const whereOptions = {
-      isComplated: false,
+      isCompleted: false,
       isDeleted: false,
       user: { id: user.id },
       ...period,
@@ -90,7 +90,7 @@ export class ProjectService {
     const convertedDate = ConvertDateUtility.convertDateWithoutTime(new Date());
 
     const options = {
-      isComplated: false,
+      isCompleted: false,
       isDeleted: false,
       startedAt: LessThanOrEqual(convertedDate),
       finishedAt: MoreThanOrEqual(convertedDate),

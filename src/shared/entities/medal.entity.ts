@@ -14,7 +14,7 @@ export class Medal {
   description: string;
 
   @Column({ type: 'tinyint', default: true })
-  isActive: Boolean;
+  isActive: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

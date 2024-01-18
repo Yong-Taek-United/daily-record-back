@@ -42,19 +42,19 @@ export class User {
   passwordChangedAt: Date;
 
   @Column({ type: 'tinyint', default: false })
-  isEmailVerified: Boolean;
+  isEmailVerified: boolean;
 
   @Column({ type: 'tinyint', default: false })
-  isPhoneVerified: Boolean;
+  isPhoneVerified: boolean;
 
   @Column({ type: 'tinyint', default: true })
-  isActive: Boolean;
+  isActive: boolean;
 
   @Column({ type: 'tinyint', default: false })
-  isAdmin: Boolean;
+  isAdmin: boolean;
 
   @Column({ type: 'tinyint', default: false })
-  isDeleted: Boolean;
+  isDeleted: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -15,17 +15,17 @@ export class TaskPush {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
-  @Column({ type: 'enum', enum: CycleType })
+  @Column({ type: 'enum', enum: CycleType, default: CycleType.DAY })
   cycleType: string;
 
   @Column({ type: 'int', default: 0 })
   pushTime: number;
 
   @Column({ type: 'tinyint', default: true })
-  isPushEnabled: Boolean;
+  isPushEnabled: boolean;
 
   @Column({ type: 'tinyint', default: true })
-  isActive: Boolean;
+  isActive: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

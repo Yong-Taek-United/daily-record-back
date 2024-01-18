@@ -14,6 +14,7 @@ export class createActivityDto {
   @IsString()
   @ApiProperty({ example: '액티비티 내용을 작성합니다.' })
   description: string;
+
   @IsDateString()
   @ApiProperty({ example: '2023-10-15' })
   actedDate: Date;
@@ -25,6 +26,11 @@ export class createActivityDto {
   @IsNumber()
   @ApiProperty({ example: 23 })
   actedMinute: number;
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty({ example: 1 })
+  filledGoal: number;
 
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
@@ -62,6 +68,11 @@ export class updateActivityDto {
   @IsNumber()
   @ApiProperty({ example: 56 })
   actedMinute: number;
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty({ example: 1 })
+  filledGoal: number;
 
   @IsObject()
   @ApiProperty({ example: { id: 1 } })

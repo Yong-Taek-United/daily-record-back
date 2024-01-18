@@ -30,6 +30,21 @@ export class TaskService {
     return { statusCode: 201, data };
   }
 
+  // 테스크 목록 조회
+  async getTaskList(user: User, projectId: number) {
+    const tasks = await this.taskRepository.find({
+      where: { project: { id: projectId } },
+      relations: ['taskGoal', 'taskPush', 'category', 'color', 'icon'],
+    });
+
+    const data = tasks.map((task) => {
+      const progressData = this.calculateTaskProgress(task);
+      return { ...task, progressData };
+    });
+
+    return { statusCode: 200, data };
+  }
+
   // 테스크 수정 처리
   async updateTask(user: User, taskId: number, taskData: UpdateTaskDto) {
     const task = await this.taskRepository.findOne({ where: { id: taskId }, relations: ['user'] });
@@ -76,7 +91,7 @@ export class TaskService {
     const convertedDate = ConvertDateUtility.convertDateWithoutTime(new Date());
 
     const options = {
-      isComplated: false,
+      isCompleted: false,
       isDeleted: false,
       startedAt: LessThanOrEqual(convertedDate),
       finishedAt: MoreThanOrEqual(convertedDate),
@@ -86,5 +101,27 @@ export class TaskService {
     const data = await this.taskRepository.find({ where: options });
 
     return { statusCode: 200, data };
+  }
+
+  // 테스크 진행도 데이터 산출
+  calculateTaskProgress(task: Task) {
+    const totalDays = ConvertDateUtility.calculateDaysBetweenDates(task.startedAt, task.finishedAt, task.taskGoal.isWeekendsExcl);
+    const elapsedDays = ConvertDateUtility.calculateDaysBetweenDates(task.startedAt, new Date(), task.taskGoal.isWeekendsExcl);
+    const goal = task.taskGoal.goal;
+    const accumulation = task.taskGoal.accumulation;
+    const expectedAccumulation = Number((goal * (elapsedDays / totalDays)).toFixed(0));
+    const achivementRate = Number((accumulation / goal).toFixed(3));
+    const estimatedAchivementRate = Number((accumulation / expectedAccumulation).toFixed(3));
+
+    const progressData = {
+      totalDays,
+      elapsedDays,
+      goal,
+      accumulation,
+      expectedAccumulation,
+      achivementRate,
+      estimatedAchivementRate,
+    };
+    return progressData;
   }
 }
