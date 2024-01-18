@@ -15,7 +15,7 @@ export class TaskPush {
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
-  @Column({ type: 'enum', enum: CycleType })
+  @Column({ type: 'enum', enum: CycleType, default: CycleType.DAY })
   cycleType: string;
 
   @Column({ type: 'int', default: 0 })

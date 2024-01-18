@@ -76,7 +76,7 @@ export class TaskService {
     const convertedDate = ConvertDateUtility.convertDateWithoutTime(new Date());
 
     const options = {
-      isComplated: false,
+      isCompleted: false,
       isDeleted: false,
       startedAt: LessThanOrEqual(convertedDate),
       finishedAt: MoreThanOrEqual(convertedDate),

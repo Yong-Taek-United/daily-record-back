@@ -32,7 +32,7 @@ export class Project {
   isActive: Boolean;
 
   @Column({ type: 'tinyint', default: false })
-  isComplated: Boolean;
+  isCompleted: Boolean;
 
   @Column({ type: 'tinyint', default: false })
   isDeleted: Boolean;
