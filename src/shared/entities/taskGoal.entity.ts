@@ -31,13 +31,13 @@ export class TaskGoal {
   accumulation: number;
 
   @Column({ type: 'tinyint', default: false })
-  isWeekendsExcl: Boolean;
+  isWeekendsExcl: boolean;
 
   @Column({ type: 'tinyint', default: true })
-  isActive: Boolean;
+  isActive: boolean;
 
   @Column({ type: 'tinyint', default: false })
-  isCompleted: Boolean;
+  isCompleted: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

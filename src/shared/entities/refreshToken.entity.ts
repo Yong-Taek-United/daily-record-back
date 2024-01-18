@@ -7,7 +7,7 @@ export class RefreshToken {
   id: number;
 
   @Column({ type: 'tinyint', default: false })
-  isRevoked: Boolean;
+  isRevoked: boolean;
 
   @Column({ type: 'varchar', length: 300, default: null })
   refreshToken: string;

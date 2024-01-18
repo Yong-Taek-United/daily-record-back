@@ -34,7 +34,7 @@ export class Activity {
   actedMinute: number;
 
   @Column({ type: 'tinyint', default: false })
-  isDeleted: Boolean;
+  isDeleted: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

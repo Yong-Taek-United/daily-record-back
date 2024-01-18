@@ -29,13 +29,13 @@ export class Project {
   finishedAt: Date;
 
   @Column({ type: 'tinyint', default: true })
-  isActive: Boolean;
+  isActive: boolean;
 
   @Column({ type: 'tinyint', default: false })
-  isCompleted: Boolean;
+  isCompleted: boolean;
 
   @Column({ type: 'tinyint', default: false })
-  isDeleted: Boolean;
+  isDeleted: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

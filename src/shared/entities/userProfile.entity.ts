@@ -21,7 +21,7 @@ export class UserProfile {
   introduce: string;
 
   @Column({ type: 'tinyint', default: false })
-  isDeleted: Boolean;
+  isDeleted: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

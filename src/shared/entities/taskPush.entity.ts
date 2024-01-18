@@ -22,10 +22,10 @@ export class TaskPush {
   pushTime: number;
 
   @Column({ type: 'tinyint', default: true })
-  isPushEnabled: Boolean;
+  isPushEnabled: boolean;
 
   @Column({ type: 'tinyint', default: true })
-  isActive: Boolean;
+  isActive: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

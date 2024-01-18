@@ -15,7 +15,7 @@ export class Icon {
   iconName: string;
 
   @Column({ type: 'tinyint', default: true })
-  isActive: Boolean;
+  isActive: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
