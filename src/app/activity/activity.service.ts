@@ -9,7 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Activity } from 'src/shared/entities/activity.entity';
 import { User } from 'src/shared/entities/user.entity';
-import { createActivityDto, updateActivityDto } from 'src/shared/dto/activity.dto';
+import { createActivityDto, getActivityWithProjectDto, updateActivityDto } from 'src/shared/dto/activity.dto';
 import { Task } from 'src/shared/entities/task.entity';
 import { TaskGoal } from 'src/shared/entities/taskGoal.entity';
 
@@ -75,6 +75,35 @@ export class ActivityService {
     if (result.affected === 0) throw new InternalServerErrorException();
 
     return { statusCode: 200 };
+  }
+
+  // 액티비티 목록 조회: 프로젝트/테스크
+  async getActivityListWithProject(user: User, activityData: getActivityWithProjectDto) {
+    const { projectId, taskId } = activityData;
+
+    const setParams = {
+      userId: user.id,
+      projectId,
+      taskId,
+      isDeleted: false,
+      isActive: false,
+    };
+
+    const queryBuilder = await this.activityRepository
+      .createQueryBuilder('activity')
+      .leftJoinAndSelect('activity.activityFile', 'activityFile', 'activityFile.isDeleted = :isDeleted')
+      .leftJoinAndSelect('activity.task', 'task', 'task.isDeleted = :isDeleted')
+      .leftJoinAndSelect('task.color', 'color', 'color.isActive = :isActive')
+      .where('activity.user.id = :userId')
+      .andWhere('activity.project.id = :projectId')
+      .andWhere('activity.isDeleted = :isDeleted')
+      .orderBy('activity.actedDate', 'DESC');
+
+    if (Number(taskId) !== 0) queryBuilder.andWhere('activity.task.id = :taskId');
+
+    const data = await queryBuilder.setParameters(setParams).getMany();
+
+    return { statusCode: 200, data };
   }
 
   // 액티비티 일자 등록 가능 여부 확인
