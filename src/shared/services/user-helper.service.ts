@@ -13,9 +13,8 @@ export class UserHelperService {
   ) {}
 
   // 회원 조회(by 특정 필드)
-  async findUserByField(field: string, value: any, optionColumns: {} = {}) {
-    const defaultColumns = { [field]: value, isDeleted: false };
-    const columns = { ...defaultColumns, ...optionColumns };
+  async findUserByField(field: string, value: any, optionColumns: { [key: string]: any } = {}) {
+    const columns = { [field]: value, ...optionColumns };
     const user = await this.userRepository.findOne({ where: columns });
     return user;
   }

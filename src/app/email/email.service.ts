@@ -30,7 +30,7 @@ export class EmailService {
   // 비밀번호 재설정 이메일 발송 처리
   async emailResetPassword(emailData: VerifyEmailDto) {
     const { email, emailType } = emailData;
-    const user = await this.userHelperService.findUserByField('email', email);
+    const user = await this.userHelperService.findUserByField('email', email, { isDeleted: false });
     if (!user) throw new NotFoundException('일치하는 회원 정보가 존재하지 않습니다.');
 
     await this.emailHelperService.HandleSendEmail({ email, emailType, user });
