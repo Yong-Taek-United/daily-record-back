@@ -64,13 +64,16 @@ export class UserService {
     };
 
     const user = await this.userHelperService.findUserByField('email', email);
-    if (user) throw new ConflictException('이미 존재하는 이메일입니다.');
+    if (!!user) {
+      const errorMessage = user.isDeleted ? '가입할 수 없는 이메일입니다.' : '이미 존재하는 이메일입니다.';
+      throw new ConflictException(errorMessage);
+    }
 
     userInfo.password = await this.userHelperService.hashPassword(password);
 
     const { password: remove, ...data } = await this.userRepository.save(userInfo);
 
-    await this.emailHelperService.HandleSendEmail({ email, emailType: EmailType.WELCOME, user: data });
+    this.emailHelperService.HandleSendEmail({ email, emailType: EmailType.WELCOME, user: data });
 
     return { statusCode: 201, data };
   }
@@ -89,8 +92,12 @@ export class UserService {
     };
 
     const user = await this.userHelperService.findUserByField('email', email);
-    if (user)
-      throw new ConflictException(`이미 ${user.authType} 회원가입으로 등록된 이메일입니다. 로그인을 진행할까요?`);
+    if (!!user) {
+      const errorMessage = user.isDeleted
+        ? '가입할 수 없는 이메일입니다.'
+        : `이미 ${user.authType} 회원가입으로 등록된 이메일입니다. 로그인을 진행할까요?`;
+      throw new ConflictException(errorMessage);
+    }
 
     userInfo.password = await this.userHelperService.hashPassword(password);
 
@@ -173,7 +180,9 @@ export class UserService {
     const { id: userId, username } = user;
 
     if (username !== userData.username) {
-      const otherUser = await this.userHelperService.findUserByField('username', userData.username);
+      const otherUser = await this.userHelperService.findUserByField('username', userData.username, {
+        isDeleted: false,
+      });
       if (otherUser) throw new ConflictException(`이미 존재하는 계정입니다.`);
     }
 
