@@ -46,12 +46,12 @@ export class Project {
   @Column({ type: 'datetime', default: null })
   deletedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.projects)
+  @ManyToOne(() => User, (user) => user.project)
   user: User;
 
   @OneToMany(() => Task, (task) => task.project, { cascade: true })
-  tasks: Task[];
+  task: Task[];
 
   @OneToMany(() => Activity, (activity) => activity.project)
-  activitys: Activity[];
+  activity: Activity[];
 }

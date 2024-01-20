@@ -34,6 +34,6 @@ export class ActivityFile {
   @Column({ type: 'datetime', default: null })
   deletedAt: Date;
 
-  @ManyToOne(() => Activity, (activity) => activity.activityFiles)
+  @ManyToOne(() => Activity, (activity) => activity.activityFile)
   activity: Activity;
 }

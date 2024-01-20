@@ -53,19 +53,19 @@ export class Task {
   @Column({ type: 'datetime', default: null })
   deletedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.tasks)
+  @ManyToOne(() => User, (user) => user.task)
   user: User;
 
-  @ManyToOne(() => Category, (category) => category.tasks)
+  @ManyToOne(() => Category, (category) => category.task)
   category: Category;
 
-  @ManyToOne(() => Color, (color) => color.tasks)
+  @ManyToOne(() => Color, (color) => color.task)
   color: Color;
 
-  @ManyToOne(() => Icon, (icon) => icon.tasks)
+  @ManyToOne(() => Icon, (icon) => icon.task)
   icon: Icon;
 
-  @ManyToOne(() => Project, (project) => project.tasks)
+  @ManyToOne(() => Project, (project) => project.task)
   project: Project;
 
   @OneToOne(() => TaskGoal, (taskGoal) => taskGoal.task, { cascade: true })
@@ -75,8 +75,8 @@ export class Task {
   taskPush: TaskPush;
 
   @OneToMany(() => Activity, (activity) => activity.task)
-  activitys: Activity[];
+  activity: Activity[];
 
   @OneToMany(() => Medal, (medal) => medal.task)
-  medals: Medal[];
+  medal: Medal[];
 }

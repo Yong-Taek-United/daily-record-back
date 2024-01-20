@@ -21,6 +21,6 @@ export class RefreshToken {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.refreshTokens)
+  @ManyToOne(() => User, (user) => user.refreshToken)
   user: User;
 }

@@ -22,9 +22,9 @@ export class Medal {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Icon, (icon) => icon.medals)
+  @ManyToOne(() => Icon, (icon) => icon.medal)
   icon: Icon[];
 
-  @ManyToOne(() => Task, (task) => task.medals)
+  @ManyToOne(() => Task, (task) => task.medal)
   task: Task[];
 }

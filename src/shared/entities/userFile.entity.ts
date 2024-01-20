@@ -40,6 +40,6 @@ export class UserFile {
   @Column({ type: 'datetime', default: null })
   deletedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.userFiles)
+  @ManyToOne(() => User, (user) => user.userFile)
   user: User;
 }

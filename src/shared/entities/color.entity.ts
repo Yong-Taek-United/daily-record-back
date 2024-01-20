@@ -19,5 +19,5 @@ export class Color {
   updatedAt: Date;
 
   @OneToMany(() => Task, (task) => task.color)
-  tasks: Task[];
+  task: Task[];
 }
