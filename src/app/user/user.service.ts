@@ -73,7 +73,7 @@ export class UserService {
 
     const { password: remove, ...data } = await this.userRepository.save(userInfo);
 
-    await this.emailHelperService.HandleSendEmail({ email, emailType: EmailType.WELCOME, user: data });
+    this.emailHelperService.HandleSendEmail({ email, emailType: EmailType.WELCOME, user: data });
 
     return { statusCode: 201, data };
   }
