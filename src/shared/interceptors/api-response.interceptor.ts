@@ -14,17 +14,17 @@ export class ApiResponseInterceptor implements NestInterceptor {
 
         const { statusCode, message, data, redirect } = response;
 
-        const frontendBaseUrl = this.configService.get<string>('REDIRECT_ORIGIN');
-
-        if (redirect) {
+        if (!!redirect) {
+          const frontendBaseUrl = this.configService.get<string>('REDIRECT_ORIGIN');
           httpResponse.redirect(`${frontendBaseUrl}${redirect}`);
         } else {
-          httpResponse.status(statusCode).send({
+          httpResponse.status(statusCode);
+          return {
             success: true,
             statusCode,
             message: message || '요청이 성공적으로 처리되었습니다.',
             data,
-          });
+          };
         }
       }),
     );
