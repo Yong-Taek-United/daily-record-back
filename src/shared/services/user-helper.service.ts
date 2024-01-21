@@ -44,11 +44,11 @@ export class UserHelperService {
     };
 
     const user = await this.userRepository
-      .createQueryBuilder('users')
-      .leftJoinAndSelect('users.userProfile', 'userProfile')
-      .leftJoinAndSelect('users.userFiles', 'userFiles', 'userFiles.isDeleted = :isDeleted')
-      .where(`users.${field} = :value`)
-      .andWhere('users.isDeleted = :isDeleted')
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.userProfile', 'userProfile')
+      .leftJoinAndSelect('user.userFile', 'userFile', 'userFile.isDeleted = :isDeleted')
+      .where(`user.${field} = :value`)
+      .andWhere('user.isDeleted = :isDeleted')
       .setParameters(setParams)
       .getOne();
 

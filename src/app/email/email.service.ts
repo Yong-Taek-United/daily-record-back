@@ -23,8 +23,6 @@ export class EmailService {
     if (user) throw new ConflictException('이미 존재하는 이메일입니다.');
 
     await this.emailHelperService.HandleSendEmail({ email, emailType });
-
-    return { statusCode: 200 };
   }
 
   // 비밀번호 재설정 이메일 발송 처리
@@ -34,8 +32,6 @@ export class EmailService {
     if (!user) throw new NotFoundException('일치하는 회원 정보가 존재하지 않습니다.');
 
     await this.emailHelperService.HandleSendEmail({ email, emailType, user });
-
-    return { statusCode: 200 };
   }
 
   // 이메일 인증 처리
@@ -50,7 +46,7 @@ export class EmailService {
 
     const redirectURL = await this.emailHelperService.createRedirectionURL(isSuccess, emailLog, emailToken);
 
-    return { redirect: redirectURL };
+    return redirectURL;
   }
 
   // 이메일 인증 여부 확인 처리
@@ -59,7 +55,5 @@ export class EmailService {
 
     const emailLog = await this.emailLogRepository.findOne({ where: { email, emailType, isChecked: true } });
     if (!emailLog) throw new NotFoundException('이메일 인증 내역이 없습니다.');
-
-    return { statusCode: 200 };
   }
 }

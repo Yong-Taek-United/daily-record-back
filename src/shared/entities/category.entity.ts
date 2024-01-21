@@ -20,8 +20,8 @@ export class Category {
   updatedAt: Date;
 
   @OneToMany(() => Task, (task) => task.category)
-  tasks: Task[];
+  task: Task[];
 
   @OneToMany(() => Activity, (activity) => activity.category)
-  activitys: Activity[];
+  activity: Activity[];
 }

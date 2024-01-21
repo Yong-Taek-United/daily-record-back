@@ -27,7 +27,7 @@ export class TaskService {
     const taskInfo = { ...taskData, user };
     const data = await this.taskRepository.save(taskInfo);
 
-    return { statusCode: 201, data };
+    return data;
   }
 
   // 테스크 목록 조회
@@ -42,7 +42,7 @@ export class TaskService {
       return { ...task, progressData };
     });
 
-    return { statusCode: 200, data };
+    return data;
   }
 
   // 테스크 수정 처리
@@ -56,7 +56,7 @@ export class TaskService {
     const taskInfo = { ...taskData, id: taskId };
     const data = await this.taskRepository.save(taskInfo);
 
-    return { statusCode: 200, data };
+    return data;
   }
 
   // 테스크 삭제 처리
@@ -69,7 +69,7 @@ export class TaskService {
 
     await this.activityRepository.update({ task: { id: taskId } }, { project: null, task: null });
 
-    return { statusCode: 200 };
+    return result;
   }
 
   // 테스크 기간 등록 가능 여부 확인
@@ -100,13 +100,21 @@ export class TaskService {
     };
     const data = await this.taskRepository.find({ where: options });
 
-    return { statusCode: 200, data };
+    return data;
   }
 
   // 테스크 진행도 데이터 산출
   calculateTaskProgress(task: Task) {
-    const totalDays = ConvertDateUtility.calculateDaysBetweenDates(task.startedAt, task.finishedAt, task.taskGoal.isWeekendsExcl);
-    const elapsedDays = ConvertDateUtility.calculateDaysBetweenDates(task.startedAt, new Date(), task.taskGoal.isWeekendsExcl);
+    const totalDays = ConvertDateUtility.calculateDaysBetweenDates(
+      task.startedAt,
+      task.finishedAt,
+      task.taskGoal.isWeekendsExcl,
+    );
+    const elapsedDays = ConvertDateUtility.calculateDaysBetweenDates(
+      task.startedAt,
+      new Date(),
+      task.taskGoal.isWeekendsExcl,
+    );
     const goal = task.taskGoal.goal;
     const accumulation = task.taskGoal.accumulation;
     const expectedAccumulation = Number((goal * (elapsedDays / totalDays)).toFixed(0));

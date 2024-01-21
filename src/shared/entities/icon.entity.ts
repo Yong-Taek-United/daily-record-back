@@ -24,8 +24,8 @@ export class Icon {
   updatedAt: Date;
 
   @OneToMany(() => Task, (task) => task.icon)
-  tasks: Task[];
+  task: Task[];
 
   @OneToMany(() => Medal, (medal) => medal.icon)
-  medals: Medal[];
+  medal: Medal[];
 }

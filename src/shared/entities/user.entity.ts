@@ -69,17 +69,17 @@ export class User {
   userProfile: UserProfile;
 
   @OneToMany(() => UserFile, (userFile) => userFile.user)
-  userFiles: UserFile[];
+  userFile: UserFile[];
 
   @OneToMany(() => Project, (project) => project.user)
-  projects: Project[];
+  project: Project[];
 
   @OneToMany(() => Task, (task) => task.user)
-  tasks: Task[];
+  task: Task[];
 
   @OneToMany(() => Activity, (activity) => activity.user)
-  activitys: Activity[];
+  activity: Activity[];
 
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
-  refreshTokens: RefreshToken;
+  refreshToken: RefreshToken;
 }

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
+import { IsDateString, IsNumber, IsNumberString, IsObject, IsOptional, IsString } from 'class-validator';
 import { Category } from '../entities/category.entity';
 import { Project } from '../entities/project.entity';
 import { Task } from '../entities/task.entity';
@@ -87,4 +87,14 @@ export class updateActivityDto {
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
   task: Task;
+}
+
+export class getActivityWithProjectDto {
+  @IsNumberString()
+  @ApiProperty({ example: 1 })
+  projectId: number;
+
+  @IsNumberString()
+  @ApiProperty({ example: 1, description: '전체: 0' })
+  taskId: number;
 }

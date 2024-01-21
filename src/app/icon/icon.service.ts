@@ -15,22 +15,22 @@ export class IconService {
   // 아이콘 생성
   async createIcon(createData: CreateIconDto) {
     const data = await this.iconRepository.save(createData);
-    return { statusCode: 201, data };
+    return data;
   }
   // 아이콘 목록 조회
   async getIconList(iconType: IconType) {
     const data = await this.iconRepository.find({ where: { iconType: iconType, isActive: true } });
-    return { statusCode: 200, data };
+    return data;
   }
   // 아이콘 수정
   async updateIcon(iconId: number, updateData: UpdateIconDto) {
     const iconInfo = { ...updateData, id: iconId };
     const data = await this.iconRepository.save(iconInfo);
-    return { statusCode: 200, data };
+    return data;
   }
   // 아이콘 비활성화
   async deactivateIcon(iconId: number) {
     const data = await this.iconRepository.update(iconId, { isActive: false });
-    return { statusCode: 200, data };
+    return data;
   }
 }

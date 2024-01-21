@@ -10,6 +10,7 @@ import { JwtRefreshAuthGuard } from '../../shared/guards/jwt-refresh-auth.guard'
 
 @ApiTags('Auth')
 @Controller('auth')
+@ApiBearerAuth()
 export class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -19,27 +20,8 @@ export class AuthController {
   @ApiBody({ type: LoginDto })
   @UseGuards(LocalAuthGuard)
   async login(@Req() req, @Res({ passthrough: true }) res: Response) {
-    return await this.authService.login(req.user, res);
-  }
-
-  @Post('refresh')
-  @Public()
-  @ApiBearerAuth()
-  @ApiOperation({
-    summary: 'Refresh Token 재발급',
-    description: 'refreshToken을 이용해 token을 재발급합니다. <br> (refreshToken으로 자물쇠를 잠그십시오.)',
-  })
-  @UseGuards(JwtRefreshAuthGuard)
-  async refreshTokens(@Req() req, @Res({ passthrough: true }) res: Response) {
-    return await this.authService.refreshTokens(req.user, res);
-  }
-
-  @Post('logout')
-  @Public()
-  @ApiBearerAuth()
-  @ApiOperation({ summary: '로그아웃', description: 'cookie에 저장된 token을 제거해 로그아웃합니다.' })
-  async logout(@Req() req, @Res() res: Response) {
-    return await this.authService.logout(req, res);
+    const data = await this.authService.login(req.user, res);
+    return { statusCode: 200, data };
   }
 
   @Get('google')
@@ -51,13 +33,34 @@ export class AuthController {
   @Public()
   @UseGuards(GoogleAuthGuard)
   async googleAuthCallback(@Req() req, @Res({ passthrough: true }) res: Response) {
-    return await this.authService.googleLogin(req.user, res);
+    const data = await this.authService.googleLogin(req.user, res);
+    return { redirect: data };
+  }
+
+  @Post('refresh')
+  @Public()
+  @ApiOperation({
+    summary: 'Refresh Token 재발급',
+    description: 'refreshToken을 이용해 token을 재발급합니다. <br> (refreshToken으로 자물쇠를 잠그십시오.)',
+  })
+  @UseGuards(JwtRefreshAuthGuard)
+  async refreshTokens(@Req() req, @Res({ passthrough: true }) res: Response) {
+    const data = await this.authService.login(req.user, res);
+    return { statusCode: 200, data };
+  }
+
+  @Post('logout')
+  @Public()
+  @ApiOperation({ summary: '로그아웃', description: 'cookie에 저장된 token을 제거해 로그아웃합니다.' })
+  async logout(@Req() req, @Res({ passthrough: true }) res: Response) {
+    await this.authService.logout(req, res);
+    return { statusCode: 200 };
   }
 
   @Post('password')
-  @ApiBearerAuth()
   @ApiOperation({ summary: '비밀번호 인증', description: '비밀번호로 사용자를 인증합니다.' })
   async authByPassword(@Req() req, @Body() authData: AuthPasswordDto) {
-    return await this.authService.authByPassword(req.user, authData);
+    await this.authService.authByPassword(req.user, authData);
+    return { statusCode: 200 };
   }
 }

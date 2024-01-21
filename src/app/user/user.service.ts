@@ -75,7 +75,7 @@ export class UserService {
 
     this.emailHelperService.HandleSendEmail({ email, emailType: EmailType.WELCOME, user: data });
 
-    return { statusCode: 201, data };
+    return data;
   }
 
   // 회원가입: 소셜
@@ -111,7 +111,7 @@ export class UserService {
 
     await this.emailHelperService.HandleSendEmail({ email, emailType: EmailType.WELCOME, user: data });
 
-    return { statusCode: 201, data };
+    return data;
   }
 
   // 비밀번호 재설정 처리
@@ -122,8 +122,9 @@ export class UserService {
 
     const secretKey = this.configService.get<string>('JWT_EMAIL_SECRET');
     const payload = this.jwtService.verify(emailToken, { secret: secretKey, ignoreExpiration: true });
-    await this.resetPassword(payload.userId, newPassword);
-    return { statusCode: 200 };
+    const data = await this.resetPassword(payload.userId, newPassword);
+
+    return data;
   }
 
   // 비밀번호 재설정/변경
@@ -131,13 +132,16 @@ export class UserService {
     password = await this.userHelperService.hashPassword(password);
     const result = await this.userRepository.update(userId, { password: password, passwordChangedAt: new Date() });
     if (result.affected === 0) throw new BadRequestException('비밀번호 변경에 실패했습니다.');
+
+    return result;
   }
 
   // 회원 정보 조회 처리
   async getUserInfo(user: User) {
     const data = await this.userHelperService.getUserWithRelations('id', user.id);
     if (!data) throw new NotFoundException('회원 정보가 존재하지 않습니다.');
-    return { statusCode: 200, data };
+
+    return data;
   }
 
   // 회원 프로필 이미지 등록 처리
@@ -159,8 +163,9 @@ export class UserService {
       { user: { id: user.id }, isDeleted: false },
       { isDeleted: true, deletedAt: new Date() },
     );
-    await this.userFileRepository.insert(fileInfo);
-    return { statusCode: 201 };
+    const data = await this.userFileRepository.save(fileInfo);
+
+    return data;
   }
 
   // 비밀번호 변경 처리
@@ -171,8 +176,9 @@ export class UserService {
     const isMatch = await bcrypt.compare(currentPassword, passwordFormDB);
     if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
 
-    await this.resetPassword(user.id, newPassword);
-    return { statusCode: 200 };
+    const data = await this.resetPassword(user.id, newPassword);
+
+    return data;
   }
 
   // 회원 기본 정보 수정
@@ -187,9 +193,9 @@ export class UserService {
     }
 
     await this.userRepository.update(userId, userData);
-    const { password: remove, ...data } = await this.userHelperService.findUserByField('id', userId);
+    const data = await this.userHelperService.findUserByField('id', userId);
 
-    return { statusCode: 200, data };
+    return data;
   }
 
   // 회원 프로필 정보 수정
@@ -197,7 +203,7 @@ export class UserService {
     await this.userProfileRepository.update({ user: { id: user.id } }, userData);
     const data = await this.userProfileRepository.findOne({ where: { user: { id: user.id } } });
 
-    return { statusCode: 200, data };
+    return data;
   }
 
   // 회원 계정 비활성화
@@ -209,7 +215,7 @@ export class UserService {
     const result = await this.userRepository.update(user.id, { isActive: false });
     if (result.affected === 0) throw new InternalServerErrorException();
 
-    return { statusCode: 200 };
+    return result;
   }
 
   // 회원 계정 탈퇴
@@ -220,7 +226,7 @@ export class UserService {
 
     const result = await this.userRepository.update(user.id, { isDeleted: true, deletedAt: new Date() });
     if (result.affected === 0) throw new InternalServerErrorException();
-
-    return { statusCode: 200 };
+    
+    return result;
   }
 }

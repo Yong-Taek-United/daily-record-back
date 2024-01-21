@@ -12,26 +12,30 @@ export class CategoryController {
   @Post('')
   @ApiOperation({ summary: '카테고리 생성', description: '카테고리를 생성합니다.' })
   async createCategory(@Body() createData: CreateCategoryDto) {
-    return this.categoryService.createCategory(createData);
+    const data = await this.categoryService.createCategory(createData);
+    return { statusCode: 201, data };
   }
 
   @Get('list')
   @ApiOperation({ summary: '카테고리 목록 조회', description: '카테고리 목록을 조회합니다.' })
   async getCategoryList() {
-    return this.categoryService.getCategoryList();
+    const data = await this.categoryService.getCategoryList();
+    return { statusCode: 200, data };
   }
 
   @Patch(':categoryId')
   @ApiOperation({ summary: '카테고리 수정', description: '카테고리를 수정합니다.' })
   @ApiParam({ name: 'categoryId', example: 1 })
   async updateCategory(@Param('categoryId') categoryId: number, @Body() updateData: UpdateCategoryDto) {
-    return this.categoryService.updateCategory(categoryId, updateData);
+    const data = await this.categoryService.updateCategory(categoryId, updateData);
+    return { statusCode: 200, data };
   }
 
   @Patch('deactivate/:categoryId')
   @ApiOperation({ summary: '카테고리 비활성화', description: '카테고리를 비활성화합니다.' })
   @ApiParam({ name: 'categoryId', example: 1 })
   async deactivateCategory(@Param('categoryId') categoryId: number) {
-    return this.categoryService.deactivateCategory(categoryId);
+    const data = await this.categoryService.deactivateCategory(categoryId);
+    return { statusCode: 200, data };
   }
 }

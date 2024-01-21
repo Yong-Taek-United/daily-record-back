@@ -48,22 +48,22 @@ export class Activity {
   @Column({ type: 'datetime', default: null })
   deletedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.activitys)
+  @ManyToOne(() => User, (user) => user.activity)
   user: User;
 
-  @ManyToOne(() => Category, (category) => category.activitys)
+  @ManyToOne(() => Category, (category) => category.activity)
   category: Category;
 
-  @ManyToOne(() => Project, (project) => project.activitys, {
+  @ManyToOne(() => Project, (project) => project.activity, {
     nullable: true,
   })
   project: Project;
 
-  @ManyToOne(() => Task, (task) => task.activitys, {
+  @ManyToOne(() => Task, (task) => task.activity, {
     nullable: true,
   })
   task: Task;
 
   @OneToMany(() => ActivityFile, (activityFile) => activityFile.activity)
-  activityFiles: ActivityFile[];
+  activityFile: ActivityFile[];
 }

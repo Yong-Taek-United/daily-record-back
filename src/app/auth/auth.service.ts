@@ -35,10 +35,9 @@ export class AuthService {
   // 로그인 제어
   async login(user: any, res: Response) {
     const tokens = await this.generateLoginTokens(user);
-
     await this.cookieHelperService.saveTokensToCookies(res, tokens);
 
-    return { statusCode: 200, data: user };
+    return user;
   }
 
   // 구글 로그인 제어
@@ -48,16 +47,7 @@ export class AuthService {
       : await this.tokenHelperService.generateToken(user, 'GOOGLE_USER');
     const redirectURL = user.id ? '/' : `${SIGN_UP_GOOGLE_URL}?userToken=${tokens}`;
 
-    return { redirect: redirectURL };
-  }
-
-  // 리프레시 토큰 재발급 제어
-  async refreshTokens(user: any, res: Response) {
-    const tokens = await this.generateLoginTokens(user);
-
-    await this.cookieHelperService.saveTokensToCookies(res, tokens);
-
-    return { statusCode: 200, data: user };
+    return redirectURL;
   }
 
   // 로그아웃 제어
@@ -66,10 +56,7 @@ export class AuthService {
     if (payload) await this.tokenHelperService.removeTokensFromUserDB(payload.sub);
 
     const cookieNames = ['accessToken', 'refreshToken'];
-
     await this.cookieHelperService.removeTokensFromCookies(res, cookieNames);
-
-    return { statusCode: 200 };
   }
 
   // 로그인 토큰 발급 제어
@@ -91,7 +78,5 @@ export class AuthService {
     const passwordFormDB = await this.userHelperService.getUserPassword(user.id);
     const isMatch = await bcrypt.compare(authData.password, passwordFormDB);
     if (!isMatch) throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
-
-    return { statusCode: 200 };
   }
 }

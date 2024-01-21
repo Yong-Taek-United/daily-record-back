@@ -28,7 +28,7 @@ export class ProjectService {
     };
     const data = await this.projectRepository.save(projectInfo);
 
-    return { statusCode: 201, data };
+    return data;
   }
 
   // 프로젝트 목록 조회
@@ -54,7 +54,7 @@ export class ProjectService {
       take: listTake,
     });
 
-    return { statusCode: 200, data };
+    return data;
   }
 
   // 프로젝트 수정 처리
@@ -68,7 +68,7 @@ export class ProjectService {
     };
     const data = await this.projectRepository.save(projectInfo);
 
-    return { statusCode: 200, data };
+    return data;
   }
 
   // 프로젝트 삭제 처리
@@ -82,7 +82,7 @@ export class ProjectService {
     await this.taskRepository.update({ project: { id: projectId } }, { isDeleted: true, deletedAt: new Date() });
     await this.activityRepository.update({ project: { id: projectId } }, { project: null, task: null });
 
-    return { statusCode: 200 };
+    return result;
   }
 
   // 나의 프로젝트 목록 조회: 액티비티 생성
@@ -98,7 +98,7 @@ export class ProjectService {
     };
     const data = await this.projectRepository.find({ where: options });
 
-    return { statusCode: 200, data };
+    return data;
   }
 
   // 조회 기간 설정 By 프로젝트 상태
@@ -123,6 +123,7 @@ export class ProjectService {
         startedAt = LessThanOrEqual(date);
         finishedAt = MoreThanOrEqual(date);
     }
+
     return { startedAt, finishedAt };
   }
 }

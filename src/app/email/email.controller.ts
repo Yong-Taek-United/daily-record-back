@@ -16,7 +16,8 @@ export class EmailController {
     description: '이메일 중복 확인으로 인한 에러가 발생할 수 있습니다. [emailType: VERIFICATION]',
   })
   async sendEmailVerification(@Body() emailData: VerifyEmailDto) {
-    return await this.emailService.sendEmailVerification(emailData);
+    await this.emailService.sendEmailVerification(emailData);
+    return { statusCode: 200 };
   }
 
   @Post('reset-password')
@@ -25,7 +26,8 @@ export class EmailController {
     description: '회원 email 정보 조회 에러가 발생할 수 있습니다. [emailType: PASSWORD]',
   })
   async sendEmailResetPassword(@Body() emailData: VerifyEmailDto) {
-    return await this.emailService.emailResetPassword(emailData);
+    await this.emailService.emailResetPassword(emailData);
+    return { statusCode: 200 };
   }
 
   @Get('verify')
@@ -34,7 +36,8 @@ export class EmailController {
     description: '이메일에 제공된 버튼을 클릭해 사용자를 인증합니다.',
   })
   async verifyEmail(@Query('id') emailLogId: number, @Query('token') emailToken: string) {
-    return await this.emailService.verifyEmail(emailLogId, emailToken);
+    const data = await this.emailService.verifyEmail(emailLogId, emailToken);
+    return { redirect: data };
   }
 
   @Post('email-verification/check')
@@ -43,6 +46,7 @@ export class EmailController {
     description: '마우스 클릭 이벤트마다 호출해주세요. 인증 미완료 시, 에러가 발생합니다.',
   })
   async checkEmailVelified(@Body() emailData: VerifyEmailDto) {
-    return await this.emailService.checkEmailVelified(emailData);
+    await this.emailService.checkEmailVelified(emailData);
+    return { statusCode: 200 };
   }
 }
