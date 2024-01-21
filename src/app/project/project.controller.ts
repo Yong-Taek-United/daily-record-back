@@ -21,7 +21,8 @@ export class ProjectController {
     description: '프로젝트 목록을 조회합니다. 프로젝트 기간에 따라 상태를 다르게 분류합니다.',
   })
   async getProjectList(@Req() req, @Query() projectData: getProjectListDto) {
-    return await this.projectService.getProjectList(req.user, projectData);
+    const data = await this.projectService.getProjectList(req.user, projectData);
+    return { statusCode: 201, data };
   }
 
   @Put(':projectId')
@@ -31,7 +32,8 @@ export class ProjectController {
     example: 1,
   })
   async updateProject(@Req() req, @Param('projectId') projectId: number, @Body() projectData: UpdateProjectDto) {
-    return await this.projectService.updateProject(req.user, projectId, projectData);
+    const data = await this.projectService.updateProject(req.user, projectId, projectData);
+    return { statusCode: 200, data };
   }
 
   @Delete(':projectId')
@@ -44,7 +46,8 @@ export class ProjectController {
     example: 1,
   })
   async deleteProject(@Req() req, @Param('projectId') projectId: number) {
-    return await this.projectService.deleteProject(req.user, projectId);
+    const data = await this.projectService.deleteProject(req.user, projectId);
+    return { statusCode: 200, data };
   }
 
   @Get('self/list/for-activity')
@@ -53,6 +56,7 @@ export class ProjectController {
     description: '액티비티 생성 시 연결할 현재 활성화 중인 프로젝트 목록을 조회합니다.',
   })
   async getProjectsForActivity(@Req() req) {
-    return await this.projectService.getProjectsForActivity(req.user);
+    const data = await this.projectService.getProjectsForActivity(req.user);
+    return { statusCode: 200, data };
   }
 }

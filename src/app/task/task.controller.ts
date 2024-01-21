@@ -12,7 +12,8 @@ export class TaskController {
   @Post('')
   @ApiOperation({ summary: '테스크 생성', description: '테스크를 생성합니다.' })
   async createTask(@Req() req, @Body() taskData: CreateTaskDto) {
-    return await this.taskService.createTask(req.user, taskData);
+    const data = await this.taskService.createTask(req.user, taskData);
+    return { statusCode: 201, data };
   }
 
   @Get('list/:projectId')
@@ -22,7 +23,8 @@ export class TaskController {
     example: 1,
   })
   async getTaskList(@Req() req, @Param('projectId') projectId: number) {
-    return await this.taskService.getTaskList(req.user, projectId);
+    const data = await this.taskService.getTaskList(req.user, projectId);
+    return { statusCode: 200, data };
   }
 
   @Put(':taskId')
@@ -32,7 +34,8 @@ export class TaskController {
     example: 1,
   })
   async updateTask(@Req() req, @Param('taskId') taskId: number, @Body() taskData: UpdateTaskDto) {
-    return await this.taskService.updateTask(req.user, taskId, taskData);
+    const data = await this.taskService.updateTask(req.user, taskId, taskData);
+    return { statusCode: 200, data };
   }
 
   @Delete(':taskId')
@@ -42,7 +45,8 @@ export class TaskController {
     example: 1,
   })
   async deleteTask(@Req() req, @Param('taskId') taskId: number) {
-    return await this.taskService.deleteTask(req.user, taskId);
+    const data = await this.taskService.deleteTask(req.user, taskId);
+    return { statusCode: 200, data };
   }
 
   @Get('self/:projectId/list/for-activity')
@@ -54,6 +58,7 @@ export class TaskController {
     name: 'projectId',
   })
   async getTaskForActivity(@Req() req, @Param('projectId') projectId: number) {
-    return await this.taskService.getTaskForActivity(req.user, projectId);
+    const data = await this.taskService.getTaskForActivity(req.user, projectId);
+    return { statusCode: 200, data };
   }
 }

@@ -103,7 +103,7 @@ export class ActivityService {
 
     const data = await queryBuilder.setParameters(setParams).getMany();
 
-    return { statusCode: 200, data };
+    return data;
   }
 
   // 액티비티 일자 등록 가능 여부 확인

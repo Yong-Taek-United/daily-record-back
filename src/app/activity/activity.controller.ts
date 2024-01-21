@@ -39,6 +39,7 @@ export class ActivityController {
     description: '프로젝트/테스크와 관련된 액티비티 목록을 조회합니다.',
   })
   async getActivityListWithProject(@Req() req, @Param() activityData: getActivityWithProjectDto) {
-    return await this.activityService.getActivityListWithProject(req.user, activityData);
+    const data = await this.activityService.getActivityListWithProject(req.user, activityData);
+    return { statusCode: 200, data };
   }
 }
