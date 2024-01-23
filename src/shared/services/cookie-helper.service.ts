@@ -9,7 +9,7 @@ export class CookieHelperService {
   // 토큰 Cookie 저장
   async saveTokensToCookies(res: Response, tokens: any) {
     const option: CookieOptions = {
-      httpOnly: Boolean(this.configService.get<CookieOptions['httpOnly']>('COOKIE_OPTION_HTTP_ONLY')),
+      // httpOnly: Boolean(this.configService.get<CookieOptions['httpOnly']>('COOKIE_OPTION_HTTP_ONLY')),
       sameSite: this.configService.get<CookieOptions['sameSite']>('COOKIE_OPTION_SAME_SITE'),
       secure: Boolean(this.configService.get<CookieOptions['secure']>('COOKIE_OPTION_SECURE')),
       domain: this.configService.get<CookieOptions['domain']>('COOKIE_OPTION_DOMAIN'),
