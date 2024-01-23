@@ -11,8 +11,8 @@ export class EmailConfig implements MailerOptionsFactory {
     return {
       transport: {
         host: this.configService.get<string>('MAIL_HOST'),
-        port: this.configService.get<number>('MAIL_PORT'),
-        secure: this.configService.get<boolean>('MAIL_SECURE'),
+        port: Number(this.configService.get<number>('MAIL_PORT')),
+        secure: Boolean(this.configService.get<boolean>('MAIL_SECURE')),
         auth: {
           user: this.configService.get<string>('MAIL_USER_EMAIL'),
           pass: this.configService.get<string>('MAIL_USER_PASSWORD'),
