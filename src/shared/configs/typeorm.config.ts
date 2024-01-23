@@ -10,12 +10,12 @@ export class TypeOrmConfig implements TypeOrmOptionsFactory {
     return {
       type: 'mysql',
       host: this.configService.get<string>('DB_HOST'),
-      port: this.configService.get<number>('DB_PORT'),
+      port: Number(this.configService.get<number>('DB_PORT')),
       username: this.configService.get<string>('DB_USERNAME'),
       password: this.configService.get<string>('DB_PASSWORD'),
       database: this.configService.get<string>('DB_DATABASE'),
       entities: [`${__dirname}/${this.configService.get<string>('DB_ENTITIES')}`],
-      synchronize: this.configService.get<boolean>('DB_SYNCHRONIZE'),
+      synchronize: Boolean(this.configService.get<boolean>('DB_SYNCHRONIZE')),
       charset: this.configService.get<string>('DB_CHARSET'),
     };
   }
