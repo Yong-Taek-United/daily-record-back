@@ -9,7 +9,7 @@ export class ApiResponseInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
-      tap((response) => {
+      map((response) => {
         const httpResponse = context.switchToHttp().getResponse();
 
         const { statusCode, message, data, redirect } = response;
