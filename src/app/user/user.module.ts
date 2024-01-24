@@ -1,6 +1,5 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
@@ -17,10 +16,8 @@ import { MulterConfig } from 'src/shared/configs/multer.config';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, UserFile, UserProfile, EmailLog]),
-    ConfigModule,
     JwtModule,
     MulterModule.registerAsync({
-      imports: [ConfigModule],
       useClass: MulterConfig,
     }),
     forwardRef(() => AuthModule),

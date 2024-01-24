@@ -1,7 +1,6 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule } from '@nestjs/config';
 import { UserModule } from 'src/app/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from './auth.controller';
@@ -18,10 +17,8 @@ import { GoogleStrategy } from '../../shared/strategies/google.strategy';
 
 @Module({
   imports: [
-    ConfigModule,
     PassportModule,
     JwtModule.registerAsync({
-      imports: [ConfigModule],
       useClass: JwtConfig,
     }),
     TypeOrmModule.forFeature([User, RefreshToken]),
