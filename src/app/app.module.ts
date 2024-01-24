@@ -22,6 +22,7 @@ const envFilePath = `.env.${nodeEnv}`;
 @Module({
   imports: [
     ConfigModule.forRoot({
+      isGlobal: true,
       envFilePath,
     }),
     TypeOrmModule.forRootAsync({
