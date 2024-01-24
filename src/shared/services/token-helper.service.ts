@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshToken } from '../entities/refreshToken.entity';
-import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class TokenHelperService {
@@ -60,12 +59,11 @@ export class TokenHelperService {
 
   // 리프레시 토큰 DB 저장
   async setRefreshTokenToUserDB(user: any, refreshToken: string) {
-    const hashedRefreshToken = await this.getHashedRefreshToken(refreshToken);
     const refreshTokenExp = await this.getRefreshTokenExp(refreshToken);
 
     const tokenInfo = {
       user: user,
-      refreshToken: hashedRefreshToken,
+      refreshToken,
       expiresAt: refreshTokenExp,
       isRevoked: false,
     };
@@ -88,12 +86,6 @@ export class TokenHelperService {
       isRevoked: true,
     };
     await this.refreshTokenRepository.update({ user: { id: userId } }, tokenInfo);
-  }
-
-  // 리프레시 토큰 해시(DB 데이터)
-  async getHashedRefreshToken(refreshToken: string) {
-    const hashedRefreshToken: string = await bcrypt.hash(refreshToken, 10);
-    return hashedRefreshToken;
   }
 
   // 리프레시 토큰 만료일 생성(DB 데이터)
