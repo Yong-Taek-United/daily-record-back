@@ -11,9 +11,10 @@ import { ProjectModule } from './project/project.module';
 import { TaskModule } from './task/task.module';
 import { ActivityModule } from './activity/activity.module';
 import { EmailModule } from './email/email.module';
-import { ApiResponseInterceptor } from '../shared/interceptors/api-response.interceptor';
-import { JwtAuthGuard } from '../shared/guards/jwt-auth.guard';
 import { ErrorExceptionFilter } from 'src/shared/filters/errorException.Filter';
+import { ApiResponseInterceptor } from '../shared/interceptors/api-response.interceptor';
+import { LoggingInterceptor } from 'src/shared/interceptors/logging.interceptor';
+import { JwtAuthGuard } from '../shared/guards/jwt-auth.guard';
 import { TypeOrmConfig } from '../shared/configs/typeorm.config';
 
 const nodeEnv = process.env.NODE_ENV || 'development';
@@ -26,7 +27,6 @@ const envFilePath = `.env.${nodeEnv}`;
       envFilePath,
     }),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
       useClass: TypeOrmConfig,
     }),
     UserModule,
@@ -48,6 +48,14 @@ const envFilePath = `.env.${nodeEnv}`;
       provide: APP_INTERCEPTOR,
       useClass: ApiResponseInterceptor,
     },
+    ...(nodeEnv === 'development'
+      ? [
+          {
+            provide: APP_INTERCEPTOR,
+            useClass: LoggingInterceptor,
+          },
+        ]
+      : []),
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
