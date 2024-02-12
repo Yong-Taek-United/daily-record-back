@@ -11,9 +11,10 @@ async function bootstrap() {
   const port = Number(config.get<number>('PORT'));
   const corsOriginDevelopment = config.get<string>('CORS_ORIGIN_DEVELOPMENT');
   const corsOriginProduction = config.get<string>('CORS_ORIGIN_PRODUCTION');
+  const corsOriginProduction2 = config.get<string>('CORS_ORIGIN_PRODUCTION_WWW');
 
   app.enableCors({
-    origin: [corsOriginDevelopment, corsOriginProduction],
+    origin: [corsOriginDevelopment, corsOriginProduction, corsOriginProduction2],
     credentials: true,
   });
 
