@@ -7,6 +7,7 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  Matches,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -45,9 +46,10 @@ export class CreateTaskPushDto {
   cycleType: CycleType;
 
   @IsOptional()
-  @IsNumber()
-  @ApiProperty({ example: 12 })
-  pushTime: number;
+  @IsString()
+  @Matches(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/)
+  @ApiProperty({ example: '12:00' })
+  pushTime: string;
 
   @IsBoolean()
   @ApiProperty({ example: true })
@@ -139,9 +141,10 @@ export class UpdateTaskPushDto {
   cycleType: CycleType;
 
   @IsOptional()
-  @IsNumber()
-  @ApiProperty({ example: 12 })
-  pushTime: number;
+  @IsString()
+  @Matches(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/)
+  @ApiProperty({ example: '10:00' })
+  pushTime: string;
 
   @IsBoolean()
   @ApiProperty({ example: true })

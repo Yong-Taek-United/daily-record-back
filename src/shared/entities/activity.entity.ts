@@ -27,11 +27,8 @@ export class Activity {
   @Column({ type: 'date' })
   actedDate: Date;
 
-  @Column({ type: 'int', default: 0 })
-  actedHour: number;
-
-  @Column({ type: 'int', default: 0 })
-  actedMinute: number;
+  @Column({ type: 'time', default: '00:00:00' })
+  actedTime: string;
 
   @Column({ type: 'int', default: 0 })
   filledGoal: number;
