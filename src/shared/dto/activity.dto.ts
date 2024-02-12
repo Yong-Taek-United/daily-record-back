@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsNumber, IsNumberString, IsObject, IsOptional, IsString } from 'class-validator';
+import { IsDateString, IsNumber, IsNumberString, IsObject, IsOptional, IsString, Matches } from 'class-validator';
 import { Category } from '../entities/category.entity';
 import { Project } from '../entities/project.entity';
 import { Task } from '../entities/task.entity';
@@ -19,13 +19,10 @@ export class createActivityDto {
   @ApiProperty({ example: '2023-10-15' })
   actedDate: Date;
 
-  @IsNumber()
-  @ApiProperty({ example: 11 })
-  actedHour: number;
-
-  @IsNumber()
-  @ApiProperty({ example: 23 })
-  actedMinute: number;
+  @IsString()
+  @Matches(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/)
+  @ApiProperty({ example: '10:22' })
+  actedTime: string;
 
   @IsOptional()
   @IsNumber()
@@ -61,13 +58,10 @@ export class updateActivityDto {
   @ApiProperty({ example: '2023-11-15' })
   actedDate: Date;
 
-  @IsNumber()
-  @ApiProperty({ example: 9 })
-  actedHour: number;
-
-  @IsNumber()
-  @ApiProperty({ example: 56 })
-  actedMinute: number;
+  @IsString()
+  @Matches(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/)
+  @ApiProperty({ example: '10:22' })
+  actedTime: string;
 
   @IsOptional()
   @IsNumber()

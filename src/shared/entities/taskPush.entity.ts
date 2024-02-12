@@ -18,8 +18,8 @@ export class TaskPush {
   @Column({ type: 'enum', enum: CycleType, default: CycleType.DAY })
   cycleType: string;
 
-  @Column({ type: 'int', default: 0 })
-  pushTime: number;
+  @Column({ type: 'time', default: '00:00:00' })
+  pushTime: string;
 
   @Column({ type: 'tinyint', default: true })
   isPushEnabled: boolean;
