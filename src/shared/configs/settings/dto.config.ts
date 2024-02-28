@@ -17,6 +17,6 @@ export const textLength = {
   },
   introduce: {
     min: 0,
-    max: 30,
+    max: 100,
   },
 };
