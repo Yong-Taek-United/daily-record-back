@@ -12,7 +12,8 @@ export class ProjectController {
   @Post('')
   @ApiOperation({ summary: '프로젝트 생성', description: '프로젝트를 생성합니다.' })
   async createProject(@Req() req, @Body() projectData: CreateProjectDto) {
-    return await this.projectService.createProject(req.user, projectData);
+    const data = await this.projectService.createProject(req.user, projectData);
+    return { statusCode: 201, data };
   }
 
   @Get('list')
@@ -22,7 +23,7 @@ export class ProjectController {
   })
   async getProjectList(@Req() req, @Query() projectData: getProjectListDto) {
     const data = await this.projectService.getProjectList(req.user, projectData);
-    return { statusCode: 201, data };
+    return { statusCode: 200, data };
   }
 
   @Put(':projectId')
