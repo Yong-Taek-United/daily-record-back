@@ -36,7 +36,7 @@ export class ActivityService {
     const activityInfo = { ...activityData, user };
     const data = await this.activityRepository.save(activityInfo);
 
-    return { statusCode: 201, data };
+    return data;
   }
 
   // 액티비티 수정 처리
@@ -60,7 +60,7 @@ export class ActivityService {
     const activityInfo = { ...activityData, id: activityId };
     const data = await this.activityRepository.save(activityInfo);
 
-    return { statusCode: 200, data };
+    return data;
   }
 
   // 액티비티 삭제 처리
@@ -74,7 +74,7 @@ export class ActivityService {
     const result = await this.activityRepository.update(activityId, { isDeleted: true, deletedAt: new Date() });
     if (result.affected === 0) throw new InternalServerErrorException();
 
-    return { statusCode: 200 };
+    return result;
   }
 
   // 액티비티 목록 조회: 프로젝트/테스크

@@ -12,7 +12,8 @@ export class ActivityController {
   @Post('')
   @ApiOperation({ summary: '액티비티 생성', description: '액티비티를 생성합니다.' })
   async createActivity(@Req() req, @Body() activityData: createActivityDto) {
-    return await this.activityService.createActivity(req.user, activityData);
+    const data = await this.activityService.createActivity(req.user, activityData);
+    return { statusCode: 201, data };
   }
 
   @Put(':activityId')
@@ -21,7 +22,8 @@ export class ActivityController {
     name: 'activityId',
   })
   async updateActivity(@Req() req, @Param('activityId') activityId: number, @Body() activityData: updateActivityDto) {
-    return await this.activityService.updateActivity(req.user, activityId, activityData);
+    const data = await this.activityService.updateActivity(req.user, activityId, activityData);
+    return { statusCode: 200, data };
   }
 
   @Delete(':activityId')
@@ -30,7 +32,8 @@ export class ActivityController {
     name: 'activityId',
   })
   async deleteActivity(@Req() req, @Param('activityId') activityId: number) {
-    return await this.activityService.deleteActivity(req.user, activityId);
+    await this.activityService.deleteActivity(req.user, activityId);
+    return { statusCode: 200 };
   }
 
   @Get('list/:projectId/:taskId')
