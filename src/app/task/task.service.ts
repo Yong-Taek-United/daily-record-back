@@ -1,4 +1,10 @@
-import { BadRequestException, ForbiddenException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual, Repository } from 'typeorm';
 import { Task } from 'src/shared/entities/task.entity';
@@ -23,6 +29,9 @@ export class TaskService {
   async createTask(user: User, taskData: CreateTaskDto) {
     const { project, startedAt, finishedAt } = taskData;
     await this.checkProjectPeriod(project.id, startedAt, finishedAt);
+
+    const taskCount = await this.taskRepository.count({ where: { project: project } });
+    if (taskCount > 2) throw new UnprocessableEntityException('과제는 최대 3개까지 추가할 수 있습니다.');
 
     const taskInfo = { ...taskData, user };
     const data = await this.taskRepository.save(taskInfo);
