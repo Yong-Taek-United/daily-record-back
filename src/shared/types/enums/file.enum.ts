@@ -12,6 +12,9 @@ export enum MimeType {
   JPEG = 'image/jpeg',
   PNG = 'image/png',
   ICO = 'image/ico',
+  WEBP = 'image/webp',
+  GIF = 'image/gif',
+  BMP = 'image/bmp',
 }
 
 export enum IconType {

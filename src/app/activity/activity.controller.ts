@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Req } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Post, Put, Req, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ActivityService } from './activity.service';
 import { createActivityDto, getActivityWithProjectDto, updateActivityDto } from 'src/shared/dto/activity.dto';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('activities')
 @ApiTags('Activitiy')
@@ -10,9 +11,62 @@ export class ActivityController {
   constructor(private readonly activityService: ActivityService) {}
 
   @Post('')
-  @ApiOperation({ summary: '액티비티 생성', description: '액티비티를 생성합니다.' })
-  async createActivity(@Req() req, @Body() activityData: createActivityDto) {
-    const data = await this.activityService.createActivity(req.user, activityData);
+  @UseInterceptors(FilesInterceptor('files', 3))
+  @ApiOperation({ summary: '액티비티 생성', description: '액티비티를 생성합니다. 이미지는 최대 3개까지 가능합니다.' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        title: {
+          type: 'string',
+          example: '액티비티 제목을 작성합니다.',
+        },
+        description: {
+          type: 'string',
+          example: '액티비티 내용을 작성합니다.',
+        },
+        actedDate: {
+          type: 'string',
+          format: 'date',
+          example: '2023-10-15',
+        },
+        actedTime: {
+          type: 'string',
+          example: '10:22',
+        },
+        filledGoal: {
+          type: 'number',
+          example: 1,
+        },
+        category: {
+          type: 'object',
+          example: { id: 1 },
+        },
+        project: {
+          type: 'object',
+          example: { id: 1 },
+        },
+        task: {
+          type: 'object',
+          example: { id: 1 },
+        },
+        files: {
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
+        },
+      },
+    },
+  })
+  async createActivity(
+    @Req() req,
+    @Body() activityData: createActivityDto,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    const data = await this.activityService.createActivity(req.user, activityData, files);
     return { statusCode: 201, data };
   }
 

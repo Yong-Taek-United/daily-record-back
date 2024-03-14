@@ -9,25 +9,31 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Activity } from 'src/shared/entities/activity.entity';
 import { User } from 'src/shared/entities/user.entity';
-import { createActivityDto, getActivityWithProjectDto, updateActivityDto } from 'src/shared/dto/activity.dto';
 import { Task } from 'src/shared/entities/task.entity';
 import { TaskGoal } from 'src/shared/entities/taskGoal.entity';
+import { ActivityFile } from 'src/shared/entities/activityFile.entity';
+import { createActivityDto, getActivityWithProjectDto, updateActivityDto } from 'src/shared/dto/activity.dto';
+import { ConfigService } from '@nestjs/config';
+import { FileStorageType } from 'src/shared/types/enums/file.enum';
 
 @Injectable()
 export class ActivityService {
   constructor(
+    private readonly configService: ConfigService,
     @InjectRepository(Activity)
     private readonly activityRepository: Repository<Activity>,
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
     @InjectRepository(TaskGoal)
     private readonly taskGoalRepository: Repository<TaskGoal>,
+    @InjectRepository(ActivityFile)
+    private readonly activityFileRepository: Repository<ActivityFile>,
   ) {}
 
   // 액티비티 생성 처리
-  async createActivity(user: User, activityData: createActivityDto) {
+  async createActivity(user: User, activityData: createActivityDto, files: Express.Multer.File[]) {
     const { task, actedDate, filledGoal } = activityData;
-
+    console.log(activityData);
     if (!!task) {
       await this.checkTaskPeriod(task.id, actedDate);
       await this.updateAccumulation(task.id, filledGoal);
@@ -35,6 +41,20 @@ export class ActivityService {
 
     const activityInfo = { ...activityData, user };
     const data = await this.activityRepository.save(activityInfo);
+
+    const fileRootDirectory = this.configService.get<string>('FILE_STORAGE_PATH');
+
+    const fileInfo = files.map((file, index) => ({
+      seqNo: index,
+      fileStorageType: FileStorageType.DISK,
+      filePath: file.destination.replace(fileRootDirectory, ''),
+      fileName: file.filename,
+      mimeType: file.mimetype,
+      fileSize: file.size,
+      activity: data,
+    }));
+
+    await this.activityFileRepository.save(fileInfo);
 
     return data;
   }
