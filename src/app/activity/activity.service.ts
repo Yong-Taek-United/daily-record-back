@@ -33,7 +33,7 @@ export class ActivityService {
   // 액티비티 생성 처리
   async createActivity(user: User, activityData: createActivityDto, files: Express.Multer.File[]) {
     const { task, actedDate, filledGoal } = activityData;
-    console.log(activityData);
+    
     if (!!task) {
       await this.checkTaskPeriod(task.id, actedDate);
       await this.updateAccumulation(task.id, filledGoal);
@@ -93,6 +93,11 @@ export class ActivityService {
 
     const result = await this.activityRepository.update(activityId, { isDeleted: true, deletedAt: new Date() });
     if (result.affected === 0) throw new InternalServerErrorException();
+
+    await this.activityFileRepository.update(
+      { activity: { id: activityId } },
+      { isDeleted: true, deletedAt: new Date() },
+    );
 
     return result;
   }
