@@ -5,11 +5,6 @@ import { Project } from '../entities/project.entity';
 import { Task } from '../entities/task.entity';
 import { Transform } from 'class-transformer';
 
-export class FileDto {
-  @ApiProperty({ type: 'array', items: { type: 'string', format: 'binary' } })
-  files: Express.Multer.File[];
-}
-
 export class createActivityDto {
   @IsOptional()
   @IsString()
@@ -74,20 +69,24 @@ export class updateActivityDto {
   actedTime: string;
 
   @IsOptional()
+  @Transform(({ value }) => parseInt(value))
   @IsNumber()
   @ApiProperty({ example: 1 })
   filledGoal: number;
 
+  @Transform(({ value }) => JSON.parse(value))
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
   category: Category;
 
   @IsOptional()
+  @Transform(({ value }) => JSON.parse(value))
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
   project: Project;
 
   @IsOptional()
+  @Transform(({ value }) => JSON.parse(value))
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
   task: Task;

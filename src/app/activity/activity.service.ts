@@ -33,7 +33,7 @@ export class ActivityService {
   // 액티비티 생성 처리
   async createActivity(user: User, activityData: createActivityDto, files: Express.Multer.File[]) {
     const { task, actedDate, filledGoal } = activityData;
-    
+
     if (!!task) {
       await this.checkTaskPeriod(task.id, actedDate);
       await this.updateAccumulation(task.id, filledGoal);
@@ -60,7 +60,7 @@ export class ActivityService {
   }
 
   // 액티비티 수정 처리
-  async updateActivity(user: User, activityId: number, activityData: updateActivityDto) {
+  async updateActivity(user: User, activityId: number, activityData: updateActivityDto, files: Express.Multer.File[]) {
     const activity = await this.activityRepository.findOne({ where: { id: activityId }, relations: ['user', 'task'] });
     if (activity.user.id !== user.id) throw new ForbiddenException('접근 권한이 없습니다.');
 
@@ -80,6 +80,25 @@ export class ActivityService {
     const activityInfo = { ...activityData, id: activityId };
     const data = await this.activityRepository.save(activityInfo);
 
+    await this.activityFileRepository.update(
+      { activity: { id: activityId }, isDeleted: false },
+      { isDeleted: true, deletedAt: new Date() },
+    );
+
+    const fileRootDirectory = this.configService.get<string>('FILE_STORAGE_PATH');
+
+    const fileInfo = files.map((file, index) => ({
+      seqNo: index,
+      fileStorageType: FileStorageType.DISK,
+      filePath: file.destination.replace(fileRootDirectory, ''),
+      fileName: file.filename,
+      mimeType: file.mimetype,
+      fileSize: file.size,
+      activity: data,
+    }));
+
+    await this.activityFileRepository.save(fileInfo);
+
     return data;
   }
 
@@ -95,7 +114,7 @@ export class ActivityService {
     if (result.affected === 0) throw new InternalServerErrorException();
 
     await this.activityFileRepository.update(
-      { activity: { id: activityId } },
+      { activity: { id: activityId }, isDeleted: false },
       { isDeleted: true, deletedAt: new Date() },
     );
 
