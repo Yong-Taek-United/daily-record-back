@@ -9,23 +9,29 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Activity } from 'src/shared/entities/activity.entity';
 import { User } from 'src/shared/entities/user.entity';
-import { createActivityDto, getActivityWithProjectDto, updateActivityDto } from 'src/shared/dto/activity.dto';
 import { Task } from 'src/shared/entities/task.entity';
 import { TaskGoal } from 'src/shared/entities/taskGoal.entity';
+import { ActivityFile } from 'src/shared/entities/activityFile.entity';
+import { createActivityDto, getActivityWithProjectDto, updateActivityDto } from 'src/shared/dto/activity.dto';
+import { ConfigService } from '@nestjs/config';
+import { FileStorageType } from 'src/shared/types/enums/file.enum';
 
 @Injectable()
 export class ActivityService {
   constructor(
+    private readonly configService: ConfigService,
     @InjectRepository(Activity)
     private readonly activityRepository: Repository<Activity>,
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
     @InjectRepository(TaskGoal)
     private readonly taskGoalRepository: Repository<TaskGoal>,
+    @InjectRepository(ActivityFile)
+    private readonly activityFileRepository: Repository<ActivityFile>,
   ) {}
 
   // 액티비티 생성 처리
-  async createActivity(user: User, activityData: createActivityDto) {
+  async createActivity(user: User, activityData: createActivityDto, files: Express.Multer.File[]) {
     const { task, actedDate, filledGoal } = activityData;
 
     if (!!task) {
@@ -36,11 +42,25 @@ export class ActivityService {
     const activityInfo = { ...activityData, user };
     const data = await this.activityRepository.save(activityInfo);
 
-    return { statusCode: 201, data };
+    const fileRootDirectory = this.configService.get<string>('FILE_STORAGE_PATH');
+
+    const fileInfo = files.map((file, index) => ({
+      seqNo: index,
+      fileStorageType: FileStorageType.DISK,
+      filePath: file.destination.replace(fileRootDirectory, ''),
+      fileName: file.filename,
+      mimeType: file.mimetype,
+      fileSize: file.size,
+      activity: data,
+    }));
+
+    await this.activityFileRepository.save(fileInfo);
+
+    return data;
   }
 
   // 액티비티 수정 처리
-  async updateActivity(user: User, activityId: number, activityData: updateActivityDto) {
+  async updateActivity(user: User, activityId: number, activityData: updateActivityDto, files: Express.Multer.File[]) {
     const activity = await this.activityRepository.findOne({ where: { id: activityId }, relations: ['user', 'task'] });
     if (activity.user.id !== user.id) throw new ForbiddenException('접근 권한이 없습니다.');
 
@@ -60,7 +80,26 @@ export class ActivityService {
     const activityInfo = { ...activityData, id: activityId };
     const data = await this.activityRepository.save(activityInfo);
 
-    return { statusCode: 200, data };
+    await this.activityFileRepository.update(
+      { activity: { id: activityId }, isDeleted: false },
+      { isDeleted: true, deletedAt: new Date() },
+    );
+
+    const fileRootDirectory = this.configService.get<string>('FILE_STORAGE_PATH');
+
+    const fileInfo = files.map((file, index) => ({
+      seqNo: index,
+      fileStorageType: FileStorageType.DISK,
+      filePath: file.destination.replace(fileRootDirectory, ''),
+      fileName: file.filename,
+      mimeType: file.mimetype,
+      fileSize: file.size,
+      activity: data,
+    }));
+
+    await this.activityFileRepository.save(fileInfo);
+
+    return data;
   }
 
   // 액티비티 삭제 처리
@@ -74,7 +113,12 @@ export class ActivityService {
     const result = await this.activityRepository.update(activityId, { isDeleted: true, deletedAt: new Date() });
     if (result.affected === 0) throw new InternalServerErrorException();
 
-    return { statusCode: 200 };
+    await this.activityFileRepository.update(
+      { activity: { id: activityId }, isDeleted: false },
+      { isDeleted: true, deletedAt: new Date() },
+    );
+
+    return result;
   }
 
   // 액티비티 목록 조회: 프로젝트/테스크

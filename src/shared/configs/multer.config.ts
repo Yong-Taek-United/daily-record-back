@@ -18,6 +18,12 @@ export class MulterConfig implements MulterOptionsFactory {
       case '/users/profile-image/upload':
         contentDirectory = 'users';
         break;
+      case '/activities':
+        contentDirectory = 'activities';
+        break;
+      case '/activities/:activityId':
+        contentDirectory = 'activities';
+        break;
       default:
         contentDirectory = 'etc';
         break;
@@ -29,7 +35,7 @@ export class MulterConfig implements MulterOptionsFactory {
   private buildFileStoragePath(req: any) {
     const fileRootDirectory = this.configService.get<string>('FILE_STORAGE_PATH');
     const contentDirectory = this.getContentDirectoryName(req.url);
-    const userId = req.user.id;
+    const userId = req.user.sub;
 
     const fileStoragePath = `${fileRootDirectory}/${contentDirectory}/${userId}`;
     return fileStoragePath;

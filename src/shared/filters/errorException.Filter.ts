@@ -12,7 +12,7 @@ export class ErrorExceptionFilter implements ExceptionFilter {
 
     let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'Internal Server Error';
-
+    console.log(exception);
     if (exception instanceof HttpException) {
       statusCode = exception.getStatus();
       message = exception.message;

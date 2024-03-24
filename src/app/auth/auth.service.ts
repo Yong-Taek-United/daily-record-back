@@ -38,7 +38,7 @@ export class AuthService {
     const tokens = await this.generateLoginTokens(user);
     await this.cookieHelperService.saveTokensToCookies(res, tokens);
 
-    return user;
+    return { ...user, tokens };
   }
 
   // 구글 로그인 제어
