@@ -38,7 +38,7 @@ export class AuthService {
     const tokens = await this.generateLoginTokens(user);
     await this.cookieHelperService.saveTokensToCookies(res, tokens);
 
-    return { ...user, tokens };
+    return user;
   }
 
   // 구글 로그인 제어
@@ -49,6 +49,14 @@ export class AuthService {
     const redirectURL = user.id ? '/' : `${SIGN_UP_GOOGLE_URL}?userToken=${tokens}`;
 
     return redirectURL;
+  }
+
+  // 리프레시토큰 재발급 제어
+  async refreshTokens(user: any, res: Response) {
+    const tokens = await this.generateLoginTokens(user);
+    await this.cookieHelperService.saveTokensToCookies(res, tokens);
+
+    return { ...user, tokens };
   }
 
   // 로그아웃 제어

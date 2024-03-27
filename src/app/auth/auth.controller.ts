@@ -45,7 +45,7 @@ export class AuthController {
   })
   @UseGuards(JwtRefreshAuthGuard)
   async refreshTokens(@Req() req, @Res({ passthrough: true }) res: Response) {
-    const data = await this.authService.login(req.user, res);
+    const data = await this.authService.refreshTokens(req.user, res);
     return { statusCode: 200, data };
   }
 
