@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ColorService } from './color.service';
 import { CreateColorDto, UpdateColorDto } from 'src/shared/dto/color.dto';
+import { Public } from 'src/shared/decorators/skip-auth.decorator';
 
 @Controller('colors')
 @ApiTags('Color')
@@ -17,6 +18,7 @@ export class ColorController {
   }
 
   @Get('list')
+  @Public()
   @ApiOperation({ summary: '컬러 목록 조회', description: '컬러 목록을 조회합니다.' })
   async getColorList() {
     const data = await this.colorService.getColorList();

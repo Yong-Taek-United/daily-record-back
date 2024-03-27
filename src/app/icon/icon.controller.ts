@@ -3,6 +3,7 @@ import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestj
 import { IconService } from './icon.service';
 import { CreateIconDto, UpdateIconDto } from 'src/shared/dto/icon.dto';
 import { IconType } from 'src/shared/types/enums/file.enum';
+import { Public } from 'src/shared/decorators/skip-auth.decorator';
 
 @Controller('icons')
 @ApiTags('Icon')
@@ -21,6 +22,7 @@ export class IconController {
   }
 
   @Get('list')
+  @Public()
   @ApiOperation({ summary: '아이콘 목록 조회', description: '과제 혹은 메달 아이콘 목록을 조회합니다.' })
   @ApiQuery({ name: 'iconType', example: IconType.TASK })
   async getIconList(@Query('iconType') iconType: IconType) {

@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreateCategoryDto, UpdateCategoryDto } from 'src/shared/dto/category.dto';
+import { Public } from 'src/shared/decorators/skip-auth.decorator';
 
 @Controller('categories')
 @ApiTags('Category')
@@ -17,6 +18,7 @@ export class CategoryController {
   }
 
   @Get('list')
+  @Public()
   @ApiOperation({ summary: '카테고리 목록 조회', description: '카테고리 목록을 조회합니다.' })
   async getCategoryList() {
     const data = await this.categoryService.getCategoryList();
