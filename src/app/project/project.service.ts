@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOperator, LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual, Repository } from 'typeorm';
 import { Project } from 'src/shared/entities/project.entity';
@@ -53,6 +53,16 @@ export class ProjectService {
       skip: listSkip,
       take: listTake,
     });
+
+    return data;
+  }
+
+  // 프로젝트 상세 내용 조회
+  async getProjectDetail(user: User, projectId: number) {
+    const project = await this.projectRepository.findOne({ where: { id: projectId }, relations: ['user'] });
+    if (!project) throw new NotFoundException('요청하신 페이지를 찾을 수 없습니다.');
+    if (project.user.id !== user.id) throw new ForbiddenException('접근 권한이 없습니다.');
+    const { user: remove, ...data } = project;
 
     return data;
   }

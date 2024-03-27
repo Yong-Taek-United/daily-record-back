@@ -26,6 +26,16 @@ export class ProjectController {
     return { statusCode: 200, data };
   }
 
+  @Get(':projectId')
+  @ApiOperation({
+    summary: '프로젝트 상세 내용 조회',
+    description: '프로젝트 상세 내용을 조회합니다. 프로젝트 수정 시 사용합니다.',
+  })
+  async getProjectDetail(@Req() req, @Param('projectId') projectId: number,) {
+    const data = await this.projectService.getProjectDetail(req.user, projectId);
+    return { statusCode: 200, data };
+  }
+
   @Put(':projectId')
   @ApiOperation({ summary: '프로젝트 수정', description: '프로젝트를 수정합니다.' })
   @ApiParam({
