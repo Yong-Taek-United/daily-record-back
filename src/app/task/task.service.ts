@@ -61,6 +61,7 @@ export class TaskService {
 
     const { project, startedAt, finishedAt } = taskData;
     await this.checkProjectPeriod(project.id, startedAt, finishedAt);
+    await this.checkAtivityPeriod(user, taskId, taskData);
 
     const taskInfo = { ...taskData, id: taskId };
     const data = await this.taskRepository.save(taskInfo);
@@ -93,6 +94,22 @@ export class TaskService {
 
     if (project.startedAt > startedAt || project.finishedAt < finishedAt)
       throw new BadRequestException('과제 기간이 프로젝트 기간을 벗어납니다.');
+  }
+
+  // 테스크 기간 수정 가능 여부 확인(for Activity)
+  async checkAtivityPeriod(user: User, taskId: number, taskData: UpdateTaskDto) {
+    const { startedAt, finishedAt } = taskData;
+
+    const whereOptions = {
+      isDeleted: false,
+      task: { id: taskId },
+      user: { id: user.id },
+      startedAt: LessThan(startedAt),
+      finishedAt: MoreThan(finishedAt),
+    };
+
+    const activitys = await this.activityRepository.find({ where: whereOptions });
+    if (activitys.length > 0) throw new UnprocessableEntityException('이미 존재하는 활동 기록과 기간이 어긋납니다.');
   }
 
   // 나의 테스크 목록 조회: 액티비티 생성
