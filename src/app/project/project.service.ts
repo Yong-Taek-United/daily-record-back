@@ -1,4 +1,10 @@
-import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOperator, LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual, Repository } from 'typeorm';
 import { Project } from 'src/shared/entities/project.entity';
@@ -59,8 +65,11 @@ export class ProjectService {
 
   // 프로젝트 상세 내용 조회
   async getProjectDetail(user: User, projectId: number) {
-    const project = await this.projectRepository.findOne({ where: { id: projectId }, relations: ['user'] });
-    if (!project) throw new NotFoundException('요청하신 페이지를 찾을 수 없습니다.');
+    const project = await this.projectRepository.findOne({
+      where: { id: projectId, isDeleted: false },
+      relations: ['user'],
+    });
+    if (!project) throw new NotFoundException('요청하신 데이터를 찾을 수 없습니다.');
     if (project.user.id !== user.id) throw new ForbiddenException('접근 권한이 없습니다.');
     const { user: remove, ...data } = project;
 
@@ -69,8 +78,14 @@ export class ProjectService {
 
   // 프로젝트 수정 처리
   async updateProject(user: User, projectId: number, projectData: UpdateProjectDto) {
-    const project = await this.projectRepository.findOne({ where: { id: projectId }, relations: ['user'] });
+    const project = await this.projectRepository.findOne({
+      where: { id: projectId, isDeleted: false },
+      relations: ['user'],
+    });
+    if (!project) throw new NotFoundException('요청하신 데이터를 찾을 수 없습니다.');
     if (project.user.id !== user.id) throw new ForbiddenException('접근 권한이 없습니다.');
+
+    await this.checkTaskPeriod(user, projectId, projectData);
 
     const projectInfo = {
       ...projectData,
@@ -135,5 +150,21 @@ export class ProjectService {
     }
 
     return { startedAt, finishedAt };
+  }
+
+  // 프로젝트 기간 수정 가능 여부 확인
+  async checkTaskPeriod(user: User, projectId: number, projectData: UpdateProjectDto) {
+    const { startedAt, finishedAt } = projectData;
+
+    const whereOptions = {
+      isDeleted: false,
+      project: { id: projectId },
+      user: { id: user.id },
+      startedAt: LessThan(startedAt),
+      finishedAt: MoreThan(finishedAt),
+    };
+
+    const tasks = await this.taskRepository.find({ where: whereOptions });
+    if (tasks.length > 0) throw new UnprocessableEntityException('이미 존재하는 과제와 기간이 어긋납니다.');
   }
 }
