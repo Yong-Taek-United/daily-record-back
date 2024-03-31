@@ -42,7 +42,7 @@ export class TaskService {
   // 테스크 목록 조회
   async getTaskList(user: User, projectId: number) {
     const tasks = await this.taskRepository.find({
-      where: { project: { id: projectId } },
+      where: { project: { id: projectId }, isDeleted: false },
       relations: ['taskGoal', 'taskPush', 'category', 'color', 'icon'],
     });
 
