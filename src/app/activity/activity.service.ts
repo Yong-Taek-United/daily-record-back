@@ -160,7 +160,7 @@ export class ActivityService {
     });
     if (!task) throw new BadRequestException('과제가 존재하지 않습니다.');
 
-    if (task.startedAt > actedDate || task.finishedAt < actedDate)
+    if (new Date(task.startedAt) > new Date(actedDate) || new Date(task.finishedAt) > new Date(actedDate))
       throw new BadRequestException('액티비티 일자가 과제 기간을 벗어납니다.');
   }
 

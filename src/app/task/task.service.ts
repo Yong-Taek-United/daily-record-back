@@ -92,7 +92,7 @@ export class TaskService {
     });
     if (!project) throw new BadRequestException('프로젝트가 존재하지 않습니다.');
 
-    if (project.startedAt > startedAt || project.finishedAt < finishedAt)
+    if (new Date(project.startedAt) > new Date(startedAt) || new Date(project.finishedAt) > new Date(finishedAt))
       throw new BadRequestException('과제 기간이 프로젝트 기간을 벗어납니다.');
   }
 
@@ -104,8 +104,7 @@ export class TaskService {
       isDeleted: false,
       task: { id: taskId },
       user: { id: user.id },
-      startedAt: LessThan(startedAt),
-      finishedAt: MoreThan(finishedAt),
+      actedDate: LessThan(startedAt) || MoreThan(finishedAt),
     };
 
     const activitys = await this.activityRepository.find({ where: whereOptions });
