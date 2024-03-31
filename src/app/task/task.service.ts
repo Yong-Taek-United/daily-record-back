@@ -30,7 +30,7 @@ export class TaskService {
     const { project, startedAt, finishedAt } = taskData;
     await this.checkProjectPeriod(project.id, startedAt, finishedAt);
 
-    const taskCount = await this.taskRepository.count({ where: { project: project } });
+    const taskCount = await this.taskRepository.count({ where: { project: project, isDeleted: false } });
     if (taskCount > 2) throw new UnprocessableEntityException('과제는 최대 3개까지 추가할 수 있습니다.');
 
     const taskInfo = { ...taskData, user };
