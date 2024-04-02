@@ -17,6 +17,16 @@ export class ActivityController {
     return { statusCode: 201, data };
   }
 
+  @Get(':activityId')
+  @ApiOperation({ summary: '액티비티 조회', description: '액티비티를 조회합니다.' })
+  @ApiParam({
+    name: 'activityId',
+  })
+  async getActivity(@Req() req, @Param('activityId') activityId: number) {
+    const data = await this.activityService.getActivity(req.user, activityId);
+    return { statusCode: 200, data };
+  }
+
   @Put(':activityId')
   @ApiOperation({ summary: '액티비티 수정', description: '액티비티를 수정합니다.' })
   @ApiParam({

@@ -48,6 +48,18 @@ export class ActivityService {
     return data;
   }
 
+  // 액티비티 조회 처리
+  async getActivity(user: User, activityId: number) {
+    const activity = await this.activityRepository.findOne({
+      where: { id: activityId },
+      relations: ['user', 'project', 'task.taskGoal', 'task.category', 'task.color', 'task.icon', 'activityFile'],
+    });
+    if (!activity) throw new NotFoundException('요청하신 데이터를 찾을 수 없습니다.');
+    if (activity.user.id !== user.id) throw new ForbiddenException('접근 권한이 없습니다.');
+
+    return activity;
+  }
+
   // 액티비티 수정 처리
   async updateActivity(user: User, activityId: number, activityData: updateActivityDto) {
     const activity = await this.activityRepository.findOne({ where: { id: activityId }, relations: ['user', 'task'] });
