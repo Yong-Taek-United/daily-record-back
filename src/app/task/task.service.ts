@@ -92,7 +92,7 @@ export class TaskService {
     });
     if (!project) throw new BadRequestException('프로젝트가 존재하지 않습니다.');
 
-    if (new Date(project.startedAt) > new Date(startedAt) || new Date(project.finishedAt) > new Date(finishedAt))
+    if (new Date(project.startedAt) > new Date(startedAt) || new Date(project.finishedAt) < new Date(finishedAt))
       throw new BadRequestException('과제 기간이 프로젝트 기간을 벗어납니다.');
   }
 
