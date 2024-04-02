@@ -54,7 +54,7 @@ export class ActivityController {
     return { statusCode: 201, data };
   }
 
-  @Delete(':activityFileId')
+  @Delete('image/:activityFileId')
   @ApiOperation({ summary: '액티비티 이미지 삭제', description: '액티비티를 이미지를 삭제합니다.' })
   @ApiParam({
     name: 'activityFileId',
