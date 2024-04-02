@@ -54,6 +54,16 @@ export class ActivityController {
     return { statusCode: 201, data };
   }
 
+  @Delete(':activityFileId')
+  @ApiOperation({ summary: '액티비티 이미지 삭제', description: '액티비티를 이미지를 삭제합니다.' })
+  @ApiParam({
+    name: 'activityFileId',
+  })
+  async deleteActivityImages(@Req() req, @Param('activityFileId') activityFileId: number) {
+    await this.activityService.deleteActivityImages(req.user, activityFileId);
+    return { statusCode: 200 };
+  }
+
   @Delete(':activityId')
   @ApiOperation({ summary: '액티비티 삭제', description: '액티비티를 삭제합니다.' })
   @ApiParam({

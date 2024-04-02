@@ -93,6 +93,23 @@ export class ActivityService {
     return data;
   }
 
+  // 액티비티 이미지 삭제 처리
+  async deleteActivityImages(user: User, activityFileId: number) {
+    const activityFile = await this.activityFileRepository.findOne({
+      where: { id: activityFileId },
+      relations: ['activity.user'],
+    });
+    if (!activityFile) throw new NotFoundException('요청하신 데이터를 찾을 수 없습니다.');
+
+    const activityUserId = activityFile.activity.user.id;
+    if (activityUserId !== user.id) throw new ForbiddenException('접근 권한이 없습니다.');
+
+    const result = await this.activityFileRepository.update(activityFileId, { isDeleted: true, deletedAt: new Date() });
+    if (result.affected === 0) throw new InternalServerErrorException();
+
+    return result
+  }
+
   // 액티비티 이미지 외래키 연결
   linkArticleAsForeignKey(activity: Activity, activityFiles: ActivityFile[]) {
     for (const activityFile of activityFiles)
