@@ -1,9 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsNumber, IsNumberString, IsObject, IsOptional, IsString, Matches } from 'class-validator';
+import {
+  IsArray,
+  IsDateString,
+  IsNumber,
+  IsNumberString,
+  IsObject,
+  IsOptional,
+  IsString,
+  Matches,
+} from 'class-validator';
 import { Category } from '../entities/category.entity';
 import { Project } from '../entities/project.entity';
 import { Task } from '../entities/task.entity';
 import { Transform } from 'class-transformer';
+import { ActivityFile } from '../entities/activityFile.entity';
 
 export class createActivityDto {
   @IsOptional()
@@ -26,27 +36,28 @@ export class createActivityDto {
   actedTime: string;
 
   @IsOptional()
-  @Transform(({ value }) => parseInt(value))
   @IsNumber()
   @ApiProperty({ example: 1 })
   filledGoal: number;
 
-  @Transform(({ value }) => JSON.parse(value))
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
   category: Category;
 
   @IsOptional()
-  @Transform(({ value }) => JSON.parse(value))
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
   project: Project;
 
   @IsOptional()
-  @Transform(({ value }) => JSON.parse(value))
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
   task: Task;
+
+  @IsOptional()
+  @IsArray()
+  @ApiProperty({ example: [{ id: 1 }] })
+  activityFiles: ActivityFile[];
 }
 
 export class updateActivityDto {
@@ -69,27 +80,28 @@ export class updateActivityDto {
   actedTime: string;
 
   @IsOptional()
-  @Transform(({ value }) => parseInt(value))
   @IsNumber()
   @ApiProperty({ example: 1 })
   filledGoal: number;
 
-  @Transform(({ value }) => JSON.parse(value))
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
   category: Category;
 
   @IsOptional()
-  @Transform(({ value }) => JSON.parse(value))
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
   project: Project;
 
   @IsOptional()
-  @Transform(({ value }) => JSON.parse(value))
   @IsObject()
   @ApiProperty({ example: { id: 1 } })
   task: Task;
+
+  @IsOptional()
+  @IsArray()
+  @ApiProperty({ example: [{ id: 1 }] })
+  activityFiles: ActivityFile[];
 }
 
 export class getActivityWithProjectDto {

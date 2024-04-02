@@ -31,7 +31,7 @@ export class ActivityService {
   ) {}
 
   // 액티비티 생성 처리
-  async createActivity(user: User, activityData: createActivityDto, files: Express.Multer.File[]) {
+  async createActivity(user: User, activityData: createActivityDto) {
     const { task, actedDate, filledGoal } = activityData;
 
     if (!!task) {
@@ -39,28 +39,17 @@ export class ActivityService {
       await this.updateAccumulation(task.id, filledGoal);
     }
 
-    const activityInfo = { ...activityData, user };
-    const data = await this.activityRepository.save(activityInfo);
+    const { activityFiles, ...activityInfo } = activityData;
 
-    const fileRootDirectory = this.configService.get<string>('FILE_STORAGE_PATH');
+    const data = await this.activityRepository.save({ ...activityInfo, user });
 
-    const fileInfo = files.map((file, index) => ({
-      seqNo: index,
-      fileStorageType: FileStorageType.DISK,
-      filePath: file.destination.replace(fileRootDirectory, ''),
-      fileName: file.filename,
-      mimeType: file.mimetype,
-      fileSize: file.size,
-      activity: data,
-    }));
-
-    await this.activityFileRepository.save(fileInfo);
+    this.linkArticleAsForeignKey(data, activityFiles);
 
     return data;
   }
 
   // 액티비티 수정 처리
-  async updateActivity(user: User, activityId: number, activityData: updateActivityDto, files: Express.Multer.File[]) {
+  async updateActivity(user: User, activityId: number, activityData: updateActivityDto) {
     const activity = await this.activityRepository.findOne({ where: { id: activityId }, relations: ['user', 'task'] });
     if (activity.user.id !== user.id) throw new ForbiddenException('접근 권한이 없습니다.');
 
@@ -77,14 +66,17 @@ export class ActivityService {
       await this.updateAccumulation(newTask.id, newFilledGoal);
     }
 
-    const activityInfo = { ...activityData, id: activityId };
-    const data = await this.activityRepository.save(activityInfo);
+    const { activityFiles, ...activityInfo } = activityData;
 
-    await this.activityFileRepository.update(
-      { activity: { id: activityId }, isDeleted: false },
-      { isDeleted: true, deletedAt: new Date() },
-    );
+    const data = await this.activityRepository.save({ ...activityInfo, id: activityId });
 
+    this.linkArticleAsForeignKey(data, activityFiles);
+
+    return data;
+  }
+
+  // 액티비티 이미지 등록 처리
+  async uploadActivityImages(user: User, files: Express.Multer.File[]) {
     const fileRootDirectory = this.configService.get<string>('FILE_STORAGE_PATH');
 
     const fileInfo = files.map((file, index) => ({
@@ -94,12 +86,17 @@ export class ActivityService {
       fileName: file.filename,
       mimeType: file.mimetype,
       fileSize: file.size,
-      activity: data,
     }));
 
-    await this.activityFileRepository.save(fileInfo);
+    const data = await this.activityFileRepository.save(fileInfo);
 
     return data;
+  }
+
+  // 액티비티 이미지 외래키 연결
+  linkArticleAsForeignKey(activity: Activity, activityFiles: ActivityFile[]) {
+    for (const activityFile of activityFiles)
+      this.activityFileRepository.update(activityFile.id, { activity: activity });
   }
 
   // 액티비티 삭제 처리
@@ -160,7 +157,7 @@ export class ActivityService {
     });
     if (!task) throw new BadRequestException('과제가 존재하지 않습니다.');
 
-    if (new Date(task.startedAt) > new Date(actedDate) || new Date(task.finishedAt) > new Date(actedDate))
+    if (new Date(task.startedAt) > new Date(actedDate) || new Date(task.finishedAt) < new Date(actedDate))
       throw new BadRequestException('액티비티 일자가 과제 기간을 벗어납니다.');
   }
 
