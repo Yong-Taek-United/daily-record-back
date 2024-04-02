@@ -43,7 +43,7 @@ export class ActivityService {
 
     const data = await this.activityRepository.save({ ...activityInfo, user });
 
-    this.linkArticleAsForeignKey(data, activityFiles);
+    if (!!activityFiles) this.linkArticleAsForeignKey(data, activityFiles);
 
     return data;
   }
@@ -70,7 +70,7 @@ export class ActivityService {
 
     const data = await this.activityRepository.save({ ...activityInfo, id: activityId });
 
-    this.linkArticleAsForeignKey(data, activityFiles);
+    if (!!activityFiles) this.linkArticleAsForeignKey(data, activityFiles);
 
     return data;
   }
@@ -107,7 +107,7 @@ export class ActivityService {
     const result = await this.activityFileRepository.update(activityFileId, { isDeleted: true, deletedAt: new Date() });
     if (result.affected === 0) throw new InternalServerErrorException();
 
-    return result
+    return result;
   }
 
   // 액티비티 이미지 외래키 연결
