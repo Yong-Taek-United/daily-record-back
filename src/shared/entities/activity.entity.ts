@@ -27,7 +27,7 @@ export class Activity {
   @Column({ type: 'date' })
   actedDate: Date;
 
-  @Column({ type: 'time', default: '00:00:00' })
+  @Column({ type: 'varchar', length: 5, default: '00:00' })
   actedTime: string;
 
   @Column({ type: 'int', default: 0 })
