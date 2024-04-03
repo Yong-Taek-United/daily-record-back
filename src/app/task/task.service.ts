@@ -1,8 +1,8 @@
 import {
-  BadRequestException,
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -90,10 +90,10 @@ export class TaskService {
         isDeleted: false,
       },
     });
-    if (!project) throw new BadRequestException('프로젝트가 존재하지 않습니다.');
+    if (!project) throw new NotFoundException('프로젝트가 존재하지 않습니다.');
 
     if (new Date(project.startedAt) > new Date(startedAt) || new Date(project.finishedAt) < new Date(finishedAt))
-      throw new BadRequestException('과제 기간이 프로젝트 기간을 벗어납니다.');
+      throw new UnprocessableEntityException('과제 기간이 프로젝트 기간을 벗어납니다.');
   }
 
   // 테스크 기간 수정 가능 여부 확인(for Activity)

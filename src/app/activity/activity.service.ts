@@ -1,9 +1,9 @@
 import {
-  BadRequestException,
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -241,10 +241,10 @@ export class ActivityService {
         isDeleted: false,
       },
     });
-    if (!task) throw new BadRequestException('과제가 존재하지 않습니다.');
+    if (!task) throw new NotFoundException('과제가 존재하지 않습니다.');
 
     if (new Date(task.startedAt) > new Date(actedDate) || new Date(task.finishedAt) < new Date(actedDate))
-      throw new BadRequestException('액티비티 일자가 과제 기간을 벗어납니다.');
+      throw new UnauthorizedException('액티비티 일자가 과제 기간을 벗어납니다.');
   }
 
   // 테스크 누적량 수정
