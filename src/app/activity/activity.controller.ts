@@ -1,7 +1,13 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Req, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ActivityService } from './activity.service';
-import { createActivityDto, getActivityWithProjectDto, updateActivityDto } from 'src/shared/dto/activity.dto';
+import {
+  createActivityDto,
+  createActivityDto2,
+  getActivityWithProjectDto,
+  updateActivityDto,
+  updateActivityDto2,
+} from 'src/shared/dto/activity.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('activities')
@@ -72,6 +78,136 @@ export class ActivityController {
   async deleteActivityImages(@Req() req, @Param('activityFileId') activityFileId: number) {
     await this.activityService.deleteActivityImages(req.user, activityFileId);
     return { statusCode: 200 };
+  }
+
+  @Post('with-image')
+  @UseInterceptors(FilesInterceptor('files', 3))
+  @ApiOperation({
+    summary: '액티비티 생성(with Images)',
+    description: '액티비티를 생성합니다. 이미지는 최대 3개까지 가능합니다.',
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        title: {
+          type: 'string',
+          example: '액티비티 제목을 작성합니다.',
+        },
+        description: {
+          type: 'string',
+          example: '액티비티 내용을 작성합니다.',
+        },
+        actedDate: {
+          type: 'string',
+          format: 'date',
+          example: '2023-10-15',
+        },
+        actedTime: {
+          type: 'string',
+          example: '10:22',
+        },
+        filledGoal: {
+          type: 'number',
+          example: 1,
+        },
+        category: {
+          type: 'object',
+          example: { id: 1 },
+        },
+        project: {
+          type: 'object',
+          example: { id: 1 },
+        },
+        task: {
+          type: 'object',
+          example: { id: 1 },
+        },
+        files: {
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
+        },
+      },
+    },
+  })
+  async createActivityWithImages(
+    @Req() req,
+    @Body() activityData: createActivityDto2,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    const data = await this.activityService.createActivityWithImages(req.user, activityData, files);
+    return { statusCode: 201, data };
+  }
+
+  @Put('with-image/:activityId')
+  @UseInterceptors(FilesInterceptor('files', 3))
+  @ApiOperation({
+    summary: '액티비티 수정(with Images)',
+    description: '액티비티를 수정합니다. 이미지는 최대 3개까지 가능합니다.',
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiParam({
+    name: 'activityId',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        title: {
+          type: 'string',
+          example: '액티비티 제목을 작성합니다.',
+        },
+        description: {
+          type: 'string',
+          example: '액티비티 내용을 작성합니다.',
+        },
+        actedDate: {
+          type: 'string',
+          format: 'date',
+          example: '2023-10-15',
+        },
+        actedTime: {
+          type: 'string',
+          example: '10:22',
+        },
+        filledGoal: {
+          type: 'number',
+          example: 1,
+        },
+        category: {
+          type: 'object',
+          example: { id: 1 },
+        },
+        project: {
+          type: 'object',
+          example: { id: 1 },
+        },
+        task: {
+          type: 'object',
+          example: { id: 1 },
+        },
+        files: {
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
+        },
+      },
+    },
+  })
+  async updateActivityWithImages(
+    @Req() req,
+    @Param('activityId') activityId: number,
+    @Body() activityData: updateActivityDto2,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    const data = await this.activityService.updateActivityWithImages(req.user, activityId, activityData, files);
+    return { statusCode: 200, data };
   }
 
   @Delete(':activityId')

@@ -12,7 +12,13 @@ import { User } from 'src/shared/entities/user.entity';
 import { Task } from 'src/shared/entities/task.entity';
 import { TaskGoal } from 'src/shared/entities/taskGoal.entity';
 import { ActivityFile } from 'src/shared/entities/activityFile.entity';
-import { createActivityDto, getActivityWithProjectDto, updateActivityDto } from 'src/shared/dto/activity.dto';
+import {
+  createActivityDto,
+  createActivityDto2,
+  getActivityWithProjectDto,
+  updateActivityDto,
+  updateActivityDto2,
+} from 'src/shared/dto/activity.dto';
 import { ConfigService } from '@nestjs/config';
 import { FileStorageType } from 'src/shared/types/enums/file.enum';
 
@@ -44,6 +50,21 @@ export class ActivityService {
     const data = await this.activityRepository.save({ ...activityInfo, user });
 
     if (!!activityFiles) this.linkArticleAsForeignKey(data, activityFiles);
+
+    return data;
+  }
+
+  // 액티비티 생성 처리(with Images)
+  async createActivityWithImages(user: User, activityData: createActivityDto2, files: Express.Multer.File[]) {
+    const { task, actedDate, filledGoal } = activityData;
+
+    if (!!task) {
+      await this.checkTaskPeriod(task.id, actedDate);
+      await this.updateAccumulation(task.id, filledGoal);
+    }
+
+    const data = await this.activityRepository.save({ ...activityData, user });
+    this.uploadActivityImages(user, files, data);
 
     return data;
   }
@@ -87,8 +108,43 @@ export class ActivityService {
     return data;
   }
 
+  // 액티비티 수정 처리(with Images)
+  async updateActivityWithImages(
+    user: User,
+    activityId: number,
+    activityData: updateActivityDto2,
+    files: Express.Multer.File[],
+  ) {
+    const activity = await this.activityRepository.findOne({ where: { id: activityId }, relations: ['user', 'task'] });
+    if (activity.user.id !== user.id) throw new ForbiddenException('접근 권한이 없습니다.');
+
+    const previousTask = activity.task;
+    const previousFilledGoal = activity.filledGoal;
+    const { task: newTask, actedDate, filledGoal: newFilledGoal } = activityData;
+
+    if (!!previousTask) {
+      await this.updateAccumulation(previousTask.id, -previousFilledGoal);
+    }
+
+    if (!!newTask) {
+      await this.checkTaskPeriod(newTask.id, actedDate);
+      await this.updateAccumulation(newTask.id, newFilledGoal);
+    }
+
+    const data = await this.activityRepository.save({ ...activityData, id: activityId });
+
+    await this.activityFileRepository.update(
+      { activity: { id: activityId }, isDeleted: false },
+      { isDeleted: true, deletedAt: new Date() },
+    );
+
+    await this.uploadActivityImages(user, files, data);
+
+    return data;
+  }
+
   // 액티비티 이미지 등록 처리
-  async uploadActivityImages(user: User, files: Express.Multer.File[]) {
+  async uploadActivityImages(user: User, files: Express.Multer.File[], activity?: Activity) {
     const fileRootDirectory = this.configService.get<string>('FILE_STORAGE_PATH');
 
     const fileInfo = files.map((file, index) => ({
@@ -98,6 +154,7 @@ export class ActivityService {
       fileName: file.filename,
       mimeType: file.mimetype,
       fileSize: file.size,
+      activity: activity,
     }));
 
     const data = await this.activityFileRepository.save(fileInfo);

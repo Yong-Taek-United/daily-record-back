@@ -21,7 +21,10 @@ export class MulterConfig implements MulterOptionsFactory {
       case '/activities/image/upload':
         contentDirectory = 'activities';
         break;
-      case '/activities/:activityId':
+      case '/activities/with-image':
+        contentDirectory = 'activities';
+        break;
+      case '/activities/with-image/:activityId':
         contentDirectory = 'activities';
         break;
       default:
@@ -34,7 +37,8 @@ export class MulterConfig implements MulterOptionsFactory {
   // 이미지 저장 주소 생성
   private buildFileStoragePath(req: any) {
     const fileRootDirectory = this.configService.get<string>('FILE_STORAGE_PATH');
-    const contentDirectory = this.getContentDirectoryName(req.url);
+    const contentDirectory = this.getContentDirectoryName(req.route.path);
+    console.log(req);
     const userId = req.user.id;
 
     const fileStoragePath = `${fileRootDirectory}/${contentDirectory}/${userId}`;
