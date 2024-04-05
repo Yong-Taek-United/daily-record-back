@@ -144,6 +144,7 @@ export class TaskService {
     const accumulation = task.taskGoal.accumulation;
     const expectedAccumulation = Number((goal * (elapsedDays / totalDays)).toFixed(0));
     const achivementRate = Number((accumulation / goal).toFixed(3));
+    const expectedAchivementRate = Number((expectedAccumulation / goal).toFixed(3));
     const estimatedAchivementRate = Number((accumulation / expectedAccumulation).toFixed(3));
 
     const progressData = {
@@ -153,6 +154,7 @@ export class TaskService {
       accumulation,
       expectedAccumulation,
       achivementRate,
+      expectedAchivementRate,
       estimatedAchivementRate,
     };
     return progressData;
