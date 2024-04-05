@@ -70,7 +70,7 @@ export class ActivityService {
   }
 
   // 액티비티 조회 처리
-  async getActivity(user: User, activityId: number) {
+  async getActivityDetail(user: User, activityId: number) {
     const activity = await this.activityRepository.findOne({
       where: { id: activityId },
       relations: ['user', 'project', 'task.taskGoal', 'task.category', 'task.color', 'task.icon', 'activityFile'],

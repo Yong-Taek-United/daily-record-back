@@ -29,8 +29,8 @@ export class ActivityController {
   @ApiParam({
     name: 'activityId',
   })
-  async getActivity(@Req() req, @Param('activityId') activityId: number) {
-    const data = await this.activityService.getActivity(req.user, activityId);
+  async getActivityDetail(@Req() req, @Param('activityId') activityId: number) {
+    const data = await this.activityService.getActivityDetail(req.user, activityId);
     return { statusCode: 200, data };
   }
 
