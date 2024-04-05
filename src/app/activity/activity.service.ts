@@ -186,8 +186,7 @@ export class ActivityService {
 
   // 액티비티 이미지 외래키 연결
   linkArticleAsForeignKey(activity: Activity, activityFiles: ActivityFile[]) {
-    for (const activityFile of activityFiles)
-      this.activityFileRepository.update(activityFile.id, { activity: activity });
+    this.activityFileRepository.update({ id: In(activityFiles) }, { activity: activity });
   }
 
   // 액티비티 삭제 처리
