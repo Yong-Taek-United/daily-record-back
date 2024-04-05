@@ -3,11 +3,11 @@ import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiTags } 
 import { ActivityService } from './activity.service';
 import {
   DeleteImageDto,
-  createActivityDto,
-  createActivityDto2,
-  getActivityWithProjectDto,
-  updateActivityDto,
-  updateActivityDto2,
+  CreateActivityDto,
+  CreateActivityDto2,
+  GetActivityWithProjectDto,
+  UpdateActivityDto,
+  UpdateActivityDto2,
 } from 'src/shared/dto/activity.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 
@@ -19,7 +19,7 @@ export class ActivityController {
 
   @Post('')
   @ApiOperation({ summary: '액티비티 생성', description: '액티비티를 생성합니다.' })
-  async createActivity(@Req() req, @Body() activityData: createActivityDto) {
+  async createActivity(@Req() req, @Body() activityData: CreateActivityDto) {
     const data = await this.activityService.createActivity(req.user, activityData);
     return { statusCode: 201, data };
   }
@@ -39,7 +39,7 @@ export class ActivityController {
   @ApiParam({
     name: 'activityId',
   })
-  async updateActivity(@Req() req, @Param('activityId') activityId: number, @Body() activityData: updateActivityDto) {
+  async updateActivity(@Req() req, @Param('activityId') activityId: number, @Body() activityData: UpdateActivityDto) {
     const data = await this.activityService.updateActivity(req.user, activityId, activityData);
     return { statusCode: 200, data };
   }
@@ -141,7 +141,7 @@ export class ActivityController {
   })
   async createActivityWithImages(
     @Req() req,
-    @Body() activityData: createActivityDto2,
+    @Body() activityData: CreateActivityDto2,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
     const data = await this.activityService.createActivityWithImages(req.user, activityData, files);
@@ -208,7 +208,7 @@ export class ActivityController {
   async updateActivityWithImages(
     @Req() req,
     @Param('activityId') activityId: number,
-    @Body() activityData: updateActivityDto2,
+    @Body() activityData: UpdateActivityDto2,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
     const data = await this.activityService.updateActivityWithImages(req.user, activityId, activityData, files);
@@ -230,7 +230,7 @@ export class ActivityController {
     summary: '액티비티 목록 조회: 프로젝트/테스크',
     description: '프로젝트/테스크와 관련된 액티비티 목록을 조회합니다.',
   })
-  async getActivityListWithProject(@Req() req, @Param() activityData: getActivityWithProjectDto) {
+  async getActivityListWithProject(@Req() req, @Param() activityData: GetActivityWithProjectDto) {
     const data = await this.activityService.getActivityListWithProject(req.user, activityData);
     return { statusCode: 200, data };
   }

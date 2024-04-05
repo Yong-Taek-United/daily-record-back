@@ -15,7 +15,7 @@ import { Task } from '../entities/task.entity';
 import { Transform } from 'class-transformer';
 import { ActivityFile } from '../entities/activityFile.entity';
 
-export class createActivityDto {
+export class CreateActivityDto {
   @IsOptional()
   @IsString()
   @ApiProperty({ example: '액티비티 제목을 작성합니다.' })
@@ -60,7 +60,7 @@ export class createActivityDto {
   activityFiles: ActivityFile[];
 }
 
-export class updateActivityDto {
+export class UpdateActivityDto {
   @IsOptional()
   @IsString()
   @ApiProperty({ example: '액티비티 제목을 수정합니다.' })
@@ -104,7 +104,7 @@ export class updateActivityDto {
   activityFiles: ActivityFile[];
 }
 
-export class getActivityWithProjectDto {
+export class GetActivityWithProjectDto {
   @IsNumberString()
   @ApiProperty({ example: 1 })
   projectId: number;
@@ -114,7 +114,7 @@ export class getActivityWithProjectDto {
   taskId: number;
 }
 
-export class createActivityDto2 {
+export class CreateActivityDto2 {
   @IsOptional()
   @IsString()
   @ApiProperty({ example: '액티비티 제목을 작성합니다.' })
@@ -158,7 +158,7 @@ export class createActivityDto2 {
   task: Task;
 }
 
-export class updateActivityDto2 {
+export class UpdateActivityDto2 {
   @IsOptional()
   @IsString()
   @ApiProperty({ example: '액티비티 제목을 수정합니다.' })

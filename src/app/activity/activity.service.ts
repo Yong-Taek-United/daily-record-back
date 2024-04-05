@@ -13,11 +13,11 @@ import { Task } from 'src/shared/entities/task.entity';
 import { TaskGoal } from 'src/shared/entities/taskGoal.entity';
 import { ActivityFile } from 'src/shared/entities/activityFile.entity';
 import {
-  createActivityDto,
-  createActivityDto2,
-  getActivityWithProjectDto,
-  updateActivityDto,
-  updateActivityDto2,
+  CreateActivityDto,
+  CreateActivityDto2,
+  GetActivityWithProjectDto,
+  UpdateActivityDto,
+  UpdateActivityDto2,
 } from 'src/shared/dto/activity.dto';
 import { ConfigService } from '@nestjs/config';
 import { FileStorageType } from 'src/shared/types/enums/file.enum';
@@ -37,7 +37,7 @@ export class ActivityService {
   ) {}
 
   // 액티비티 생성 처리
-  async createActivity(user: User, activityData: createActivityDto) {
+  async createActivity(user: User, activityData: CreateActivityDto) {
     const { task, actedDate, filledGoal } = activityData;
 
     if (!!task) {
@@ -55,7 +55,7 @@ export class ActivityService {
   }
 
   // 액티비티 생성 처리(with Images)
-  async createActivityWithImages(user: User, activityData: createActivityDto2, files: Express.Multer.File[]) {
+  async createActivityWithImages(user: User, activityData: CreateActivityDto2, files: Express.Multer.File[]) {
     const { task, actedDate, filledGoal } = activityData;
 
     if (!!task) {
@@ -82,7 +82,7 @@ export class ActivityService {
   }
 
   // 액티비티 수정 처리
-  async updateActivity(user: User, activityId: number, activityData: updateActivityDto) {
+  async updateActivity(user: User, activityId: number, activityData: UpdateActivityDto) {
     const activity = await this.activityRepository.findOne({ where: { id: activityId }, relations: ['user', 'task'] });
     if (activity.user.id !== user.id) throw new ForbiddenException('접근 권한이 없습니다.');
 
@@ -112,7 +112,7 @@ export class ActivityService {
   async updateActivityWithImages(
     user: User,
     activityId: number,
-    activityData: updateActivityDto2,
+    activityData: UpdateActivityDto2,
     files: Express.Multer.File[],
   ) {
     const activity = await this.activityRepository.findOne({ where: { id: activityId }, relations: ['user', 'task'] });
@@ -210,7 +210,7 @@ export class ActivityService {
   }
 
   // 액티비티 목록 조회: 프로젝트/테스크
-  async getActivityListWithProject(user: User, activityData: getActivityWithProjectDto) {
+  async getActivityListWithProject(user: User, activityData: GetActivityWithProjectDto) {
     const { projectId, taskId } = activityData;
 
     const setParams = {

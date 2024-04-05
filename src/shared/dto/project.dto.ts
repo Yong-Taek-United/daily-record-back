@@ -26,7 +26,7 @@ export class CreateProjectDto {
   isActive: boolean;
 }
 
-export class getProjectListDto {
+export class GetProjectListDto {
   @IsEnum(ProjectStatus)
   @ApiProperty({ enum: ProjectStatus, default: ProjectStatus.ONGOING })
   projectStatus: ProjectStatus;

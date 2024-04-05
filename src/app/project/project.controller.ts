@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ProjectService } from './project.service';
-import { CreateProjectDto, UpdateProjectDto, getProjectListDto } from 'src/shared/dto/project.dto';
+import { CreateProjectDto, UpdateProjectDto, GetProjectListDto } from 'src/shared/dto/project.dto';
 
 @Controller('projects')
 @ApiTags('Project')
@@ -21,7 +21,7 @@ export class ProjectController {
     summary: '프로젝트 목록 조회',
     description: '프로젝트 목록을 조회합니다. 프로젝트 기간에 따라 상태를 다르게 분류합니다.',
   })
-  async getProjectList(@Req() req, @Query() projectData: getProjectListDto) {
+  async getProjectList(@Req() req, @Query() projectData: GetProjectListDto) {
     const data = await this.projectService.getProjectList(req.user, projectData);
     return { statusCode: 200, data };
   }

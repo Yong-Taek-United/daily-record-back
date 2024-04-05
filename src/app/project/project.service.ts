@@ -10,7 +10,7 @@ import { FindOperator, LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual, Rep
 import { Project } from 'src/shared/entities/project.entity';
 import { User } from 'src/shared/entities/user.entity';
 import { Task } from 'src/shared/entities/task.entity';
-import { CreateProjectDto, UpdateProjectDto, getProjectListDto } from 'src/shared/dto/project.dto';
+import { CreateProjectDto, UpdateProjectDto, GetProjectListDto } from 'src/shared/dto/project.dto';
 import { ConvertDateUtility } from 'src/shared/utilities/convert-date.utility';
 import { Activity } from 'src/shared/entities/activity.entity';
 import { ProjectStatus } from 'src/shared/types/enums/project.enum';
@@ -38,7 +38,7 @@ export class ProjectService {
   }
 
   // 프로젝트 목록 조회
-  async getProjectList(user: User, projectData: getProjectListDto) {
+  async getProjectList(user: User, projectData: GetProjectListDto) {
     const { projectStatus, listSkip, listTake } = projectData;
     const convertedDate = ConvertDateUtility.convertDateWithoutTime(new Date());
 
