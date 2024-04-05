@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Activity } from 'src/shared/entities/activity.entity';
 import { User } from 'src/shared/entities/user.entity';
 import { Task } from 'src/shared/entities/task.entity';
@@ -163,17 +163,22 @@ export class ActivityService {
   }
 
   // 액티비티 이미지 삭제 처리
-  async deleteActivityImages(user: User, activityFileId: number) {
-    const activityFile = await this.activityFileRepository.findOne({
-      where: { id: activityFileId },
+  async deleteActivityImages(user: User, activityFileIds: number[]) {
+    const activityFiles = await this.activityFileRepository.find({
+      where: { id: In(activityFileIds) },
       relations: ['activity.user'],
     });
-    if (!activityFile) throw new NotFoundException('요청하신 데이터를 찾을 수 없습니다.');
+    if (!activityFiles) throw new NotFoundException('요청하신 데이터를 찾을 수 없습니다.');
 
-    const activityUserId = activityFile.activity.user.id;
-    if (activityUserId !== user.id) throw new ForbiddenException('접근 권한이 없습니다.');
+    for (const activityFile of activityFiles) {
+      const activityUserId = activityFile.activity.user.id;
+      if (activityUserId !== user.id) throw new ForbiddenException('접근 권한이 없습니다.');
+    }
 
-    const result = await this.activityFileRepository.update(activityFileId, { isDeleted: true, deletedAt: new Date() });
+    const result = await this.activityFileRepository.update(
+      { id: In(activityFileIds) },
+      { isDeleted: true, deletedAt: new Date() },
+    );
     if (result.affected === 0) throw new InternalServerErrorException();
 
     return result;

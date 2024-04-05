@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Put, Req, UploadedFiles, Us
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ActivityService } from './activity.service';
 import {
+  DeleteImageDto,
   createActivityDto,
   createActivityDto2,
   getActivityWithProjectDto,
@@ -70,13 +71,17 @@ export class ActivityController {
     return { statusCode: 201, data };
   }
 
-  @Delete('image/:activityFileId')
-  @ApiOperation({ summary: '액티비티 이미지 삭제', description: '액티비티를 이미지를 삭제합니다.' })
-  @ApiParam({
-    name: 'activityFileId',
+  @Delete('image/:activityFileIds')
+  @ApiOperation({
+    summary: '액티비티 이미지 삭제',
+    description: '액티비티를 이미지를 삭제합니다. 여러개의 id를 쉼표로 Stringify하여 전달할 수 있습니다.("1,2,3")',
   })
-  async deleteActivityImages(@Req() req, @Param('activityFileId') activityFileId: number) {
-    await this.activityService.deleteActivityImages(req.user, activityFileId);
+  @ApiParam({
+    name: 'activityFileIds',
+  })
+  async deleteActivityImages(@Req() req, @Param() deleteImageData: DeleteImageDto) {
+    const activityFileIds = deleteImageData.arrayActivityFileIds;
+    await this.activityService.deleteActivityImages(req.user, activityFileIds);
     return { statusCode: 200 };
   }
 

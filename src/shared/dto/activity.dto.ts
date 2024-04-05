@@ -200,3 +200,13 @@ export class updateActivityDto2 {
   @ApiProperty({ example: { id: 1 } })
   task: Task;
 }
+
+export class DeleteImageDto {
+  @IsString()
+  @Matches(/^[0-9]+(,[0-9]+)*$/)
+  activityFileIds: string;
+
+  get arrayActivityFileIds(): number[] {
+    return this.activityFileIds.split(',').map(Number);
+  }
+}
