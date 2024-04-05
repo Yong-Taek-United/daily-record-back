@@ -8,6 +8,7 @@ import {
   GetActivityWithProjectDto,
   UpdateActivityDto,
   UpdateActivityDto2,
+  GetActivityListDto,
 } from 'src/shared/dto/activity.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 
@@ -22,6 +23,19 @@ export class ActivityController {
   async createActivity(@Req() req, @Body() activityData: CreateActivityDto) {
     const data = await this.activityService.createActivity(req.user, activityData);
     return { statusCode: 201, data };
+  }
+
+  @Get('list/:year/:month')
+  @ApiOperation({ summary: '액티비티 목록 조회: 캘린더', description: '캘린더에 사용될 액티비티 목록을 조회합니다.' })
+  @ApiParam({
+    name: 'year',
+  })
+  @ApiParam({
+    name: 'month',
+  })
+  async getActivityList(@Req() req, @Param() getActivityListData: GetActivityListDto) {
+    const data = await this.activityService.getActivityList(req.user, getActivityListData);
+    return { statusCode: 200, data };
   }
 
   @Get(':activityId')
@@ -225,7 +239,7 @@ export class ActivityController {
     return { statusCode: 200 };
   }
 
-  @Get('list/:projectId/:taskId')
+  @Get('logs/list/:projectId/:taskId')
   @ApiOperation({
     summary: '액티비티 목록 조회: 프로젝트/테스크',
     description: '프로젝트/테스크와 관련된 액티비티 목록을 조회합니다.',

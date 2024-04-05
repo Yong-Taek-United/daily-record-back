@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { Between, In, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Activity } from 'src/shared/entities/activity.entity';
 import { User } from 'src/shared/entities/user.entity';
 import { Task } from 'src/shared/entities/task.entity';
@@ -15,6 +15,7 @@ import { ActivityFile } from 'src/shared/entities/activityFile.entity';
 import {
   CreateActivityDto,
   CreateActivityDto2,
+  GetActivityListDto,
   GetActivityWithProjectDto,
   UpdateActivityDto,
   UpdateActivityDto2,
@@ -65,6 +66,41 @@ export class ActivityService {
 
     const data = await this.activityRepository.save({ ...activityData, user });
     this.uploadActivityImages(user, files, data);
+
+    return data;
+  }
+
+  // 액티비티 목록 조회 처리: 캘린더
+  async getActivityList(user: User, getActivityListData: GetActivityListDto) {
+    const { year, month } = getActivityListData;
+
+    const { previousMonthFirstDay, nextMonthLastDay } = this.calculateBoundaryDates(year, month);
+
+    const whereOptions = {
+      actedDate: Between(previousMonthFirstDay, nextMonthLastDay),
+      user: { id: user.id },
+      isDeleted: false,
+    };
+
+    const activities = await this.activityRepository.find({
+      where: whereOptions,
+      order: {
+        actedDate: 'ASC',
+      },
+      relations: ['category', 'project', 'task.taskGoal', 'task.category', 'task.color', 'task.icon', 'activityFile'],
+    });
+
+    const groupedData = activities.reduce((acc, item) => {
+      const dateKey = item.actedDate.toString();
+
+      if (!acc[dateKey]) acc[dateKey] = { actedDate: dateKey, activities: [] };
+
+      acc[dateKey].activities.push(item);
+
+      return acc;
+    }, {});
+
+    const data = Object.values(groupedData);
 
     return data;
   }
@@ -217,7 +253,7 @@ export class ActivityService {
       projectId,
       taskId,
       isDeleted: false,
-      isActive: false,
+      isActive: true,
     };
 
     const queryBuilder = await this.activityRepository
@@ -258,5 +294,14 @@ export class ActivityService {
     const newAccumulation = accumulation + filledGoal;
     const result = await this.taskGoalRepository.update({ task: { id: taskId } }, { accumulation: newAccumulation });
     if (result.affected === 0) throw new InternalServerErrorException();
+  }
+
+  calculateBoundaryDates(year: number, month: number) {
+    month -= 1;
+    const previousMonthFirstDay = new Date(year, month - 1, 1);
+    const nextMonthFirstDay = new Date(year, month + 1, 1);
+    const nextMonthLastDay = new Date(nextMonthFirstDay.getTime() - 1);
+
+    return { previousMonthFirstDay, nextMonthLastDay };
   }
 }
