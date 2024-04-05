@@ -91,11 +91,12 @@ export class ActivityService {
     });
 
     const groupedData = activities.reduce((acc, item) => {
-      const dateKey = item.actedDate.toString();
+      const date = item.actedDate.toString();
+      const day = new Date(item.actedDate).getDay();
 
-      if (!acc[dateKey]) acc[dateKey] = { actedDate: dateKey, activities: [] };
+      if (!acc[date]) acc[date] = { actedDate: date, actedDay: day, activities: [] };
 
-      acc[dateKey].activities.push(item);
+      acc[date].activities.push(item);
 
       return acc;
     }, {});
