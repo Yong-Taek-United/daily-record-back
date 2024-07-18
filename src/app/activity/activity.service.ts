@@ -86,6 +86,7 @@ export class ActivityService {
       where: whereOptions,
       order: {
         actedDate: 'ASC',
+        actedTime: 'ASC',
       },
       relations: ['category', 'project', 'task.taskGoal', 'task.category', 'task.color', 'task.icon', 'activityFile'],
     });
